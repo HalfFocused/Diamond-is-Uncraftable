@@ -50,7 +50,6 @@ public class TimeSkipEffectGUI extends AbstractGui {
                     //This was a very informative introduction to GUIs. What did I learn? Why I couldn't find a guide online.
                     double xScaleFactor = mc.getMainWindow().getScaledWidth() / 256.0;
                     double yScaleFactor = mc.getMainWindow().getScaledHeight() / 154.0;
-                    //Test
 
 
                     GlStateManager.enableBlend();
