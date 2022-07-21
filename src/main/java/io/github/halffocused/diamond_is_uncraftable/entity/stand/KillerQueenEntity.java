@@ -740,6 +740,9 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
         }
     }
 
+    /*
+     Removes first bomb status from any entity, block, or item. Items have their names reset.
+     */
     public void removeFirstBombFromAll(){
         bombEntity = null;
 
