@@ -641,9 +641,7 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
                                     ((MobEntity) bombEntity).spawnExplosionParticle();
                                     world.playSound(null, master.getPosition(), SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 1, 1);
                                     explosion.doExplosionB(true);
-                                    bombEntity.setInvisible(true);
-                                    bombEntity.setPosition(bombEntity.getPosX(), -200, bombEntity.getPosZ());
-                                    bombEntity.attackEntityFrom(DamageSource.causeExplosionDamage(master), Float.MAX_VALUE);
+                                    bombEntity.remove();
                                 } else {
                                     detonateBTDMob();
                                 }
