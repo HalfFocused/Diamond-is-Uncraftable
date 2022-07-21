@@ -1,0 +1,15 @@
+{
+  "display": {
+    "icon": {
+      "item": "minecraft:diamond_axe"
+    },
+    "title": "Menacing!",
+    "description": "Use a stand's menacing move. Each stand has at least one."
+  },
+  "parent": "diamond_is_uncraftable:obtainstand",
+  "criteria": {
+    "menacing": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

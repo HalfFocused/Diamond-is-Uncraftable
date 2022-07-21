@@ -1,0 +1,15 @@
+{
+  "display": {
+    "icon": {
+      "item": "minecraft:skeleton_skull"
+    },
+    "title": "Drawn Together By Fate",
+    "description": "Kill another Stand User with your stand."
+  },
+  "parent": "diamond_is_uncraftable:obtainstand",
+  "criteria": {
+    "killuser": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

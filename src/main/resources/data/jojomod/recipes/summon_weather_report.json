@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "EDE",
+    "DAD",
+    "EDE"
+  ],
+  "key": {
+    "D": {
+      "item": "minecraft:diamond"
+    },
+    "E": {
+      "item": "minecraft:trident"
+    },
+    "A": {
+      "item": "diamond_is_uncraftable:stand_arrow"
+    }
+  },
+  "result": {
+    "item": "diamond_is_uncraftable:summon_weather_report"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "IDI",
+    "DAD",
+    "IDI"
+  ],
+  "key": {
+    "D": {
+      "item": "minecraft:bow"
+    },
+    "I": {
+      "item": "minecraft:arrow"
+    },
+    "A": {
+      "item": "diamond_is_uncraftable:stand_arrow"
+    }
+  },
+  "result": {
+    "item": "diamond_is_uncraftable:summon_the_emperor"
+  }
+}

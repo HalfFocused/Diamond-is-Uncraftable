@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "TDT",
+    "DAD",
+    "TDT"
+  ],
+  "key": {
+    "D": {
+      "item": "minecraft:diamond"
+    },
+    "T": {
+      "item": "minecraft:tnt"
+    },
+    "A": {
+      "item": "diamond_is_uncraftable:stand_arrow"
+    }
+  },
+  "result": {
+    "item": "diamond_is_uncraftable:summon_killer_queen"
+  }
+}

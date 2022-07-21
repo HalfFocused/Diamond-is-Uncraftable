@@ -1,0 +1,596 @@
+{
+  "canzoni_preferite": {
+    "category": "record",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:canzoni_preferite",
+        "stream": true
+      }
+    ]
+  },
+  "punch_miss": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:punch_miss",
+        "stream": false
+      }
+    ]
+  },
+  "spawn_king_crimson": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:spawn_king_crimson",
+        "stream": false
+      }
+    ]
+  },
+  "spawn_d4c": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:spawn_d4c",
+        "stream": false
+      }
+    ]
+  },
+  "spawn_gold_experience": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:spawn_gold_experience",
+        "stream": false
+      }
+    ]
+  },
+  "mudagiorno": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:mudagiorno",
+        "stream": false
+      }
+    ]
+  },
+  "transmute": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:transmute",
+        "stream": false
+      }
+    ]
+  },
+  "spawn_made_in_heaven": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:spawn_made_in_heaven",
+        "stream": false
+      }
+    ]
+  },
+  "spawn_ger": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:spawn_ger",
+        "stream": false
+      }
+    ]
+  },
+  "spawn_aerosmith": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:spawn_aerosmith",
+        "stream": false
+      }
+    ]
+  },
+  "volarush": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:volarush",
+        "stream": false
+      }
+    ]
+  },
+  "spawn_weather_report": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:spawn_weather_report",
+        "stream": false
+      }
+    ]
+  },
+  "spawn_killer_queen": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:spawn_killer_queen",
+        "stream": false
+      }
+    ]
+  },
+  "look_here": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:look_here",
+        "stream": false
+      }
+    ]
+  },
+  "spawn_crazy_diamond": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:spawn_crazy_diamond",
+        "stream": false
+      }
+    ]
+  },
+  "dorarush": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:dorarush",
+        "stream": false
+      }
+    ]
+  },
+  "spawn_purple_haze": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:spawn_purple_haze",
+        "stream": false
+      }
+    ]
+  },
+  "purple_haze_rush": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:purple_haze_rush",
+        "stream": false
+      }
+    ]
+  },
+  "spawn_the_emperor": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:spawn_the_emperor",
+        "stream": false
+      }
+    ]
+  },
+  "spawn_whitesnake": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:spawn_whitesnake",
+        "stream": false
+      }
+    ]
+  },
+  "spawn_cmoon": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:spawn_cmoon",
+        "stream": false
+      }
+    ]
+  },
+  "spawn_the_world": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:spawn_the_world",
+        "stream": false
+      }
+    ]
+  },
+  "stoptime": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:stoptime",
+        "stream": false
+      }
+    ]
+  },
+  "resumetime": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:resumetime",
+        "stream": false
+      }
+    ]
+  },
+  "mudarush": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:mudarush",
+        "stream": false
+      }
+    ]
+  },
+  "the_world_teleport": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:the_world_teleport",
+        "stream": false
+      }
+    ]
+  },
+  "spawn_star_platinum": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:spawn_star_platinum",
+        "stream": false
+      }
+    ]
+  },
+  "orarush": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:orarush",
+        "stream": false
+      }
+    ]
+  },
+  "star_platinum_the_world": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:star_platinum_the_world",
+        "stream": false
+      }
+    ]
+  },
+  "resume_time_star_platinum": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:resume_time_star_platinum",
+        "stream": false
+      }
+    ]
+  },
+  "spawn_silver_chariot": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:spawn_silver_chariot",
+        "stream": false
+      }
+    ]
+  },
+  "silver_chariot_rush": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:silver_chariot_rush",
+        "stream": false
+      }
+    ]
+  },
+  "spawn_magicians_red": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:spawn_magicians_red",
+        "stream": false
+      }
+    ]
+  },
+  "crossfire_hurricane_special": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:crossfire_hurricane_special",
+        "stream": false
+      }
+    ]
+  },
+  "spawn_the_hand": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:spawn_the_hand",
+        "stream": false
+      }
+    ]
+  },
+  "the_hand_teleport": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:the_hand_teleport",
+        "stream": false
+      }
+    ]
+  },
+  "the_hand_pull": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:the_hand_pull",
+        "stream": false
+      }
+    ]
+  },
+  "spawn_hierophant_green": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:spawn_hierophant_green",
+        "stream": false
+      }
+    ]
+  },
+  "emerald_splash": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:emerald_splash",
+        "stream": false
+      }
+    ]
+  },
+  "spawn_green_day": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:spawn_green_day",
+        "steam": false
+      }
+    ]
+  },
+  "spawn_the_grateful_dead": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:spawn_the_grateful_dead",
+        "steam": false
+      }
+    ]
+  },
+  "spawn_sticky_fingers": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:spawn_sticky_fingers",
+        "steam": false
+      }
+    ]
+  },
+  "zipper": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:zipper",
+        "steam": false
+      }
+    ]
+  },
+  "arrivederci": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:arrivederci",
+        "steam": false
+      }
+    ]
+  },
+  "spawn_tusk_act_1": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:spawn_tusk_act_1",
+        "steam": false
+      }
+    ]
+  },
+  "spawn_tusk_act_2": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:spawn_tusk_act_2",
+        "steam": false
+      }
+    ]
+  },
+  "spawn_tusk_act_3": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:spawn_tusk_act_3",
+        "steam": false
+      }
+    ]
+  },
+  "spawn_tusk_act_4": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:spawn_tusk_act_4",
+        "steam": false
+      }
+    ]
+  },
+  "tusk_act_4_ora": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:tusk_act_4_ora",
+        "steam": false
+      }
+    ]
+  },
+  "spawn_echoes_act_1": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:spawn_echoes_act_1",
+        "steam": false
+      }
+    ]
+  },
+  "spawn_echoes_act_2": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:spawn_echoes_act_2",
+        "steam": false
+      }
+    ]
+  },
+  "spawn_echoes_act_3": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:spawn_echoes_act_3",
+        "steam": false
+      }
+    ]
+  },
+  "three_freeze": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:three_freeze",
+        "steam": false
+      }
+    ]
+  },
+  "spawn_beach_boy": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:spawn_beach_boy",
+        "steam": false
+      }
+    ]
+  },
+  "spawn_soft_and_wet": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:spawn_soft_and_wet",
+        "steam": false
+      }
+    ]
+  },
+  "punch1": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:punch1",
+        "steam": false
+      }
+    ]
+  },
+  "punch2": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:punch2",
+        "steam": false
+      }
+    ]
+  },
+  "punch3": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:punch3",
+        "steam": false
+      }
+    ]
+  },
+  "punch4": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:punch4",
+        "steam": false
+      }
+    ]
+  },
+  "punch5": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:punch5",
+        "steam": false
+      }
+    ]
+  },
+  "punch6": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:punch6",
+        "steam": false
+      }
+    ]
+  },
+  "punch7": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:punch7",
+        "steam": false
+      }
+    ]
+  },
+  "standout": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:standout",
+        "steam": false
+      }
+    ]
+  },
+  "silverchariotarmoroff1": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:silverchariotarmoroff1",
+        "steam": false
+      }
+    ]
+  },
+  "silverchariotarmoroff2": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:silverchariotarmoroff2",
+        "steam": false
+      }
+    ]
+  },
+  "silverchariotarmoroff3": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "diamond_is_uncraftable:silverchariotarmoroff3",
+        "steam": false
+      }
+    ]
+  }
+}

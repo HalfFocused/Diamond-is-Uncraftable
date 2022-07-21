@@ -1,0 +1,42 @@
+modLoader="javafml" #mandatory
+
+loaderVersion="[31,)"
+
+issueTrackerURL="https://github.com/Novarch129/JoJo-s-Blocky-Adventure/issues"
+
+[[mods]]
+
+modId="diamond_is_uncraftable"
+
+version="1.15.2-1.0.0.1"
+
+displayName="Diamond is Uncraftable"
+
+updateJSONURL="http://example.com/"
+
+displayURL="https://github.com/Novarch129/JoJo-s-Bizarre-Survival"
+
+logoFile="logo.png"
+
+credits="HalfFocused (coding), JoeJan (models), DELTA & the17kyd (sounds)"
+
+authors="HalfFocused"
+
+description='''
+	An animated pvp inspired by JoJo's Bizarre Adventure that adds many stands from the series.
+	The mod is primarily balanced around the player-versus-player experience.
+'''
+
+[[dependencies.diamond_is_uncraftable]]
+    modId="forge" #mandatory
+    mandatory=true #mandatory
+    versionRange="[31,)" #mandatory
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.diamond_is_uncraftable]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.15.2]"
+    ordering="NONE"
+    side="BOTH"

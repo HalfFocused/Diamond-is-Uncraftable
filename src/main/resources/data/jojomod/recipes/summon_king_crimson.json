@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "RDR",
+    "DAD",
+    "RDR"
+  ],
+  "key": {
+    "D": {
+      "item": "minecraft:diamond_block"
+    },
+    "R": {
+      "item": "minecraft:redstone_block"
+    },
+    "A": {
+      "item": "diamond_is_uncraftable:stand_arrow"
+    }
+  },
+  "result": {
+    "item": "diamond_is_uncraftable:summon_king_crimson"
+  }
+}

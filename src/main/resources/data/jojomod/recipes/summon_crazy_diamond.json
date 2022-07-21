@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " D ",
+    "DAD",
+    " D "
+  ],
+  "key": {
+    "D": {
+      "item": "minecraft:diamond"
+    },
+    "A": {
+      "item": "diamond_is_uncraftable:stand_arrow"
+    }
+  },
+  "result": {
+    "item": "diamond_is_uncraftable:summon_crazy_diamond"
+  }
+}

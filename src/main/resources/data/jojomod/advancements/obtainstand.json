@@ -1,0 +1,16 @@
+{
+  "display": {
+    "icon": {
+      "item": "diamond_is_uncraftable:stand_arrow"
+    },
+    "title": "Chosen By The Arrow",
+    "description": "Obtain the power of a Stand.",
+    "background": "diamond_is_uncraftable:textures/gui/backgrounds/background.png",
+    "frame": "task"
+  },
+  "criteria": {
+    "obtainStand": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

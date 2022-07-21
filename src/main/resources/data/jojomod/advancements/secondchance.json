@@ -1,0 +1,19 @@
+{
+  "display": {
+    "icon": {
+      "item": "minecraft:totem_of_undying"
+    },
+    "title": "Second Chance",
+    "description": "Take fatal damage and survive due to a stand ability.",
+    "background": "minecraft:textures/blocks/glowstone.png",
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "diamond_is_uncraftable:obtainstand",
+  "criteria": {
+    "surviveFatal": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}
