@@ -12,19 +12,23 @@ import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tileentity.*;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 import software.bernie.geckolib3.core.IAnimatable;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -94,8 +98,7 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
     }
 
     public void detonate() {
-        Stand stand = Stand.getCapabilityFromPlayer(master);
-        if (getMaster() == null || stand.getCooldown() > 0 || world.isRemote()) return;
+        if (getMaster() == null || world.isRemote()) return;
         if(spendEnergy(65)) { //In conditional statements like this all other checks must precede the spendEnergy() method.
             controller.setMoveActive(5);
         }
@@ -136,9 +139,9 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
     public void turnItemOrBlockIntoBomb() {
         if (getMaster() == null || world.isRemote) return;
         Stand.getLazyOptional(master).ifPresent(props -> {
-            if (!master.isCrouching() && master.getHeldItemMainhand() != ItemStack.EMPTY && props.getAbilityUseCount() == 0) {
+            if (!master.isCrouching() && master.getHeldItemMainhand() != ItemStack.EMPTY) {
                 controller.setMoveActive(7);
-            } else if (master.isCrouching() && props.getAbilityUseCount() == 0) {
+            } else if (master.isCrouching()) {
                 setBlockBombPosition = master.getPosition().add(0,-1,0);
                 controller.setMoveActive(6);
             }
@@ -654,7 +657,6 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
                     }
                     if (bombEntity != null) {
                         if (bombEntity.isAlive()) {
-                            stand.setCooldown(140);
                             if (bombEntity instanceof MobEntity) {
                                 if (stand.getGameTime() == -1) {
                                     Util.spawnParticle(this, 5, bombEntity.getPosX(), bombEntity.getPosY(), bombEntity.getPosZ(), 1, 1, 1, 1);
@@ -703,6 +705,7 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
         }
 
         if(message1 == 2){
+            removeFirstBombFromAll();
             Stand props = Stand.getCapabilityFromPlayer(master);
             props.setBlockPos(setBlockBombPosition);
             StandChunkEffects.getLazyOptional(world.getChunkAt(master.getPosition())).ifPresent(standChunkEffects -> standChunkEffects.addBombPos(master, setBlockBombPosition));
@@ -710,21 +713,22 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
         }
 
         if(message1 == 3){
+            removeFirstBombFromAll();
             Stand props = Stand.getCapabilityFromPlayer(master);
             if (master.getHeldItemMainhand().getCount() > 1) {
                 if (master.inventory.getStackInSlot(master.inventory.getBestHotbarSlot()).isEmpty()) {
                     ItemStack stack = master.getHeldItemMainhand().copy();
                     stack.shrink(master.getHeldItemMainhand().getCount() - 1);
                     stack.getOrCreateTag().putBoolean("bomb", true);
+                    stack.getOrCreateTag().putUniqueId("ownerUUID", master.getUniqueID());
                     master.getHeldItemMainhand().shrink(1);
                     stack.setDisplayName(new StringTextComponent("Bomb"));
                     master.inventory.add(master.inventory.getBestHotbarSlot(), stack);
-                    props.setAbilityUseCount(1);
                 }
             } else if (master.getHeldItemMainhand().getCount() == 1) {
                 master.getHeldItemMainhand().getOrCreateTag().putBoolean("bomb", true);
+                master.getHeldItemMainhand().getOrCreateTag().putUniqueId("ownerUUID", master.getUniqueID());
                 master.getHeldItemMainhand().setDisplayName(new StringTextComponent("Bomb"));
-                props.setAbilityUseCount(1);
             }
         }
 
@@ -758,6 +762,50 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
                 controller.cancelActiveMoves();
             }
         }
+    }
+
+    public void removeFirstBombFromAll(){
+        bombEntity = null;
+
+        getServer().getWorld(dimension).getEntities()
+                .filter(entity -> entity instanceof ItemEntity)
+                .forEach(entity ->
+                        StandEffects.getLazyOptional(entity).ifPresent(effects -> {
+                            effects.setBomb(false);
+                            ItemStack item = ((ItemEntity) entity).getItem();
+
+                            CompoundNBT nbt = item.getOrCreateTag();
+                            if(nbt.getUniqueId("ownerUUID").equals(master.getUniqueID())) {
+                                nbt.remove("bomb");
+                                item.clearCustomName();
+                            }
+                        }));
+
+        for(ItemStack item : master.inventory.mainInventory){
+            CompoundNBT nbt = item.getOrCreateTag();
+            if(nbt.getUniqueId("ownerUUID").equals(master.getUniqueID())) {
+                nbt.remove("bomb");
+                item.clearCustomName();            }
+        }
+
+        for(ItemStack item : master.inventory.offHandInventory){
+            CompoundNBT nbt = item.getOrCreateTag();
+            if(nbt.getUniqueId("ownerUUID").equals(master.getUniqueID())) {
+                nbt.remove("bomb");
+                item.clearCustomName();            }
+        }
+
+        for(ItemStack item : master.inventory.armorInventory){
+            CompoundNBT nbt = item.getOrCreateTag();
+            if(nbt.getUniqueId("ownerUUID").equals(master.getUniqueID())) {
+                nbt.remove("bomb");
+                item.clearCustomName();            }
+        }
+
+        Stand stand = Stand.getCapabilityFromPlayer(getMaster());
+        stand.setBlockPos(BlockPos.ZERO);
+
+        stand.setAbilityUseCount(0);
     }
 }
 
