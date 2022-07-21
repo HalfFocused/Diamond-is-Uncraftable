@@ -262,6 +262,8 @@ public class AttackFramedata {
 
                     Util.spawnParticle(standEntityIn, 14, entity.getPosX(), entity.getPosY() + 1, entity.getPosZ(), 1, 1, 1, 20);
 
+                    ((KillerQueenEntity) standEntityIn).removeFirstBombFromAll();
+
                     if(bombTarget.getHealth() / bombTarget.getMaxHealth() >= 0.16 && bombTarget.getHealth() >= 3) {
                         ((KillerQueenEntity) standEntityIn).bombEntity = bombTarget;
                     }else if (!blockedFlag){
