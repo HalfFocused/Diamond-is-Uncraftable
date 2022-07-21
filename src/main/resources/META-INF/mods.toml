@@ -2,7 +2,7 @@ modLoader="javafml" #mandatory
 
 loaderVersion="[31,)"
 
-issueTrackerURL="https://github.com/Novarch129/JoJo-s-Blocky-Adventure/issues"
+issueTrackerURL="https://github.com/HalfFocused/Diamond-is-Uncraftable/issues"
 
 [[mods]]
 
@@ -14,7 +14,7 @@ displayName="Diamond is Uncraftable"
 
 updateJSONURL="http://example.com/"
 
-displayURL="https://github.com/Novarch129/JoJo-s-Bizarre-Survival"
+displayURL="https://github.com/HalfFocused/Diamond-is-Uncraftable"
 
 logoFile="logo.png"
 
