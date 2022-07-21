@@ -24,27 +24,6 @@ public class TimeSkipEffectGUI extends AbstractGui {
 
             Stand.getLazyOptional(player).ifPresent(props -> {
                 if (props.getTimeSkipEffectTicker() > 0) {
-                /*
-                RenderSystem.disableDepthTest();
-                RenderSystem.depthMask(false);
-                RenderSystem.defaultBlendFunc();
-                RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-
-                Minecraft.getInstance().getTextureManager().bindTexture(new ResourceLocation(DiamondIsUncraftable.MOD_ID, "textures/gui/timeskip/time_skip" + (16 - props.getTimeSkipEffectTicker()) + ".png"));
-
-                Tessellator tessellator = Tessellator.getInstance();
-                BufferBuilder bufferbuilder = tessellator.getBuffer();
-                bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
-                bufferbuilder.pos(0.0D, mc.getMainWindow().getScaledHeight(), -90.0D).tex(0.0F, 1.0F).endVertex();
-                bufferbuilder.pos(mc.getMainWindow().getScaledWidth(), mc.getMainWindow().getScaledHeight(), -90.0D).tex(1.0F, 1.0F).endVertex();
-                bufferbuilder.pos(mc.getMainWindow().getScaledWidth(), 0.0D, -90.0D).tex(1.0F, 0.0F).endVertex();
-                bufferbuilder.pos(0.0D, 0.0D, -90.0D).tex(0.0F, 0.0F).endVertex();
-                tessellator.draw();
-                RenderSystem.depthMask(false);
-                RenderSystem.enableDepthTest();
-                RenderSystem.enableAlphaTest();
-                RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-                 */
 
                     //If I had randomly chosen numbers I'm pretty sure I would have gotten these faster than trying to actually figure them out.
                     //This was a very informative introduction to GUIs. What did I learn? Why I couldn't find a guide online.
