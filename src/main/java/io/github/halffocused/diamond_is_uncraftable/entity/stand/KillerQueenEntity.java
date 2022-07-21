@@ -26,7 +26,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 import software.bernie.geckolib3.core.IAnimatable;
 
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -34,7 +33,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class KillerQueenEntity extends AbstractStandEntity implements IAnimatable, IOnMasterAttacked {
     public LivingEntity bombEntity;
     protected int shaCount;
-    private SheerHeartAttackEntity sheerHeartAttack;
     BlockPos setBlockBombPosition = null;
 
 
@@ -103,26 +101,6 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
     }
 
     public void toggleSheerHeartAttack() {
-        /*
-        if (getMaster() == null || world.isRemote) return;
-        if (sheerHeartAttack == null)
-            sheerHeartAttack = new SheerHeartAttackEntity(world, this);
-
-        Stand.getLazyOptional(getMaster()).ifPresent(stand -> {
-            if (shaCount <= 0) {
-                sheerHeartAttack.setPosition(getPosX(), getPosY(), getPosZ());
-                world.addEntity(sheerHeartAttack);
-                shaCount++;
-                stand.setCooldown(300);
-            } else {
-                if (!world.isRemote)
-                    world.getServer().getWorld(dimension).getEntities()
-                            .filter(entity -> entity instanceof SheerHeartAttackEntity)
-                            .filter(entity -> ((SheerHeartAttackEntity) entity).getMaster().getEntityId() == getMaster().getEntityId())
-                            .forEach(Entity::remove);
-            }
-        });
-        */
 
         if(!world.isRemote() && this.shaCount == 0 && spendEnergy(50)) {
             SheerHeartAttackEntity sheerHeartAttackEntity = new SheerHeartAttackEntity(world, this, master, 100);

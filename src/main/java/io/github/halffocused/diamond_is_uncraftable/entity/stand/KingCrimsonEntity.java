@@ -32,21 +32,13 @@ public class KingCrimsonEntity extends AbstractStandEntity implements IAnimatabl
     ArrayList<EpitaphPairing> pairList = new ArrayList<>();
 
     int opportunityTicks = 0;
-
     static boolean activeTimeErase = false;
-
     int epitaphTicks = -1;
-
     boolean epitaphFlag = false;
-
     int epitaphEndingOpportunityTicks = 0;
-
     boolean timeEraseActive;
-
     int timeEraseDuration = 0;
-
     boolean clipToPosition = false;
-
     LivingEntity executionTarget = null;
 
     AttackFramedata mainPunchData = new AttackFramedata()
@@ -144,7 +136,6 @@ public class KingCrimsonEntity extends AbstractStandEntity implements IAnimatabl
 
             if (timeEraseActive) {
                 endTimeSkip();
-                //stand.setCooldown(2 * timeEraseDuration + 100);
             } else if (!timeEraseActive) {
                 if (opportunityTicks > 0) {
                     if (getMostRecentlyDamagedEntity() != null && spendEnergy(20, true)) { //
@@ -231,17 +222,8 @@ public class KingCrimsonEntity extends AbstractStandEntity implements IAnimatabl
                 }
                 master.addPotionEffect(new EffectInstance(Effects.INVISIBILITY, 25, 1));
                 master.setInvulnerable(true);
-                //this.setInvisible(true);
 
                 timeEraseDuration++;
-                /*
-                if (timeEraseDuration >= 200) {
-                    endTimeSkip();
-                    Stand.getLazyOptional(master).ifPresent(cooldown -> {
-                        cooldown.setCooldown(2 * timeEraseDuration + 100);
-                    });
-                }
-                */
 
 
                 if(epitaphFlag){

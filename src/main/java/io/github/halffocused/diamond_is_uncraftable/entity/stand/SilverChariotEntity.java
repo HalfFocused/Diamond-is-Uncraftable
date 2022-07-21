@@ -253,7 +253,6 @@ public class SilverChariotEntity extends AbstractStandEntity implements IAnimata
                 }
                 if(!world.isRemote) {
                     if (!(controller.isMoveActive())) {
-                        //setCancelNextDamage(false);
                         props.setCounterBuffer(false);
                     }
                     if (!controller.isMoveActive() && hasMoveHitOnce) {
@@ -413,7 +412,6 @@ public class SilverChariotEntity extends AbstractStandEntity implements IAnimata
             if (controller.getActiveMove().getId() == 5) {
                 controller.cancelActiveMoves();
                 controller.setMoveActive(6);
-                //setCancelNextDamage(false);
                 Stand.getLazyOptional(master).ifPresent(props -> {
                     props.setCounterBuffer(true);
                 });
