@@ -16,11 +16,10 @@ import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.RenderTypeLookup;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.util.InputMappings;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -43,10 +42,13 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
+import net.minecraftforge.client.model.ModelDataManager;
 import net.minecraftforge.client.model.data.EmptyModelData;
+import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.fml.network.PacketDistributor;
 import org.lwjgl.glfw.GLFW;
 
+import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
@@ -340,6 +342,21 @@ public class Util {
         buffer.finish();
     }
 
+    public static void renderBlock(MatrixStack matrixStack, BlockPos pos, BlockState state) {
+        BlockRendererDispatcher renderer = Minecraft.getInstance().getBlockRendererDispatcher();
+        ClientWorld world = Minecraft.getInstance().world;
+        IModelData model = renderer.getModelForState(state).getModelData(world, pos, state, ModelDataManager.getModelData(world, new BlockPos(pos)));
+
+        ActiveRenderInfo renderInfo = Minecraft.getInstance().gameRenderer.getActiveRenderInfo();
+
+        matrixStack.push(); // push
+        matrixStack.translate(-renderInfo.getProjectedView().getX() + pos.getX(), -renderInfo.getProjectedView().getY() + pos.getY(), -renderInfo.getProjectedView().getZ() + pos.getZ()); // translate back to camera
+        matrixStack.scale(0.5f, 0.5f, 0.5f);
+
+        Minecraft.getInstance().getBlockRendererDispatcher().renderBlock(state, matrixStack, Minecraft.getInstance().getRenderTypeBuffers().getBufferSource(), 15728880, OverlayTexture.NO_OVERLAY, model);
+        matrixStack.pop(); // pop
+    }
+
     /**
      * Used to suppress warnings saying that <code>static final</code> fields are <code>null</code>.
      * Based on diesieben07's solution <a href="http://www.minecraftforge.net/forum/topic/60980-solved-disable-%E2%80%9Cconstant-conditions-exceptions%E2%80%9D-inspection-for-field-in-intellij-idea/?do=findCommentcomment=285024">here</a>.
@@ -573,6 +590,18 @@ public class Util {
                 }
             }
         });
+    }
+
+    @CheckForNull
+    public static AbstractStandEntity getStandEntityFromPlayer(PlayerEntity playerIn){
+        Stand stand = Stand.getCapabilityFromPlayer(playerIn);
+            if(stand.getStandOn()){
+                Entity grabbedStand = playerIn.world.getEntityByID(stand.getPlayerStand());
+                if(grabbedStand instanceof AbstractStandEntity){
+                    return (AbstractStandEntity) grabbedStand;
+                }
+            }
+            return null;
     }
 
     public static class Predicates {

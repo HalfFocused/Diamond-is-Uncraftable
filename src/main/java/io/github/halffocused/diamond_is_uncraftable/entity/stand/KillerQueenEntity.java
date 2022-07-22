@@ -27,6 +27,7 @@ import net.minecraft.world.dimension.DimensionType;
 import software.bernie.geckolib3.core.IAnimatable;
 
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings("ConstantConditions")
@@ -642,6 +643,8 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
                                     world.playSound(null, master.getPosition(), SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 1, 1);
                                     explosion.doExplosionB(true);
                                     bombEntity.remove();
+                                    bombEntity = null;
+                                    stand.setBombEntityId(0);
                                 } else {
                                     detonateBTDMob();
                                 }
@@ -654,6 +657,8 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
                                         Util.spawnParticle(this, 5, bombEntity.getPosX(), bombEntity.getPosY(), bombEntity.getPosZ(), 1, 1, 1, 1);
                                         Util.spawnParticle(this, 14, bombEntity.getPosX(), bombEntity.getPosY() + 1, bombEntity.getPosZ(), 1, 1, 1, 20);
                                         Util.dealStandDamage(this, bombEntity, 15, Vec3d.ZERO, false, null);
+                                        bombEntity = null;
+                                        stand.setBombEntityId(0);
                                     } else {
                                         Explosion explosion = new Explosion(master.world, master, master.getPosX(), master.getPosY(), master.getPosZ(), 4, true, Explosion.Mode.NONE);
                                         if (master.world.isRemote) {
@@ -743,6 +748,8 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
      */
     public void removeFirstBombFromAll(){
         bombEntity = null;
+        Stand stand = Stand.getCapabilityFromPlayer(master);
+        stand.setBombEntityId(0);
 
         getServer().getWorld(dimension).getEntities()
                 .filter(entity -> entity instanceof ItemEntity)
@@ -779,7 +786,6 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
                 item.clearCustomName();            }
         }
 
-        Stand stand = Stand.getCapabilityFromPlayer(getMaster());
         stand.setBlockPos(BlockPos.ZERO);
 
         stand.setAbilityUseCount(0);

@@ -1,5 +1,6 @@
 package io.github.halffocused.diamond_is_uncraftable.util;
 
+import io.github.halffocused.diamond_is_uncraftable.capability.Stand;
 import io.github.halffocused.diamond_is_uncraftable.entity.stand.*;
 import io.github.halffocused.diamond_is_uncraftable.init.SoundInit;
 import io.github.halffocused.diamond_is_uncraftable.util.frame.*;
@@ -264,10 +265,14 @@ public class AttackFramedata {
 
                     ((KillerQueenEntity) standEntityIn).removeFirstBombFromAll();
 
+                    Stand stand = Stand.getCapabilityFromPlayer(standEntityIn.getMaster());
+
                     if(bombTarget.getHealth() / bombTarget.getMaxHealth() >= 0.16 && bombTarget.getHealth() >= 3) {
                         ((KillerQueenEntity) standEntityIn).bombEntity = bombTarget;
+                        stand.setBombEntityId(bombTarget.getEntityId());
                     }else if (!blockedFlag){
                         ((KillerQueenEntity) standEntityIn).bombEntity = bombTarget;
+                        stand.setBombEntityId(bombTarget.getEntityId());
                         standEntityIn.getController().setMoveActive(8);
                     }else{
                         Util.dealStandDamage(standEntityIn, bombTarget, 5, Vec3d.ZERO, false, null);

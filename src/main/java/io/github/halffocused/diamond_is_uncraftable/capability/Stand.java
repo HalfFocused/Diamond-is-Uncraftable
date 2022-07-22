@@ -77,6 +77,7 @@ public class Stand implements ICapabilitySerializable<INBT> {
     private boolean experiencingTimeSkip = false;
     private boolean experiencingTimeStop = false;
     private int instantTimeStopFrame = 0;
+    private int bombEntityId = 0;
 
     private int invincibleTicks = 0;
     private int reflexCooldown = 0;
@@ -149,6 +150,7 @@ public class Stand implements ICapabilitySerializable<INBT> {
                 nbt.putInt("invincibleTicks", instance.getInvincibleTicks());
                 nbt.putInt("reflexCooldown", instance.getReflexCooldown());
                 nbt.putInt("standUnsummonedTime", instance.getStandUnsummonedTime());
+                nbt.putInt("bombEntity", instance.getBombEntityId());
                 ListNBT affectedChunkList = new ListNBT();
                 instance.getAffectedChunkList().forEach(pos -> {
                     CompoundNBT compoundNBT = new CompoundNBT();
@@ -218,6 +220,7 @@ public class Stand implements ICapabilitySerializable<INBT> {
                 instance.invincibleTicks = compoundNBT.getInt("invincibleTicks");
                 instance.reflexCooldown = compoundNBT.getInt("reflexCooldown");
                 instance.standUnsummonedTime = compoundNBT.getInt("standUnsummonedTime");
+                instance.bombEntityId = compoundNBT.getInt("bombEntity");
 
                 compoundNBT.getList("affectedChunkList", Constants.NBT.TAG_COMPOUND).forEach(inbt -> {
                     if (inbt instanceof CompoundNBT && ((CompoundNBT) inbt).contains("chunkX"))
@@ -338,6 +341,15 @@ public class Stand implements ICapabilitySerializable<INBT> {
 
     public void setMomentum(int momentumIn) {
         this.momentum = momentumIn;
+        onDataUpdated();
+    }
+
+    public int getBombEntityId(){
+        return bombEntityId;
+    }
+
+    public void setBombEntityId(int bombEntityIdIn) {
+        this.bombEntityId = bombEntityIdIn;
         onDataUpdated();
     }
 
