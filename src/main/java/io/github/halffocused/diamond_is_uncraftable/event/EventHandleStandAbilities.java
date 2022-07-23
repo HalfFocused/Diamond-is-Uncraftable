@@ -325,11 +325,24 @@ public class EventHandleStandAbilities {
                                     }
                                 });
 
+                        BlockPos.getAllInBox(player.getPosition().add(10, 10, 10), player.getPosition().add(-10, -10, -10))
+                                .filter(blockPos -> blockPos.equals(stand.getBlockPos()))
+                                .filter(blockPos -> !blockPos.equals(BlockPos.ZERO))
+                                .forEach(blockPos -> {
+                                    Util.spawnClientParticle((ServerPlayerEntity) player, 8, blockPos.getX() + 0.5, blockPos.getY() + 0.5, blockPos.getZ()+ 0.5, 1, 2, 1, 1);
+                                });
+
+
                         player.world.getServer().getWorld(player.dimension).getEntities()
                             .filter(entity -> entity instanceof LivingEntity)
                             .filter(entity -> !entity.equals(player))
                             .filter(entity -> entity.getDistance(player) < 20)
                             .forEach(entity -> {
+
+                                if(entity.getEntityId() == stand.getBombEntityId()){
+                                    Util.spawnClientParticle((ServerPlayerEntity) player, 8, entity.getPosX(), entity.getPosY() + 0.5, entity.getPosZ(), 1, 2, 1, 1);
+                                }
+
                                 if(entity instanceof PlayerEntity){
                                     boolean hasItemBomb = false;
                                     for(ItemStack stack : ((PlayerEntity) entity).inventory.mainInventory){
