@@ -1054,7 +1054,7 @@ public class Util {
                     .filter(entity -> !(entity instanceof AbstractStandEntity))
                     .filter(entity -> Math.sqrt((entity.getDistanceSq(position))) <= range)
                     .filter(Entity::isAlive)
-                    .forEach(entity -> Util.dealUnsummonedStandDamage(master, (LivingEntity) entity, (float) lerp(minDamage, maxDamage, Math.sqrt((entity.getDistanceSq(position))) / range), Vec3d.ZERO, Math.sqrt((entity.getDistanceSq(position))) <= blockableDistance, null));
+                    .forEach(entity -> Util.dealUnsummonedStandDamage(master, (LivingEntity) entity, (float) lerp(minDamage, maxDamage, Math.sqrt((entity.getDistanceSq(position))) / range), Vec3d.ZERO, Math.sqrt((entity.getDistanceSq(position))) >= blockableDistance, null));
         }
     }
 
