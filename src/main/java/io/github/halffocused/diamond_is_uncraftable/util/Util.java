@@ -491,6 +491,10 @@ public class Util {
         DiamondIsUncraftable.INSTANCE.send(PacketDistributor.DIMENSION.with(() -> trackingDimension), new SParticlePacket(particleId, posX, posY, posZ, dX, dY, dZ, amount));
     }
 
+    public static void spawnClientParticle(ServerPlayerEntity player, int particleId, double posX, double posY, double posZ, double dX, double dY, double dZ, int amount) {
+        DiamondIsUncraftable.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new SParticlePacket(particleId, posX, posY, posZ, dX, dY, dZ, amount));
+    }
+
     public static void dealStandDamage(AbstractStandEntity stand, LivingEntity entity, float damage, Vec3d motion, boolean blockable, @Nullable MoveEffects moveEffects){
 
         LivingEntity attackedEntity;
@@ -575,6 +579,77 @@ public class Util {
             }
         }else{
             entity.world.playSound(null, stand.getPosition(), SoundEvents.ITEM_SHIELD_BLOCK, SoundCategory.NEUTRAL, 0.25F, (random.nextFloat() * 0.3f + 1) * 2);
+        }
+
+    }
+
+    public static void dealUnsummonedStandDamage(PlayerEntity standMaster, LivingEntity entity, float damage, Vec3d motion, boolean blockable, @Nullable MoveEffects moveEffects){
+
+        LivingEntity attackedEntity;
+
+        Random random = standMaster.getRNG();
+        boolean blockedFlag = false;
+
+        if (entity instanceof PlayerEntity) {
+            if (entity.isActiveItemStackBlocking() && blockable) {
+                entity.getHeldEquipment().forEach(itemStack -> {
+                    if (itemStack.getItem().equals(Items.SHIELD)) {
+                        itemStack.damageItem((int) damage * 4, ((PlayerEntity) entity), (playerEntity) -> {
+                            playerEntity.sendBreakAnimation(Hand.MAIN_HAND); //F**k it I'm just gonna play the animation on both hands
+                            playerEntity.sendBreakAnimation(Hand.OFF_HAND);
+                        });
+                    }
+                });
+                blockedFlag = true;
+            }
+        }
+        if (!blockedFlag) {
+            entity.hurtResistantTime = 0;
+            if (entity instanceof AbstractStandEntity) {
+                ((AbstractStandEntity) entity).getMaster().hurtResistantTime = 0;
+            }
+
+            double damageModifier = (float) JojoBizarreSurvivalConfig.COMMON.standDamageMultiplier.get().doubleValue();
+            double potionModifier = 1.0;
+
+            for(EffectInstance effect : standMaster.getActivePotionEffects()){
+                if(effect.getPotion().equals(EffectInit.STAND_STRENGTH.get())){
+                    potionModifier += (effect.getAmplifier() + 1) * 0.1;
+                }
+                if(effect.getPotion().equals(EffectInit.STAND_WEAKNESS.get())){
+                    potionModifier -= (effect.getAmplifier() + 1) * 0.1;
+                }
+            }
+            potionModifier = Math.max(potionModifier, 0); //Can't let it go into the negatives
+            float modifiedDamage = (float) (damage * damageModifier * potionModifier);
+            entity.attackEntityFrom(DamageSource.causeMobDamage(standMaster), modifiedDamage);
+
+
+            /*
+             * Drawn together by fate achievement
+             */
+            if(!entity.world.isRemote()) {
+                PlayerEntity killedPlayer = null;
+                if (!entity.isAlive()) {
+                    if (entity instanceof PlayerEntity) {
+                        killedPlayer = (PlayerEntity) entity;
+                    }
+                }
+                if (entity instanceof AbstractStandEntity && !((AbstractStandEntity) entity).getMaster().isAlive()){
+                    killedPlayer = ((AbstractStandEntity) entity).getMaster();
+                }
+                if(killedPlayer != null){
+                    Stand killedStand = Stand.getCapabilityFromPlayer(killedPlayer);
+                    if(killedStand.getStandID() != 0){
+                        Util.giveAdvancement((ServerPlayerEntity) standMaster, "killstanduser");
+                    }
+                }
+            }
+
+            entity.setMotion(motion);
+
+        }else{
+            entity.world.playSound(null, standMaster.getPosition(), SoundEvents.ITEM_SHIELD_BLOCK, SoundCategory.NEUTRAL, 0.25F, (random.nextFloat() * 0.3f + 1) * 2);
         }
 
     }
@@ -964,6 +1039,38 @@ public class Util {
             }
         }
         return false;
+    }
+
+    public static void standExplosion(PlayerEntity master, World world, Vec3d position, double range, double blockableDistance, double minDamage, double maxDamage) {
+        if(!world.isRemote()) {
+            Util.spawnParticle(master.dimension, 5, position.getX(), position.getY(), position.getZ(), 1, 1, 1, 1);
+            Util.spawnParticle(master.dimension, 14, position.getX(), position.getY(), position.getZ(), 1, 1, 1, 20);
+            Explosion explosion = new Explosion(master.world, master, position.getX(), position.getY(), position.getZ(), 4, true, Explosion.Mode.NONE);
+            master.world.playSound(null, new BlockPos(position), SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 1, 1);
+            explosion.doExplosionB(true);
+
+            master.getServer().getWorld(master.dimension).getEntities()
+                    .filter(entity -> entity instanceof LivingEntity)
+                    .filter(entity -> !(entity instanceof AbstractStandEntity))
+                    .filter(entity -> Math.sqrt((entity.getDistanceSq(position))) <= range)
+                    .filter(Entity::isAlive)
+                    .forEach(entity -> Util.dealUnsummonedStandDamage(master, (LivingEntity) entity, (float) lerp(minDamage, maxDamage, Math.sqrt((entity.getDistanceSq(position))) / range), Vec3d.ZERO, Math.sqrt((entity.getDistanceSq(position))) <= blockableDistance, null));
+        }
+    }
+
+    public static void standExplosionFX(PlayerEntity master, World world, Vec3d position) {
+        if(!world.isRemote()) {
+            Util.spawnParticle(master.dimension, 5, position.getX(), position.getY(), position.getZ(), 1, 1, 1, 1);
+            Util.spawnParticle(master.dimension, 14, position.getX(), position.getY(), position.getZ(), 1, 1, 1, 20);
+            Explosion explosion = new Explosion(master.world, master, position.getX(), position.getY(), position.getZ(), 4, true, Explosion.Mode.NONE);
+            master.world.playSound(null, new BlockPos(position), SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 1, 1);
+            explosion.doExplosionB(true);
+        }
+    }
+
+    private static double lerp(double min, double max, double value)
+    {
+        return min + value * (max - min);
     }
 }
 

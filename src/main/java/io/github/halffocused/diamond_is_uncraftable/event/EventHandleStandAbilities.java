@@ -3,10 +3,7 @@ package io.github.halffocused.diamond_is_uncraftable.event;
 import io.github.halffocused.diamond_is_uncraftable.DiamondIsUncraftable;
 import io.github.halffocused.diamond_is_uncraftable.capability.*;
 import io.github.halffocused.diamond_is_uncraftable.config.JojoBizarreSurvivalConfig;
-import io.github.halffocused.diamond_is_uncraftable.entity.stand.AbstractStandEntity;
-import io.github.halffocused.diamond_is_uncraftable.entity.stand.MadeInHeavenEntity;
-import io.github.halffocused.diamond_is_uncraftable.entity.stand.StarPlatinumEntity;
-import io.github.halffocused.diamond_is_uncraftable.entity.stand.TheWorldEntity;
+import io.github.halffocused.diamond_is_uncraftable.entity.stand.*;
 import io.github.halffocused.diamond_is_uncraftable.event.custom.StandAttackEvent;
 import io.github.halffocused.diamond_is_uncraftable.event.custom.StandEvent;
 import io.github.halffocused.diamond_is_uncraftable.init.EffectInit;
@@ -16,8 +13,11 @@ import io.github.halffocused.diamond_is_uncraftable.init.SoundInit;
 import io.github.halffocused.diamond_is_uncraftable.network.message.server.SSyncStandMasterPacket;
 import io.github.halffocused.diamond_is_uncraftable.util.IOnMasterAttacked;
 import io.github.halffocused.diamond_is_uncraftable.util.Util;
+import net.minecraft.advancements.criterion.ItemPredicate;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.IProjectile;
 import net.minecraft.entity.LivingEntity;
@@ -30,6 +30,7 @@ import net.minecraft.entity.projectile.DamagingProjectileEntity;
 import net.minecraft.item.EnchantedGoldenAppleItem;
 import net.minecraft.item.HoneyBottleItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
@@ -60,6 +61,8 @@ import net.minecraftforge.fml.network.PacketDistributor;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.Lock;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("ConstantConditions")
@@ -296,6 +299,76 @@ public class EventHandleStandAbilities {
                 }
                 stand.setReflexCooldown(Math.max(0, stand.getReflexCooldown() - 1));
                 stand.setInvincibleTicks(Math.max(0, stand.getInvincibleTicks() - 1));
+                if(!player.world.isRemote){
+                    if(stand.getStandID() == Util.StandID.KILLER_QUEEN) {
+                    BlockPos.getAllInBox(player.getPosition().add(15, 15, 15), player.getPosition().add(-15, -15, -15))
+                            .forEach(blockPos -> {
+                                if (player.world.getTileEntity(blockPos) != null) {
+                                    if (player.world.getTileEntity(blockPos) instanceof LockableTileEntity) {
+                                        LockableTileEntity tile = (LockableTileEntity) player.world.getTileEntity(blockPos);
+                                        for (int i = 0; i < tile.getSizeInventory(); i++) {
+                                            CompoundNBT nbt = tile.getStackInSlot(i).getOrCreateTag();
+                                            if (nbt.getBoolean("bomb") && nbt.getUniqueId("ownerUUID").equals(player.getUniqueID())) {
+                                                Util.spawnClientParticle((ServerPlayerEntity) player, 17, blockPos.getX() + 0.5, blockPos.getY() + 0.5, blockPos.getZ() + 0.5, 1, 2, 1, 1);
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+
+                        player.world.getServer().getWorld(player.dimension).getEntities()
+                                .filter(itemEntity -> itemEntity instanceof ItemEntity)
+                                .filter(itemEntity -> itemEntity.getDistance(player) < 20)
+                                .forEach(itemEntity -> {
+                                    if(((ItemEntity) itemEntity).getItem().getOrCreateTag().getBoolean("bomb") && ((ItemEntity) itemEntity).getItem().getOrCreateTag().getUniqueId("ownerUUID").equals(player.getUniqueID())){
+                                        Util.spawnClientParticle((ServerPlayerEntity) player, 8, itemEntity.getPosX(), itemEntity.getPosY(), itemEntity.getPosZ(), 1, 2, 1, 1);
+                                    }
+                                });
+
+                        player.world.getServer().getWorld(player.dimension).getEntities()
+                            .filter(entity -> entity instanceof LivingEntity)
+                            .filter(entity -> !entity.equals(player))
+                            .filter(entity -> entity.getDistance(player) < 20)
+                            .forEach(entity -> {
+                                if(entity instanceof PlayerEntity){
+                                    boolean hasItemBomb = false;
+                                    for(ItemStack stack : ((PlayerEntity) entity).inventory.mainInventory){
+                                        if(stack.getOrCreateTag().getBoolean("bomb") && stack.getOrCreateTag().getUniqueId("ownerUUID").equals(player.getUniqueID())){
+                                            hasItemBomb = true;
+                                        }
+                                    }
+                                    for(ItemStack stack : ((PlayerEntity) entity).inventory.offHandInventory){
+                                        if(stack.getOrCreateTag().getBoolean("bomb") && stack.getOrCreateTag().getUniqueId("ownerUUID").equals(player.getUniqueID())){
+                                            hasItemBomb = true;
+                                        }
+                                    }
+                                    for(ItemStack stack : ((PlayerEntity) entity).inventory.armorInventory){
+                                        if(stack.getOrCreateTag().getBoolean("bomb") && stack.getOrCreateTag().getUniqueId("ownerUUID").equals(player.getUniqueID())){
+                                            hasItemBomb = true;
+                                        }
+                                    }
+                                    if(hasItemBomb){
+                                        Util.spawnClientParticle((ServerPlayerEntity) player, 17, entity.getPosX(), entity.getPosY() + 0.5, entity.getPosZ(), 1, 2, 1, 1);
+                                    }
+                                    PlayerEntity playerEntity = (PlayerEntity) entity;
+
+                                    for (int i = 0; i < playerEntity.getInventoryEnderChest().getSizeInventory(); i++) {
+                                        if (playerEntity.getInventoryEnderChest().getStackInSlot(i).getOrCreateTag().getBoolean("bomb") && playerEntity.getInventoryEnderChest().getStackInSlot(i).getOrCreateTag().getUniqueId("ownerUUID").equals(player.getUniqueID())) {
+                                            Util.spawnClientParticle((ServerPlayerEntity) player, 18, entity.getPosX(), entity.getPosY() + 0.5, entity.getPosZ(), 1, 2, 1, 1);
+                                        }
+                                    }
+                                }else {
+                                    LivingEntity livingEntity = (LivingEntity) entity;
+                                    for (ItemStack stack : livingEntity.getEquipmentAndArmor()){
+                                        CompoundNBT nbt = stack.getOrCreateTag();
+                                        if(nbt.getBoolean("bomb") && nbt.getUniqueId("ownerUUID").equals(player.getUniqueID())){
+                                            Util.spawnClientParticle((ServerPlayerEntity) player, 17, livingEntity.getPosX(), livingEntity.getPosY() + 0.5, livingEntity.getPosZ(), 1, 2, 1, 1);
+                                        }
+                                    }
+                                }
+                            });
+                    }
+                }
             });
         }
     }
@@ -528,11 +601,40 @@ public class EventHandleStandAbilities {
             event.setCanceled(true);
             Stand.getLazyOptional(event.getPlayer()).ifPresent(props -> props.setStandOn(false));
         }
-        if (event.getEntityItem().getItem().getOrCreateTag().getBoolean("bomb"))
+        if (event.getEntityItem().getItem().getOrCreateTag().getBoolean("bomb")) {
+
+            PlayerEntity playerEntity = event.getPlayer();
+
+            for (ItemStack stack : playerEntity.inventory.mainInventory) {
+                if (stack.getOrCreateTag().getBoolean("bomb") && stack.getOrCreateTag().getUniqueId("ownerUUID").equals(playerEntity.getUniqueID())) {
+                    playerEntity.inventory.markDirty();
+                    stack.getOrCreateTag().remove("bomb");
+                    stack.getOrCreateTag().remove("ownerUUID");
+                    stack.setCount(0);
+                }
+            }
+            for (ItemStack stack : playerEntity.inventory.offHandInventory) {
+                if (stack.getOrCreateTag().getBoolean("bomb") && stack.getOrCreateTag().getUniqueId("ownerUUID").equals(playerEntity.getUniqueID())) {
+                    playerEntity.inventory.markDirty();
+                    stack.getOrCreateTag().remove("bomb");
+                    stack.getOrCreateTag().remove("ownerUUID");
+                    stack.setCount(0);
+                }
+            }
+            for (ItemStack stack : playerEntity.inventory.armorInventory) {
+                if (stack.getOrCreateTag().getBoolean("bomb") && stack.getOrCreateTag().getUniqueId("ownerUUID").equals(playerEntity.getUniqueID())) {
+                    playerEntity.inventory.markDirty();
+                    stack.getOrCreateTag().remove("bomb");
+                    stack.getOrCreateTag().remove("ownerUUID");
+                    stack.setCount(0);
+                }
+            }
+
             StandEffects.getLazyOptional(event.getEntityItem()).ifPresent(props -> {
                 props.setBomb(true);
                 props.setStandUser(event.getPlayer().getUniqueID());
             });
+        }
         StandEffects.getLazyOptional(event.getPlayer()).ifPresent(standEffects -> {
             if (standEffects.getBitesTheDustPos() != BlockPos.ZERO)
                 StandEffects.getLazyOptional(event.getEntityItem()).ifPresent(item -> item.setShouldBeRemoved(true));
@@ -955,14 +1057,7 @@ public class EventHandleStandAbilities {
             if (props.isBomb()) {
                 PlayerEntity player = entity.world.getPlayerByUuid(props.getStandUser());
                 if (player != null) {
-                    entity.world.createExplosion(player, entity.getPosX(), entity.getPosY(), entity.getPosZ(), 2.3f, Explosion.Mode.DESTROY);
-                    Stand.getLazyOptional(player).ifPresent(stand -> stand.setAbilityUseCount(0));
-                    Util.spawnParticle(entity.dimension, 5, entity.getPosX(), entity.getPosY(), entity.getPosZ(), 1, 1, 1, 1);
-                    Util.spawnParticle(entity.dimension, 14, entity.getPosX(), entity.getPosY() + 1, entity.getPosZ(), 1, 1, 1, 20);
-                    Explosion explosion = new Explosion(entity.world, player, entity.getPosX(), entity.getPosY(), entity.getPosZ(), 4, true, Explosion.Mode.NONE);
-                    entity.world.playSound(null, entity.getPosition(), SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 1, 1);
-                    explosion.doExplosionB(true);
-
+                    Util.standExplosion(player, player.world, entity.getPositionVec(), KillerQueenEntity.explosionRange, 3, KillerQueenEntity.maxExplosionDamage, KillerQueenEntity.minExplosionDamage);
                 }
                 entity.remove();
                 event.setCanceled(true);
@@ -1000,25 +1095,6 @@ public class EventHandleStandAbilities {
         if (world.isRemote) return;
         Chunk chunk = world.getChunkAt(event.getPos());
         StandChunkEffects.getLazyOptional(chunk).ifPresent(props -> {
-            props.getBombs().forEach((uuid, blockPos) -> {
-                if (blockPos.equals(event.getPos())) {
-                    PlayerEntity player = world.getPlayerByUuid(uuid);
-
-                    player.world.createExplosion(player, blockPos.getX(), blockPos.getY(), blockPos.getZ(), 2.3f, Explosion.Mode.DESTROY);
-
-                    Util.spawnParticle(player, 5, blockPos.getX(), blockPos.getY(), blockPos.getZ(), 1, 1, 1, 1);
-                    Util.spawnParticle(player, 14, blockPos.getX(), blockPos.getY() + 1, blockPos.getZ(), 1, 1, 1, 20);
-                    Explosion explosion = new Explosion(world, player, blockPos.getX(), blockPos.getY(), blockPos.getZ(), 4, true, Explosion.Mode.NONE);
-                    world.playSound(null, blockPos, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 1, 1);
-                    explosion.doExplosionB(true);
-
-                    Stand.getLazyOptional(player).ifPresent(stand -> {
-                        stand.setBlockPos(BlockPos.ZERO);
-                        stand.setAbilityUseCount(0);
-                    });
-                    props.removeBombPos(player);
-                }
-            });
             props.getSoundEffects().forEach((uuid, list) -> {
                 if (list.size() > 0) {
                     List<BlockPos> removalList = new ArrayList<>();

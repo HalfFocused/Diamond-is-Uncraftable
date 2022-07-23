@@ -26,7 +26,11 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.monster.EndermanEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.tileentity.LockableTileEntity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -374,24 +378,19 @@ public class EventClientTick {
             }
             if (event.getPhase() != EventPriority.NORMAL || player == null) return;
 
+
             if (props.getStandID() == Util.StandID.KILLER_QUEEN) {
-                BlockPos.getAllInBox(player.getPosition().add(5, 5, 5), player.getPosition().add(-5, -5, -5))
+                BlockPos.getAllInBox(player.getPosition().add(10, 10, 10), player.getPosition().add(-10, -10, -10))
                         .filter(blockPos -> Stand.getCapabilityFromPlayer(player).getBlockPos().equals(blockPos))
                         .forEach(blockPos -> {
                             if(!blockPos.equals(BlockPos.ZERO)) {
-                                Util.renderBlock(matrixStack, blockPos, Blocks.TNT.getDefaultState());
+                                double d0 = blockPos.getX() + 0.5 + ((Minecraft.getInstance().player.getRNG().nextInt( 10) - 5)) / 10.0;
+                                double d1 = blockPos.getY() + 0.5 + ((Minecraft.getInstance().player.getRNG().nextInt(20) - 10)) / 10.0;
+                                double d2 = blockPos.getZ() + 0.5 + ((Minecraft.getInstance().player.getRNG().nextInt(10) - 5)) / 10.0;
+                                assert Minecraft.getInstance().world != null;
+                                Minecraft.getInstance().world.addParticle(ParticleTypes.ENTITY_EFFECT, d0, d1, d2, 0, 0, 0);
                             }
                         });
-                                /*Util.renderBlockStatic(
-                                        matrixStack,
-                                        IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer()),
-                                        world,
-                                        Blocks.TNT.getDefaultState(),
-                                        blockPos,
-                                        projectedView,
-                                        false,
-                                        RenderType.getOutline(new ResourceLocation("minecraft", "textures/block/tnt.png"))
-                                ));*/
             }
 
             if(!JojoBizarreSurvivalConfig.CLIENT.reducedFlashes.get()) {
@@ -420,16 +419,14 @@ public class EventClientTick {
             }
         }
         Stand stand = Stand.getCapabilityFromPlayer(mc.player);
-        if(stand.getBombEntityId() != 0){
-            if(stand.getBombEntityId() == event.getEntity().getEntityId()) {
-                {
-                    LivingEntity target = event.getEntity();
-                    double d0 = target.getPosX() + ((mc.player.getRNG().nextInt( 10) - 5)) / 10.0;
-                    double d1 = target.getPosY() + 0.5 + ((mc.player.getRNG().nextInt(20) - 10)) / 10.0;
-                    double d2 = target.getPosZ() + ((mc.player.getRNG().nextInt(10) - 5)) / 10.0;
-                    assert Minecraft.getInstance().world != null;
-                    Minecraft.getInstance().world.addParticle(ParticleTypes.ENTITY_EFFECT, d0, d1, d2, 0, 0, 0);
-                }
+        if(stand.getBombEntityId() == event.getEntity().getEntityId() && !mc.isGamePaused()) {
+            {
+                LivingEntity target = event.getEntity();
+                double d0 = target.getPosX() + ((mc.player.getRNG().nextInt( 10) - 5)) / 10.0;
+                double d1 = target.getPosY() + 0.5 + ((mc.player.getRNG().nextInt(20) - 10)) / 10.0;
+                double d2 = target.getPosZ() + ((mc.player.getRNG().nextInt(10) - 5)) / 10.0;
+                assert Minecraft.getInstance().world != null;
+                Minecraft.getInstance().world.addParticle(ParticleTypes.ENTITY_EFFECT, d0, d1, d2, 0, 0, 0);
             }
         }
     }

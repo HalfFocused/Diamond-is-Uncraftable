@@ -78,6 +78,7 @@ public class Stand implements ICapabilitySerializable<INBT> {
     private boolean experiencingTimeStop = false;
     private int instantTimeStopFrame = 0;
     private int bombEntityId = 0;
+    private boolean queueBombRemoval = false;
 
     private int invincibleTicks = 0;
     private int reflexCooldown = 0;
@@ -151,6 +152,7 @@ public class Stand implements ICapabilitySerializable<INBT> {
                 nbt.putInt("reflexCooldown", instance.getReflexCooldown());
                 nbt.putInt("standUnsummonedTime", instance.getStandUnsummonedTime());
                 nbt.putInt("bombEntity", instance.getBombEntityId());
+                nbt.putBoolean("queueBombRemoval", instance.getQueueBombRemoval());
                 ListNBT affectedChunkList = new ListNBT();
                 instance.getAffectedChunkList().forEach(pos -> {
                     CompoundNBT compoundNBT = new CompoundNBT();
@@ -221,6 +223,7 @@ public class Stand implements ICapabilitySerializable<INBT> {
                 instance.reflexCooldown = compoundNBT.getInt("reflexCooldown");
                 instance.standUnsummonedTime = compoundNBT.getInt("standUnsummonedTime");
                 instance.bombEntityId = compoundNBT.getInt("bombEntity");
+                instance.queueBombRemoval = compoundNBT.getBoolean("queueBombRemoval");
 
                 compoundNBT.getList("affectedChunkList", Constants.NBT.TAG_COMPOUND).forEach(inbt -> {
                     if (inbt instanceof CompoundNBT && ((CompoundNBT) inbt).contains("chunkX"))
@@ -332,6 +335,15 @@ public class Stand implements ICapabilitySerializable<INBT> {
 
     public void setPreventUnsummon2(boolean preventUnsummonIn2) {
         this.preventUnsummon2 = preventUnsummonIn2;
+        onDataUpdated();
+    }
+
+    public boolean getQueueBombRemoval() {
+        return queueBombRemoval;
+    }
+
+    public void setQueueBombRemoval(boolean queueBombRemovalIn) {
+        this.queueBombRemoval = queueBombRemovalIn;
         onDataUpdated();
     }
 
@@ -692,6 +704,8 @@ public class Stand implements ICapabilitySerializable<INBT> {
         invincibleTicks = stand.getInvincibleTicks();
         standUnsummonedTime = stand.getStandUnsummonedTime();
         reflexCooldown = stand.getReflexCooldown();
+        bombEntityId = stand.getBombEntityId();
+        queueBombRemoval = stand.getQueueBombRemoval();
         onDataUpdated();
     }
 
@@ -755,6 +769,8 @@ public class Stand implements ICapabilitySerializable<INBT> {
         invincibleTicks = 0;
         standUnsummonedTime = 0;
         reflexCooldown = 0;
+        bombEntityId = 0;
+        queueBombRemoval = false;
         onDataUpdated();
     }
 

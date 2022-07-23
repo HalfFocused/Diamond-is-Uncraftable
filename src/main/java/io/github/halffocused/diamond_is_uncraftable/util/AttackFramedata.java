@@ -15,6 +15,7 @@ import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
@@ -252,7 +253,7 @@ public class AttackFramedata {
                             entity.getHeldEquipment().forEach(itemStack -> {
                                 if (itemStack.getItem().equals(Items.SHIELD)) {
                                     itemStack.damageItem(50, ((PlayerEntity) entity), (playerEntity) -> {
-                                        playerEntity.sendBreakAnimation(Hand.MAIN_HAND); //F**k it I'm just gonna play the animation on both hands
+                                        playerEntity.sendBreakAnimation(Hand.MAIN_HAND);
                                         playerEntity.sendBreakAnimation(Hand.OFF_HAND);
                                     });
                                 }
@@ -275,7 +276,12 @@ public class AttackFramedata {
                         stand.setBombEntityId(bombTarget.getEntityId());
                         standEntityIn.getController().setMoveActive(8);
                     }else{
-                        Util.dealStandDamage(standEntityIn, bombTarget, 5, Vec3d.ZERO, false, null);
+                        ((KillerQueenEntity) standEntityIn).removeFirstBombFromAll();
+                        if(bombTarget.isActiveItemStackBlocking()){
+                            ((LivingEntity) entity).getActiveItemStack().getOrCreateTag().putBoolean("bomb", true);
+                            ((LivingEntity) entity).getActiveItemStack().getOrCreateTag().putUniqueId("ownerUUID", standEntityIn.getMaster().getUniqueID());
+                            ((LivingEntity) entity).getHeldItemMainhand().setDisplayName(new StringTextComponent("Bomb"));
+                        }
                     }
 
                 }

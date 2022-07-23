@@ -186,6 +186,22 @@ public class SParticlePacket implements IMessage<SParticlePacket> {
                     assert Minecraft.getInstance().world != null;
                     Minecraft.getInstance().world.addParticle(ParticleTypes.FLAME, d0, d1, d2, 0, 0, 0);
                 }
+            }else if(message.Particle == 17) {
+                for (int i = 0; i < message.amount; i++) {
+                    double d0 = message.X + ((rand.nextInt((int) (message.dX * 10)) - (message.dX * 5))) / 10.0;
+                    double d1 = message.Y + ((rand.nextInt((int) (message.dY * 10)) - (message.dY * 5))) / 10.0;
+                    double d2 = message.Z + ((rand.nextInt((int) (message.dZ * 10)) - (message.dZ * 5))) / 10.0;
+                    assert Minecraft.getInstance().world != null;
+                    Minecraft.getInstance().world.addParticle(ParticleTypes.EFFECT, d0, d1, d2, 0, 0.075, 0);
+                }
+            }else if(message.Particle == 18) {
+                for (int i = 0; i < message.amount; i++) {
+                    double d0 = message.X + ((rand.nextInt((int) (message.dX * 10)) - (message.dX * 5))) / 10.0;
+                    double d1 = message.Y + ((rand.nextInt((int) (message.dY * 10)) - (message.dY * 5))) / 10.0;
+                    double d2 = message.Z + ((rand.nextInt((int) (message.dZ * 10)) - (message.dZ * 5))) / 10.0;
+                    assert Minecraft.getInstance().world != null;
+                    Minecraft.getInstance().world.addParticle(ParticleTypes.PORTAL, d0, d1, d2, 0, 0.075, 0);
+                }
             }
         }
         ctx.get().setPacketHandled(true);
