@@ -131,7 +131,7 @@ public class Stand implements ICapabilitySerializable<INBT> {
                 nbt.putDouble("blockPosY", instance.getBlockPos().getY());
                 nbt.putDouble("blockPosZ", instance.getBlockPos().getZ());
                 nbt.putInt("experiencePoints", instance.getExperiencePoints());
-                nbt.putInt("prevExperiencePoints", instance.prevExperiencePoints);
+                nbt.putInt("prevExperiencePoints", instance.getPrevExperiencePoints());
                 nbt.putLong("gameTime", instance.getGameTime());
                 nbt.putLong("dayTime", instance.getDayTime());
                 nbt.putInt("abilitiesUnlocked", instance.getAbilitiesUnlocked());
