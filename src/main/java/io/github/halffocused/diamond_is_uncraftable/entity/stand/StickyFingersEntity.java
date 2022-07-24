@@ -7,7 +7,9 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.pathfinding.PathType;
 import net.minecraft.util.math.*;
+import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
@@ -17,15 +19,22 @@ public class StickyFingersEntity extends AbstractStandEntity {
     public LivingEntity disguiseEntity;
     int zipLineTicks = 0;
     boolean layingZipLine = false;
-    ZipLinePoint startingPoint;
-    Vec3d zipLineVector;
+    Vec3d zipLineStartPoint;
+    Vec3d zipLinePoint;
     ArrayList<ZipLinePoint> zipLinePoints = new ArrayList<>();
     ArrayList<ZippedBlock> zippedBlocks = new ArrayList<>();
     ArrayList<ZippedBlock> adjacentZippedBlocks = new ArrayList<>();
-    double lastZipX;
-    double lastZipY;
-    double lastZipZ;
-    int zippedBlockIndex = 0;
+    Vec3d initialLookVec;
+    Vec3d increment;
+    static final double ZIP_INCREMENT = 0.3;
+
+    enum ZipLineDirection {
+        FORWARD,
+        BACKWARD,
+        UP,
+        DOWN
+    }
+    ZipLineDirection zipLineDirection;
 
     boolean zipperRidingAlongCeiling = false;
 
@@ -108,13 +117,14 @@ public class StickyFingersEntity extends AbstractStandEntity {
     public void zipPunch() {
         if (getMaster() == null || world.isRemote || disguiseEntity != null) return;
 
-        if(!layingZipLine) {
-            zipLineVector = Util.rotationVectorIgnoreY(master).normalize();
-            startingPoint = new ZipLinePoint(master.getPosX(), master.getPosY(), master.getPosZ());
-            lastZipX = startingPoint.x;
-            lastZipY = startingPoint.y;
-            lastZipZ = startingPoint.z;
+        if(!layingZipLine && master.onGround) {
+            zipLineStartPoint = master.getPositionVec();
+            zipLinePoint = master.getPositionVec();
+            initialLookVec = Util.rotationVectorIgnoreY(master).normalize();
+            increment = initialLookVec.scale(ZIP_INCREMENT);
+            zipLineDirection = ZipLineDirection.FORWARD;
             layingZipLine = true;
+
         }else{
             layingZipLine = false;
         }
@@ -132,45 +142,82 @@ public class StickyFingersEntity extends AbstractStandEntity {
 
             if (layingZipLine) {
 
-                zipLineTicks++;
-                boolean ridingAlongGround = true;
-                double newX = lastZipX + zipLineVector.x / 3;
-                double newY = lastZipY;
-                double newZ = lastZipZ + zipLineVector.z / 3;
+                if(master.getPositionVec().distanceTo(zipLineStartPoint) > 1){
+                    zipLinePoints.clear();
+                    layingZipLine = false;
+                }else{
 
+                    Vec3d nextPoint;
+                    boolean gotNextPoint = false;
+                    int passes = 0;
+                    zipLineTicks++;
+                    while(!gotNextPoint && passes < 4) {
+                        passes++;
+                        if (zipLineDirection == ZipLineDirection.FORWARD) {
+                            increment = initialLookVec.scale(ZIP_INCREMENT);
+                            nextPoint = zipLinePoint.add(increment);
 
-                if (world.getBlockState(new BlockPos(newX, newY, newZ)).isSolid() || zipperRidingAlongCeiling) {
-                    newX = lastZipX;
-                    newY = lastZipY + (1 / 3.0);
-                    newZ = lastZipZ;
-
-                    if (world.getBlockState(new BlockPos(newX, newY, newZ)).isSolid()) {
-                        zipperRidingAlongCeiling = true;
-                        newX = lastZipX - zipLineVector.x / 2;
-                        newY = lastZipY;
-                        newZ = lastZipZ - zipLineVector.z / 2;
-                        if (!world.getBlockState(new BlockPos(newX, newY + 0.4, newZ)).isSolid()) {
-                            zipperRidingAlongCeiling = false;
-                            newY += 0.4;
+                            if (Util.isPointAtVecSolid(world, nextPoint)) {
+                                zipLineDirection = ZipLineDirection.UP;
+                                nextPoint = zipLinePoint;
+                            } else if (!Util.isPointAtVecSolid(world, new Vec3d(nextPoint.getX(), nextPoint.getY() - ZIP_INCREMENT, nextPoint.getZ()))) {
+                                zipLineDirection = ZipLineDirection.DOWN;
+                            } else {
+                                nextPoint = zipLinePoint.add(increment);
+                                gotNextPoint = true;
+                            }
+                        } else if (zipLineDirection == ZipLineDirection.UP) {
+                            increment = new Vec3d(0, 0.2, 0);
+                            nextPoint = zipLinePoint.add(increment);
+                            if (Util.isPointAtVecSolid(world, nextPoint)) {
+                                zipLineDirection = ZipLineDirection.BACKWARD;
+                                nextPoint = zipLinePoint;
+                            } else if (!Util.isPointAtVecSolid(world, nextPoint.add(initialLookVec.scale(ZIP_INCREMENT)))) {
+                                zipLineDirection = ZipLineDirection.FORWARD;
+                                nextPoint = zipLinePoint.add(increment);
+                            } else {
+                                nextPoint = zipLinePoint.add(increment);
+                                gotNextPoint = true;
+                            }
+                        } else if (zipLineDirection == ZipLineDirection.BACKWARD) {
+                            increment = initialLookVec.scale(ZIP_INCREMENT).inverse();
+                            nextPoint = zipLinePoint.add(increment);
+                            if (Util.isPointAtVecSolid(world, nextPoint)) {
+                                zipLineDirection = ZipLineDirection.DOWN;
+                                nextPoint = zipLinePoint;
+                            } else if (!Util.isPointAtVecSolid(world, nextPoint.add(new Vec3d(0, ZIP_INCREMENT, 0)))) {
+                                zipLineDirection = ZipLineDirection.UP;
+                                nextPoint = zipLinePoint.add(increment);
+                            } else {
+                                nextPoint = zipLinePoint.add(increment);
+                                gotNextPoint = true;
+                            }
+                        } else {
+                            increment = new Vec3d(0, -ZIP_INCREMENT, 0);
+                            nextPoint = zipLinePoint.add(increment);
+                            if (Util.isPointAtVecSolid(world, nextPoint)) {
+                                zipLineDirection = ZipLineDirection.FORWARD;
+                                nextPoint = zipLinePoint;
+                            } else if (!Util.isPointAtVecSolid(world, nextPoint.add(initialLookVec.scale(ZIP_INCREMENT).inverse()))) {
+                                zipLineDirection = ZipLineDirection.BACKWARD;
+                                nextPoint = zipLinePoint.add(increment);
+                            } else {
+                                nextPoint = zipLinePoint.add(increment);
+                                gotNextPoint = true;
+                            }
                         }
-                    }
-
-                } else {
-                    if (zipLineTicks > 100 || (ridingAlongGround && !world.getBlockState(new BlockPos(newX, newY - 0.4, newZ)).isSolid())) {
-                        layingZipLine = false;
+                        zipLinePoint = nextPoint;
+                        zipLinePoints.add(new ZipLinePoint(nextPoint.x, nextPoint.y, nextPoint.z, zipLineDirection == ZipLineDirection.BACKWARD));
                     }
                 }
-
-                zipLinePoints.add(new ZipLinePoint(newX, newY, newZ, zipperRidingAlongCeiling));
-
-                lastZipX = newX;
-                lastZipY = newY;
-                lastZipZ = newZ;
+                if(zipLineTicks >= 80){
+                    layingZipLine = false;
+                }
 
             } else {
                 zipLineTicks = 0;
                 if (zipLinePoints.size() > 0) {
-                    int yShift = zipLinePoints.get(0).isCeilingLine ? -2 : 0;
+                    double yShift = zipLinePoints.get(0).isCeilingLine ? -2 : 0;
                     master.setPositionAndUpdate(zipLinePoints.get(0).x, zipLinePoints.get(0).y + yShift, zipLinePoints.get(0).z);
                     for (int i = 0; i < 4; i++) {
                         if (zipLinePoints.size() > 0) {
@@ -219,7 +266,7 @@ public class StickyFingersEntity extends AbstractStandEntity {
         zippedBlocks.clear();
     }
 
-    class ZipLinePoint{
+    static class ZipLinePoint{
         double x;
         double y;
         double z;

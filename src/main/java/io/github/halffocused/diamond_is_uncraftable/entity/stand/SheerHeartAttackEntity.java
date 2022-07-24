@@ -72,7 +72,7 @@ public class SheerHeartAttackEntity extends AbstractStandAttackEntity {
                 setMotion(0, this.getMotion().getY(), 0);
                 Util.spawnParticle(masterStand, 14, this.getPosX(), this.getPosY() + 1, this.getPosZ(), 0.4, 0.4, 0.4, 2);
 
-                double verticalAdjustment = Util.heightAboveGround(world, this.getPosX(), this.getPosY(), this.getPosZ());
+                double verticalAdjustment = Util.heightAboveGround(world, this.getPositionVec());
                 int circleDots = 32;
                 int circleRadius = 8;
                 for(int i = 0; i < circleDots; i++){

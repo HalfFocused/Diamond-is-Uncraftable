@@ -37,6 +37,7 @@ import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.*;
 import net.minecraft.util.math.*;
+import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.text.ChatType;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.Explosion;
@@ -86,6 +87,23 @@ public class Util {
         return new Vec3d((double)(f3), 0, (double)(f2));
     }
 
+    /**
+     * Returns wheter or not the exact point pos is in any block's collision box.
+     * world.getBlockState().isSolid() has a lot of issues that necessitated the creation of this method.
+     * @param world The world that the collision check is taking place in.
+     * @param pos The position vector being checked.
+     * @return if the pos exists in any block's collision.
+     */
+    public static boolean isPointAtVecSolid(World world, Vec3d pos){
+        VoxelShape collison = world.getBlockState(new BlockPos(pos)).getCollisionShape(world, new BlockPos(pos));
+        for(AxisAlignedBB box : collison.toBoundingBoxList()){
+            if(box.offset(new BlockPos(pos)).contains(pos)){
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static void teleportUntilWall(LivingEntity entity, Vec3d vec, double maxDistance){
 
         double incrementSize = 0.01;
@@ -97,7 +115,7 @@ public class Util {
 
         for(int i = 0; i < maxDistance * (1 / incrementSize) && !hitWall; i++){
 
-            if(entity.world.getBlockState(new BlockPos(futurePosition.x, futurePosition.y, futurePosition.z)).isSolid()){
+            if(Util.isPointAtVecSolid(entity.world, futurePosition)){
                 hitWall = true;
             }
             currentPosition = currentPosition.add(increment);
@@ -109,9 +127,9 @@ public class Util {
          entity.setPositionAndUpdate(currentPosition.getX(), currentPosition.getY(), currentPosition.getZ());
     }
 
-    public static double heightAboveGround(World world, double x, double y, double z){
+    public static double heightAboveGround(World world, Vec3d pos){
         double distanceUntilGround = 0;
-        while(world.getBlockState(new BlockPos(x, y - distanceUntilGround, z)).isAir() && y - distanceUntilGround >= 0.01){
+        while(!Util.isPointAtVecSolid(world, pos.add(new Vec3d(0, -distanceUntilGround, 0))) && pos.add(new Vec3d(0, -distanceUntilGround, 0)).y - distanceUntilGround >= 0.01){
             distanceUntilGround = distanceUntilGround + 0.01;
         }
         return distanceUntilGround;
