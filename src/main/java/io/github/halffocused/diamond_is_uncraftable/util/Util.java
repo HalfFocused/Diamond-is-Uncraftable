@@ -754,28 +754,10 @@ public class Util {
          */
         public static final int[] STANDS = {
                 KING_CRIMSON,
-                D4C,
-                GOLD_EXPERIENCE,
-                AEROSMITH,
-                WEATHER_REPORT,
                 KILLER_QUEEN,
-                CRAZY_DIAMOND,
-                PURPLE_HAZE,
-                THE_EMPEROR,
-                WHITESNAKE,
-                THE_WORLD,
-                STAR_PLATINUM,
                 SILVER_CHARIOT,
-                MAGICIANS_RED,
-                THE_HAND,
-                HIEROPHANT_GREEN,
-                GREEN_DAY,
-                TWENTIETH_CENTURY_BOY,
-                THE_GRATEFUL_DEAD,
-                STICKY_FINGERS,
-                TUSK_ACT_1,
-                ECHOES_ACT_1,
-                BEACH_BOY,
+                THE_WORLD,
+                STICKY_FINGERS
         };
 
         public static final List<Integer> MOMENTUM_METER_STANDS = Arrays.asList( //What stands should render the momentum meter on the HUD
