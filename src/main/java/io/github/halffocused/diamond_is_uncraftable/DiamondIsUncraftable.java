@@ -2,7 +2,7 @@ package io.github.halffocused.diamond_is_uncraftable;
 
 import io.github.halffocused.diamond_is_uncraftable.capability.*;
 import io.github.halffocused.diamond_is_uncraftable.command.impl.StandCommand;
-import io.github.halffocused.diamond_is_uncraftable.config.JojoBizarreSurvivalConfig;
+import io.github.halffocused.diamond_is_uncraftable.config.DiamondIsUncraftableConfig;
 import io.github.halffocused.diamond_is_uncraftable.init.*;
 import io.github.halffocused.diamond_is_uncraftable.network.message.PacketHandler;
 import io.github.halffocused.diamond_is_uncraftable.particle.ParticleList;
@@ -77,7 +77,7 @@ public class DiamondIsUncraftable {
         DimensionInit.DIMENSIONS.register(modBus); //Deprecated in preparation for 1.16.
         EffectInit.EFFECTS.register(modBus);
         GeckoLib.initialize();
-        JojoBizarreSurvivalConfig.register(ModLoadingContext.get());
+        DiamondIsUncraftableConfig.register(ModLoadingContext.get());
         modBus.register(this);
     }
 

@@ -1,15 +1,14 @@
 package io.github.halffocused.diamond_is_uncraftable.entity.stand;
 
 import io.github.halffocused.diamond_is_uncraftable.capability.Stand;
+import io.github.halffocused.diamond_is_uncraftable.config.DiamondIsUncraftableConfig;
 import io.github.halffocused.diamond_is_uncraftable.util.Util;
 import io.github.halffocused.diamond_is_uncraftable.util.movesets.HoveringMoveHandler;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.pathfinding.PathType;
 import net.minecraft.util.math.*;
-import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
@@ -28,6 +27,7 @@ public class StickyFingersEntity extends AbstractStandEntity {
     Vec3d increment;
     static final double ZIP_INCREMENT = 0.3;
 
+
     enum ZipLineDirection {
         FORWARD,
         BACKWARD,
@@ -35,8 +35,6 @@ public class StickyFingersEntity extends AbstractStandEntity {
         DOWN
     }
     ZipLineDirection zipLineDirection;
-
-    boolean zipperRidingAlongCeiling = false;
 
     public StickyFingersEntity(EntityType<? extends AbstractStandEntity> type, World world) {
         super(type, world);
@@ -100,7 +98,7 @@ public class StickyFingersEntity extends AbstractStandEntity {
             }
         }
 
-        if(pos != null && block == null) {
+        if(pos != null && block == null && zippedBlocks.size() < DiamondIsUncraftableConfig.COMMON.maxStickyFingersBlocks.get()) {
             if(world.getBlockState(pos).getBlockHardness(world, pos) != -1f) {
                 zippedBlocks.add(new ZippedBlock(this, 1, pos, true, world.getBlockState(pos), world));
                 double min = 0.1;

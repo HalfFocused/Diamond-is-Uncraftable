@@ -3,7 +3,7 @@ package io.github.halffocused.diamond_is_uncraftable.client.gui;
 import com.mojang.blaze3d.platform.GlStateManager;
 import io.github.halffocused.diamond_is_uncraftable.DiamondIsUncraftable;
 import io.github.halffocused.diamond_is_uncraftable.capability.Stand;
-import io.github.halffocused.diamond_is_uncraftable.config.JojoBizarreSurvivalConfig;
+import io.github.halffocused.diamond_is_uncraftable.config.DiamondIsUncraftableConfig;
 import io.github.halffocused.diamond_is_uncraftable.network.message.client.CTimeSkipEffectPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
@@ -20,7 +20,7 @@ public class TimeSkipEffectGUI extends AbstractGui {
         if (mc.world == null) return;
         if (player == null) return;
 
-        if(!JojoBizarreSurvivalConfig.CLIENT.reducedFlashes.get()) {
+        if(!DiamondIsUncraftableConfig.CLIENT.reducedFlashes.get()) {
 
             Stand.getLazyOptional(player).ifPresent(props -> {
                 if (props.getTimeSkipEffectTicker() > 0) {

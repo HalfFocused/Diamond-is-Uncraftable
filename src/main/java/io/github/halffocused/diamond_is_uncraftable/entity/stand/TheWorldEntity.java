@@ -4,7 +4,7 @@ import io.github.halffocused.diamond_is_uncraftable.DiamondIsUncraftable;
 import io.github.halffocused.diamond_is_uncraftable.capability.ITimestop;
 import io.github.halffocused.diamond_is_uncraftable.capability.Stand;
 import io.github.halffocused.diamond_is_uncraftable.capability.Timestop;
-import io.github.halffocused.diamond_is_uncraftable.config.JojoBizarreSurvivalConfig;
+import io.github.halffocused.diamond_is_uncraftable.config.DiamondIsUncraftableConfig;
 import io.github.halffocused.diamond_is_uncraftable.entity.stand.attack.NailBulletEntity;
 import io.github.halffocused.diamond_is_uncraftable.init.SoundInit;
 import io.github.halffocused.diamond_is_uncraftable.util.*;
@@ -435,7 +435,7 @@ public class TheWorldEntity extends AbstractStandEntity implements IMomentum, IO
 
                         world.getServer().getWorld(dimension).getEntities()
                                 .filter(entity -> entity instanceof PlayerEntity)
-                                .filter(entity -> JojoBizarreSurvivalConfig.COMMON.timeStopRange.get() == -1 || entity.getDistance(this) < JojoBizarreSurvivalConfig.COMMON.timeStopRange.get())
+                                .filter(entity -> DiamondIsUncraftableConfig.COMMON.timeStopRange.get() == -1 || entity.getDistance(this) < DiamondIsUncraftableConfig.COMMON.timeStopRange.get())
                                 .forEach(entity -> {
                                     Stand props = Stand.getCapabilityFromPlayer((PlayerEntity) entity);
                                     props.setExperiencingTimeStop(true);
@@ -448,7 +448,7 @@ public class TheWorldEntity extends AbstractStandEntity implements IMomentum, IO
                                 .filter(entity -> !(entity instanceof GoldExperienceRequiemEntity))
                                 .filter(entity -> !(entity instanceof TheWorldEntity))
                                 .filter(entity -> !(entity instanceof StarPlatinumEntity))
-                                .filter(entity -> JojoBizarreSurvivalConfig.COMMON.timeStopRange.get() == -1 || entity.getDistance(this) < JojoBizarreSurvivalConfig.COMMON.timeStopRange.get())
+                                .filter(entity -> DiamondIsUncraftableConfig.COMMON.timeStopRange.get() == -1 || entity.getDistance(this) < DiamondIsUncraftableConfig.COMMON.timeStopRange.get())
                                 .forEach(entity -> {
                                     if (entity instanceof PlayerEntity) {
                                         Stand props = Stand.getCapabilityFromPlayer((PlayerEntity) entity);

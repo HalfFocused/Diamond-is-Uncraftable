@@ -5,7 +5,7 @@ import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
 import org.apache.commons.lang3.tuple.Pair;
 
-public class JojoBizarreSurvivalConfig {
+public class DiamondIsUncraftableConfig {
     public static final Common COMMON;
     public static final Client CLIENT;
     private static final ForgeConfigSpec commonSpec;
@@ -29,6 +29,7 @@ public class JojoBizarreSurvivalConfig {
     public static class Common {
         public final ForgeConfigSpec.BooleanValue saveStandOnDeath;
         public final ForgeConfigSpec.IntValue timeStopRange;
+        public final ForgeConfigSpec.IntValue maxStickyFingersBlocks;
         public final ForgeConfigSpec.DoubleValue standDamageMultiplier;
         public final ForgeConfigSpec.BooleanValue uniqueStandMode;
 
@@ -49,7 +50,11 @@ public class JojoBizarreSurvivalConfig {
 
             timeStopRange = builder
                     .comment("Set the Range (in blocks) of Star Platinum and The World's time stops. \n If you want the stop to have infinite range, set the range to -1")
-                    .defineInRange("TimeStopRange", 64, -1, 300);
+                    .defineInRange("timeStopRange", 64, -1, 300);
+
+            maxStickyFingersBlocks = builder
+                    .comment("Set the maximum amount of zipped blocks a Sticky Fingers user can have at once. Clusters of over 100 zipped blocks get laggy.")
+                    .defineInRange("stickyFingersLimit", 100, 10, 200);
 
             builder.pop();
         }

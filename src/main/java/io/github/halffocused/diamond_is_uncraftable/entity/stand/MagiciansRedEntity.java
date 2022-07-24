@@ -2,7 +2,6 @@ package io.github.halffocused.diamond_is_uncraftable.entity.stand;
 
 import io.github.halffocused.diamond_is_uncraftable.capability.Stand;
 import io.github.halffocused.diamond_is_uncraftable.capability.StandEffects;
-import io.github.halffocused.diamond_is_uncraftable.config.JojoBizarreSurvivalConfig;
 import io.github.halffocused.diamond_is_uncraftable.entity.stand.attack.MagiciansRedFlameEntity;
 import io.github.halffocused.diamond_is_uncraftable.util.movesets.HoveringMoveHandler;
 import net.minecraft.entity.EntityType;

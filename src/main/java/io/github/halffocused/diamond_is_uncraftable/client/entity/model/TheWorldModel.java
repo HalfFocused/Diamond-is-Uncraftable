@@ -2,7 +2,7 @@ package io.github.halffocused.diamond_is_uncraftable.client.entity.model;
 
 import io.github.halffocused.diamond_is_uncraftable.DiamondIsUncraftable;
 import io.github.halffocused.diamond_is_uncraftable.capability.Stand;
-import io.github.halffocused.diamond_is_uncraftable.config.JojoBizarreSurvivalConfig;
+import io.github.halffocused.diamond_is_uncraftable.config.DiamondIsUncraftableConfig;
 import io.github.halffocused.diamond_is_uncraftable.entity.stand.TheWorldEntity;
 import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib3.core.IAnimatable;
@@ -33,7 +33,7 @@ public class TheWorldModel extends AnimatedGeoModel {
         if(entity instanceof TheWorldEntity) {
             Stand.getLazyOptional(((TheWorldEntity) entity).getMaster()).ifPresent(props -> {
 
-                if (props.getAbilityActive() && !JojoBizarreSurvivalConfig.CLIENT.reducedFlashes.get()) {
+                if (props.getAbilityActive() && !DiamondIsUncraftableConfig.CLIENT.reducedFlashes.get()) {
                     returnValue.set(new ResourceLocation(DiamondIsUncraftable.MOD_ID, "textures/stands/the_world_invert.png"));
                 }else{
                     returnValue.set(new ResourceLocation(DiamondIsUncraftable.MOD_ID, "textures/stands/the_world.png"));

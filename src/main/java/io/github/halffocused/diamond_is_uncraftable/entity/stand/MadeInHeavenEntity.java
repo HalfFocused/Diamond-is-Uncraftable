@@ -1,7 +1,6 @@
 package io.github.halffocused.diamond_is_uncraftable.entity.stand;
 
 import io.github.halffocused.diamond_is_uncraftable.capability.Stand;
-import io.github.halffocused.diamond_is_uncraftable.config.JojoBizarreSurvivalConfig;
 import io.github.halffocused.diamond_is_uncraftable.entity.stand.attack.MadeInHeavenPunchEntity;
 import io.github.halffocused.diamond_is_uncraftable.event.EventD4CTeleportProcessor;
 import io.github.halffocused.diamond_is_uncraftable.init.DimensionInit;

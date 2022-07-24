@@ -3,7 +3,7 @@ package io.github.halffocused.diamond_is_uncraftable.item;
 
 import io.github.halffocused.diamond_is_uncraftable.capability.Stand;
 import io.github.halffocused.diamond_is_uncraftable.capability.StandPerWorldCapability;
-import io.github.halffocused.diamond_is_uncraftable.config.JojoBizarreSurvivalConfig;
+import io.github.halffocused.diamond_is_uncraftable.config.DiamondIsUncraftableConfig;
 import io.github.halffocused.diamond_is_uncraftable.entity.StandArrowEntity;
 import io.github.halffocused.diamond_is_uncraftable.entity.stand.AbstractStandEntity;
 import io.github.halffocused.diamond_is_uncraftable.entity.stand.GoldExperienceEntity;
@@ -62,7 +62,7 @@ public class StandArrowItem extends ArrowItem {
                 int random;
                 StandPerWorldCapability standPerWorld = StandPerWorldCapability.getCapabilityFromWorld(world.getServer().getWorld(DimensionType.OVERWORLD));
                 int newStandID;
-                if(JojoBizarreSurvivalConfig.COMMON.uniqueStandMode.get()) {
+                if(DiamondIsUncraftableConfig.COMMON.uniqueStandMode.get()) {
 
 
                     if (standPerWorld.getTakenStandIDs().size() == Util.StandID.STANDS.length) {
@@ -86,7 +86,7 @@ public class StandArrowItem extends ArrowItem {
                     if (!player.isCreative())
                         stack.shrink(1);
                     stand.setStandID(newStandID);
-                    if(JojoBizarreSurvivalConfig.COMMON.uniqueStandMode.get()) {
+                    if(DiamondIsUncraftableConfig.COMMON.uniqueStandMode.get()) {
                         standPerWorld.addTakenStandId(random);
                     }
                     stand.setStandOn(true);

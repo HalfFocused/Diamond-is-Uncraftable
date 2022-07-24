@@ -3,36 +3,22 @@ package io.github.halffocused.diamond_is_uncraftable.event;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import io.github.halffocused.diamond_is_uncraftable.DiamondIsUncraftable;
 import io.github.halffocused.diamond_is_uncraftable.capability.Stand;
-import io.github.halffocused.diamond_is_uncraftable.capability.StandChunkEffects;
 import io.github.halffocused.diamond_is_uncraftable.client.gui.*;
-import io.github.halffocused.diamond_is_uncraftable.config.JojoBizarreSurvivalConfig;
+import io.github.halffocused.diamond_is_uncraftable.config.DiamondIsUncraftableConfig;
 import io.github.halffocused.diamond_is_uncraftable.entity.stand.AerosmithEntity;
 import io.github.halffocused.diamond_is_uncraftable.entity.stand.HierophantGreenEntity;
-import io.github.halffocused.diamond_is_uncraftable.entity.stand.KillerQueenEntity;
 import io.github.halffocused.diamond_is_uncraftable.entity.stand.StickyFingersEntity;
 import io.github.halffocused.diamond_is_uncraftable.item.StandDiscItem;
 import io.github.halffocused.diamond_is_uncraftable.network.message.client.CAerosmithRotationPacket;
 import io.github.halffocused.diamond_is_uncraftable.util.Util;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.monster.EndermanEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.tileentity.LockableTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.StringTextComponent;
@@ -378,7 +364,7 @@ public class EventClientTick {
             }
             if (event.getPhase() != EventPriority.NORMAL || player == null) return;
 
-            if(!JojoBizarreSurvivalConfig.CLIENT.reducedFlashes.get()) {
+            if(!DiamondIsUncraftableConfig.CLIENT.reducedFlashes.get()) {
 
                 if (props.getExperiencingTimeStop()) {
                     Minecraft.getInstance().gameRenderer.loadEntityShader(new EndermanEntity(EntityType.ENDERMAN, world));

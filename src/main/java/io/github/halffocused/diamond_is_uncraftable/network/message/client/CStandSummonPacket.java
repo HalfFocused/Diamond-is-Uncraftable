@@ -2,7 +2,7 @@ package io.github.halffocused.diamond_is_uncraftable.network.message.client;
 
 import io.github.halffocused.diamond_is_uncraftable.DiamondIsUncraftable;
 import io.github.halffocused.diamond_is_uncraftable.capability.Stand;
-import io.github.halffocused.diamond_is_uncraftable.config.JojoBizarreSurvivalConfig;
+import io.github.halffocused.diamond_is_uncraftable.config.DiamondIsUncraftableConfig;
 import io.github.halffocused.diamond_is_uncraftable.entity.stand.AbstractStandEntity;
 import io.github.halffocused.diamond_is_uncraftable.network.message.IMessage;
 import io.github.halffocused.diamond_is_uncraftable.network.message.server.SSyncStandMasterPacket;
@@ -60,7 +60,7 @@ public class CStandSummonPacket implements IMessage<CStandSummonPacket> {
                                 standEntity.setLocationAndAngles(position.getX(), position.getY(), position.getZ(), sender.rotationYaw, sender.rotationPitch);
                                 standEntity.setMaster(sender);
                                 standEntity.setMasterUUID(sender.getUniqueID());
-                                if (JojoBizarreSurvivalConfig.CLIENT.playStandSpawnSounds.get())
+                                if (DiamondIsUncraftableConfig.CLIENT.playStandSpawnSounds.get())
                                     standEntity.playSpawnSound();
                                 DiamondIsUncraftable.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> sender), new SSyncStandMasterPacket(standEntity.getEntityId(), sender.getEntityId()));
                                 sender.world.addEntity(standEntity);

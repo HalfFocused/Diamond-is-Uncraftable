@@ -5,7 +5,7 @@ import io.github.halffocused.diamond_is_uncraftable.DiamondIsUncraftable;
 import io.github.halffocused.diamond_is_uncraftable.capability.Stand;
 import io.github.halffocused.diamond_is_uncraftable.capability.StandChunkEffects;
 import io.github.halffocused.diamond_is_uncraftable.capability.Timestop;
-import io.github.halffocused.diamond_is_uncraftable.config.JojoBizarreSurvivalConfig;
+import io.github.halffocused.diamond_is_uncraftable.config.DiamondIsUncraftableConfig;
 import io.github.halffocused.diamond_is_uncraftable.entity.stand.*;
 import io.github.halffocused.diamond_is_uncraftable.entity.stand.attack.AbstractStandAttackEntity;
 import io.github.halffocused.diamond_is_uncraftable.init.*;
@@ -19,7 +19,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.util.InputMappings;
-import net.minecraft.client.world.ClientWorld;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -43,9 +42,7 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
-import net.minecraftforge.client.model.ModelDataManager;
 import net.minecraftforge.client.model.data.EmptyModelData;
-import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.fml.network.PacketDistributor;
 import org.lwjgl.glfw.GLFW;
 
@@ -504,7 +501,7 @@ public class Util {
                 ((AbstractStandEntity) entity).getMaster().hurtResistantTime = 0;
             }
 
-            double damageModifier = (float) JojoBizarreSurvivalConfig.COMMON.standDamageMultiplier.get().doubleValue();
+            double damageModifier = (float) DiamondIsUncraftableConfig.COMMON.standDamageMultiplier.get().doubleValue();
             double potionModifier = 1.0;
 
             for(EffectInstance effect : stand.getMaster().getActivePotionEffects()){
@@ -592,7 +589,7 @@ public class Util {
                 ((AbstractStandEntity) entity).getMaster().hurtResistantTime = 0;
             }
 
-            double damageModifier = (float) JojoBizarreSurvivalConfig.COMMON.standDamageMultiplier.get().doubleValue();
+            double damageModifier = (float) DiamondIsUncraftableConfig.COMMON.standDamageMultiplier.get().doubleValue();
             double potionModifier = 1.0;
 
             for(EffectInstance effect : standMaster.getActivePotionEffects()){

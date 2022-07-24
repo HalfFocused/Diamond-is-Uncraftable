@@ -5,7 +5,7 @@ import io.github.halffocused.diamond_is_uncraftable.capability.Stand;
 import io.github.halffocused.diamond_is_uncraftable.capability.StandEffects;
 import io.github.halffocused.diamond_is_uncraftable.capability.StandPerWorldCapability;
 import io.github.halffocused.diamond_is_uncraftable.capability.Timestop;
-import io.github.halffocused.diamond_is_uncraftable.config.JojoBizarreSurvivalConfig;
+import io.github.halffocused.diamond_is_uncraftable.config.DiamondIsUncraftableConfig;
 import io.github.halffocused.diamond_is_uncraftable.entity.stand.SheerHeartAttackEntity;
 import io.github.halffocused.diamond_is_uncraftable.entity.stand.StarPlatinumEntity;
 import io.github.halffocused.diamond_is_uncraftable.entity.stand.TheWorldEntity;
@@ -35,15 +35,15 @@ import static io.github.halffocused.diamond_is_uncraftable.util.Util.StandID.*;
 public class EventSyncCapability {
     @SubscribeEvent
     public static void saveStand(PlayerEvent.Clone event) {
-        if (!event.isWasDeath() || JojoBizarreSurvivalConfig.COMMON.saveStandOnDeath.get()) {
+        if (!event.isWasDeath() || DiamondIsUncraftableConfig.COMMON.saveStandOnDeath.get()) {
             Stand.getLazyOptional(event.getOriginal()).ifPresent(originalProps -> {
                 ServerPlayerEntity player = (ServerPlayerEntity) event.getPlayer();
                 Stand.getLazyOptional(player).ifPresent(newProps -> newProps.clone(originalProps));
             });
         }
 
-        if(event.isWasDeath() && !JojoBizarreSurvivalConfig.COMMON.saveStandOnDeath.get()){
-            if(JojoBizarreSurvivalConfig.COMMON.uniqueStandMode.get()){
+        if(event.isWasDeath() && !DiamondIsUncraftableConfig.COMMON.saveStandOnDeath.get()){
+            if(DiamondIsUncraftableConfig.COMMON.uniqueStandMode.get()){
                 Objects.requireNonNull(event.getPlayer().world.getServer()).getWorld(DimensionType.OVERWORLD);
                 StandPerWorldCapability.getLazyOptional(event.getPlayer().world.getServer().getWorld(DimensionType.OVERWORLD)).ifPresent(uniqueStandHandler -> {
                     ServerPlayerEntity player = (ServerPlayerEntity) event.getPlayer();

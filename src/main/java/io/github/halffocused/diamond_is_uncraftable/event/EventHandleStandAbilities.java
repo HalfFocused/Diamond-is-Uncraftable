@@ -2,7 +2,7 @@ package io.github.halffocused.diamond_is_uncraftable.event;
 
 import io.github.halffocused.diamond_is_uncraftable.DiamondIsUncraftable;
 import io.github.halffocused.diamond_is_uncraftable.capability.*;
-import io.github.halffocused.diamond_is_uncraftable.config.JojoBizarreSurvivalConfig;
+import io.github.halffocused.diamond_is_uncraftable.config.DiamondIsUncraftableConfig;
 import io.github.halffocused.diamond_is_uncraftable.entity.stand.*;
 import io.github.halffocused.diamond_is_uncraftable.event.custom.StandAttackEvent;
 import io.github.halffocused.diamond_is_uncraftable.event.custom.StandEvent;
@@ -13,11 +13,8 @@ import io.github.halffocused.diamond_is_uncraftable.init.SoundInit;
 import io.github.halffocused.diamond_is_uncraftable.network.message.server.SSyncStandMasterPacket;
 import io.github.halffocused.diamond_is_uncraftable.util.IOnMasterAttacked;
 import io.github.halffocused.diamond_is_uncraftable.util.Util;
-import net.minecraft.advancements.criterion.ItemPredicate;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.IProjectile;
 import net.minecraft.entity.LivingEntity;
@@ -61,8 +58,6 @@ import net.minecraftforge.fml.network.PacketDistributor;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.concurrent.locks.Lock;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("ConstantConditions")
@@ -547,7 +542,7 @@ public class EventHandleStandAbilities {
                 standEntity.setMaster(player);
                 standEntity.setMasterUUID(player.getUniqueID());
                 standEntity.followMaster();
-                if (JojoBizarreSurvivalConfig.CLIENT.playStandSpawnSounds.get())
+                if (DiamondIsUncraftableConfig.CLIENT.playStandSpawnSounds.get())
                     standEntity.playSpawnSound();
                 DiamondIsUncraftable.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> player), new SSyncStandMasterPacket(standEntity.getEntityId(), player.getEntityId()));
                 player.world.addEntity(standEntity);

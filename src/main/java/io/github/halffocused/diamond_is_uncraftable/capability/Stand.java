@@ -1,7 +1,7 @@
 package io.github.halffocused.diamond_is_uncraftable.capability;
 
 import io.github.halffocused.diamond_is_uncraftable.DiamondIsUncraftable;
-import io.github.halffocused.diamond_is_uncraftable.config.JojoBizarreSurvivalConfig;
+import io.github.halffocused.diamond_is_uncraftable.config.DiamondIsUncraftableConfig;
 import io.github.halffocused.diamond_is_uncraftable.network.message.server.SSyncStandCapabilityPacket;
 import io.github.halffocused.diamond_is_uncraftable.util.Util;
 import net.minecraft.block.Block;
@@ -713,7 +713,7 @@ public class Stand implements ICapabilitySerializable<INBT> {
 
         List<int[]> standAssignments = Collections.singletonList(STANDS);
 
-        if(JojoBizarreSurvivalConfig.COMMON.uniqueStandMode.get() && !evolution) {
+        if(DiamondIsUncraftableConfig.COMMON.uniqueStandMode.get() && !evolution) {
             Objects.requireNonNull(player.getServer()).getWorld(DimensionType.OVERWORLD);
             StandPerWorldCapability.getLazyOptional(player.getServer().getWorld(DimensionType.OVERWORLD)).ifPresent(uniqueStandHandler -> {
                 if (uniqueStandHandler.getTakenStandIDs().contains(ArrayUtils.indexOf(STANDS, getStandID()))) {
