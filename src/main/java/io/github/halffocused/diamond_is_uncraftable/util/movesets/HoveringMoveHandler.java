@@ -206,7 +206,7 @@ public class HoveringMoveHandler {
     public void setAnimation(String animationNameIn, boolean shouldLoop){
         if(!stand.world.isRemote) {
             if(!animationNameIn.equals(lastAnimation)) {
-                DiamondIsUncraftable.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> stand), new SAnimatePacket(stand.getEntityId(), animationNameIn, shouldLoop));
+                DiamondIsUncraftable.INSTANCE.send(PacketDistributor.DIMENSION.with(() -> stand.dimension), new SAnimatePacket(stand.getEntityId(), animationNameIn, shouldLoop));
                 currentAnimation = animationNameIn;
                 lastAnimation = animationNameIn;
             }

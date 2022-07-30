@@ -47,7 +47,7 @@ public class SAnimatePacket implements IMessage<SAnimatePacket> {
                 Entity entity = world.getEntityByID(message.entityID);
                 if (!(entity instanceof IAnimatable)) return;
 
-                ((AbstractStandEntity) entity).setAnimation(message.animation, message.shouldLoop); //todo move animation logic to AbstractStandEntity
+                ((AbstractStandEntity) entity).setAnimation(message.animation, message.shouldLoop);
 
 
             });
