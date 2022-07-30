@@ -171,7 +171,7 @@ public class KingCrimsonEntity extends AbstractStandEntity implements IAnimatabl
 
         Stand.getLazyOptional(master).ifPresent(stand -> {
             ability = stand.getAbility();
-            if (opportunityTicks > 0 && stand.getCooldown() <= 0 && getMostRecentlyDamagedEntity() != null && energyAboveThreshold(15)) {
+            if (opportunityTicks > 0 && stand.getCooldown() <= 0 && getMostRecentlyDamagedEntity() != null && energyAtThreshold(15)) {
                 Util.spawnParticle(this, 6, this.getPosX(), this.getPosY() + this.getEyeHeight() - 0.5, this.getPosZ(), 1.2, 2.5, 1.2, 1);
             }
         });

@@ -375,7 +375,7 @@ public abstract class AbstractStandEntity extends MobEntity implements IEntityAd
         else
             s = PreYggdrasilConverter.convertMobOwnerIfNeeded(getServer(), compoundNBT.getString("MasterUUID"));
         if (!s.isEmpty())
-            setMasterUUID(UUID.fromString(s)); //Got most of this code from AbstractHorseEntity, though I improved it a bit.
+            setMasterUUID(UUID.fromString(s));
     }
 
     /**
@@ -412,13 +412,19 @@ public abstract class AbstractStandEntity extends MobEntity implements IEntityAd
         this.animationLooping = animationLoopingIn;
     }
 
+    /**
+     * @return The move that should be used when the stand's owner left-clicks without sneaking.
+     */
     public int getJabMoveId(){
         return 1;
-    } //Returns the move ID that should be activated on punch
-
+    }
+    /**
+     * @return The move that should be used when the stand's owner left-clicks while sneaking.
+     */
     public int getBarrageMoveId(){
         return 2;
-    } //Returns the move ID that should be activated on shift-punch
+    }
+
 
     public void goToAttackPosition(double distanceIn){
 
@@ -433,6 +439,11 @@ public abstract class AbstractStandEntity extends MobEntity implements IEntityAd
         hasAttackTarget = true;
     }
 
+    /**
+     * I could very easily have just written 5 methods and avoided the holder class.
+     * This isn't hard-coded because there are stands that change their movement animations based on certain conditions.
+     * @return A MovementAnimationHolder().
+     */
     public MovementAnimationHolder getMovementAnimations(){
         return new MovementAnimationHolder().create("idle", "forward", "left", "right", "backwards");
     }
@@ -449,6 +460,11 @@ public abstract class AbstractStandEntity extends MobEntity implements IEntityAd
 
     }
 
+    /**
+     * Some stands need to keep track of whatever entity they attacked last. This is called on every attack hitbox.
+     * When multiple entities are hit, whatever entity is handled last (essentially random) is chosen.
+     * @param entityIn The LivingEntity attacked last.
+     */
     public void setMostRecentlyDamagedEntity(@Nullable LivingEntity entityIn){
         mostRecentlyDamagedEntity = entityIn;
     }
@@ -467,6 +483,12 @@ public abstract class AbstractStandEntity extends MobEntity implements IEntityAd
         return spendEnergy(amount, false);
     }
 
+    /**
+     * Attempt to spend energy.
+     * @param amount The amount of energy being spent.
+     * @param ignoreActionability Should this energy be spendable even if the stand is not currently actionable?
+     * @return If the user has enough, spend it and return true. Otherwise, don't spend it and return false.
+     */
     public boolean spendEnergy(double amount, boolean ignoreActionability){ //Channeled energy spending shouldn't require the stand to be actionable.
 
         AtomicBoolean state = new AtomicBoolean(false);
@@ -486,7 +508,11 @@ public abstract class AbstractStandEntity extends MobEntity implements IEntityAd
         return state.get();
     }
 
-    public void penalizeEnergy(double amount){ //Like spending energy but if you don't have enough you just hit 0.
+    /**
+     * Remove energy from a stand user. If they don't have enough, just hit 0.
+     * @param amount How much energy to remove
+     */
+    public void penalizeEnergy(double amount){
         if(!world.isRemote) {
             Stand.getLazyOptional(getMaster()).ifPresent(stand -> {
                 stand.setCurrentStandEnergy(Math.max(0, stand.getCurrentStandEnergy() - amount));
@@ -495,6 +521,11 @@ public abstract class AbstractStandEntity extends MobEntity implements IEntityAd
         }
     }
 
+    /**
+     * Called every tick to update the stands controller (Stand.getController)
+     * @param isCharging Is the player inputting left click.
+     * @param isBarrage Is the player sneaking.
+     */
     public void chargeAttack(boolean isCharging, boolean isBarrage) {
         if (getMaster() == null) return;
 
@@ -502,6 +533,10 @@ public abstract class AbstractStandEntity extends MobEntity implements IEntityAd
         lastIsCrouching = isBarrage;
     }
 
+    /**
+     * Add stand energy, up to the maximum amount.
+     * @param amount The amount of energy to add.
+     */
     public void addEnergy(double amount){
         if(!world.isRemote()) {
             Stand.getLazyOptional(getMaster()).ifPresent(stand -> {
@@ -510,7 +545,12 @@ public abstract class AbstractStandEntity extends MobEntity implements IEntityAd
         }
     }
 
-    public boolean energyAboveThreshold(double amount){
+    /**
+     * Check if the stand user has a certain amount of energy.
+     * @param amount The amount of energy being checked.
+     * @return True if the stand user's energy is greater than or equal to @param amount.
+     */
+    public boolean energyAtThreshold(double amount){
 
         AtomicBoolean state = new AtomicBoolean(false);
 
@@ -520,6 +560,10 @@ public abstract class AbstractStandEntity extends MobEntity implements IEntityAd
         return state.get();
     }
 
+    /**
+     * Get the percentage of a stand user's remaining energy.
+     * @return Returns a double value between 0 and 1.
+     */
     public double getEnergyPercentage(){
         AtomicDouble doublePercentage = new AtomicDouble(-1);
 

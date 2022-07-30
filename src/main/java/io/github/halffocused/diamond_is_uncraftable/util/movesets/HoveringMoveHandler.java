@@ -45,7 +45,7 @@ public class HoveringMoveHandler {
     int mostRecentChargeAttackTicks = 0;
 
     /*
-    Charge attack variables. The variety of charge attacks make this a struggle to create a uniform system. I have hope though.
+    Charge attack variables.
      */
     boolean hasChargeAttack = false;
     ChargeAttackFormat chargeAttackFormat = null;
