@@ -41,7 +41,7 @@ public class DiamondIsUncraftableConfig {
                     .defineInRange("standDamageMultiplier", 1.0, 0, 100.0F);
 
             uniqueStandMode = builder
-                    .comment("Enable Unique Stand Mode: This mode causes the stand arrow to not roll stands that have already been rolled.\n Note that on large servers this will severely limit the amount of players that can have a stand.\n Stands will become available again whenever a player loses their stand for any reason.\n Interactions with Whitesnake may be buggy")
+                    .comment("Enable Unique Stand Mode: This mode causes the stand arrow to not roll stands that have already been rolled.\n Note that on large servers this will severely limit the amount of players that can have a stand.\n Stands will become available again whenever a player loses their stand for any reason.")
                     .define("uniqueStandMode", false);
 
             saveStandOnDeath = builder
