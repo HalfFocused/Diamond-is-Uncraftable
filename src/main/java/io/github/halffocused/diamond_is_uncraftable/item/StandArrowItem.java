@@ -9,6 +9,7 @@ import io.github.halffocused.diamond_is_uncraftable.entity.stand.AbstractStandEn
 import io.github.halffocused.diamond_is_uncraftable.entity.stand.GoldExperienceEntity;
 import io.github.halffocused.diamond_is_uncraftable.entity.stand.GoldExperienceRequiemEntity;
 import io.github.halffocused.diamond_is_uncraftable.init.EntityInit;
+import io.github.halffocused.diamond_is_uncraftable.init.ItemInit;
 import io.github.halffocused.diamond_is_uncraftable.util.Util;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.Enchantment;
@@ -33,13 +34,15 @@ import java.util.Objects;
 public class StandArrowItem extends ArrowItem {
     final int standID;
     final StringTextComponent tooltip;
+    final StringTextComponent description;
     final String tooltip2;
     boolean newSystem;
 
-    public StandArrowItem(Properties properties, int standID, StringTextComponent tooltip) {
+    public StandArrowItem(Properties properties, int standID, ItemInit.StandArrowTooltip tooltip) {
         super(properties);
         this.standID = standID;
-        this.tooltip = tooltip;
+        this.description = tooltip.getDescription();
+        this.tooltip = tooltip.getMoveset();
         this.tooltip2 = null;
         newSystem = true;
     }
@@ -48,6 +51,7 @@ public class StandArrowItem extends ArrowItem {
         super(properties);
         this.standID = standID;
         this.tooltip = null;
+        this.description = null;
         this.tooltip2 = tooltip;
         newSystem = false;
     }
@@ -141,7 +145,8 @@ public class StandArrowItem extends ArrowItem {
             if (!newSystem && (Util.isClientHoldingShift() && !this.tooltip2.equals("")) || newSystem && (Util.isClientHoldingShift() && !tooltip.isEmpty()))
                 tooltip.add(newSystem ? this.tooltip : new StringTextComponent(this.tooltip2));
             else if (!Util.isClientHoldingShift())
-                tooltip.add(new StringTextComponent("Hold\u00A7e Shift\u00A7f for more information!"));
+                tooltip.add(description);
+                tooltip.add(new StringTextComponent("Hold\u00A7e Shift\u00A7f for moveset!"));
         } else
             tooltip.add(newSystem ? this.tooltip : new StringTextComponent(this.tooltip2));
     }

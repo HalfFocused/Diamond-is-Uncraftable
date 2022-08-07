@@ -20,7 +20,7 @@ public class TimeSkipEffectGUI extends AbstractGui {
         if (mc.world == null) return;
         if (player == null) return;
 
-        if(!DiamondIsUncraftableConfig.CLIENT.reducedFlashes.get()) {
+        if(!DiamondIsUncraftableConfig.CLIENT.noTimeSkipFlash.get()) {
 
             Stand.getLazyOptional(player).ifPresent(props -> {
                 if (props.getTimeSkipEffectTicker() > 0) {

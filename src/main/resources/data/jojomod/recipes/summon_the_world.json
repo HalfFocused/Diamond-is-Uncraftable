@@ -1,13 +1,16 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "DDD",
+    "FDF",
     "DAD",
-    "DDD"
+    "FDF"
   ],
   "key": {
     "D": {
-      "item": "minecraft:diamond_block"
+      "item": "minecraft:diamond"
+    },
+    "F": {
+      "item": "minecraft:clock"
     },
     "A": {
       "item": "diamond_is_uncraftable:stand_arrow"

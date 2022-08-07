@@ -53,7 +53,7 @@ public class DiamondIsUncraftableConfig {
                     .defineInRange("timeStopRange", 64, -1, 300);
 
             maxStickyFingersBlocks = builder
-                    .comment("Set the maximum amount of zipped blocks a Sticky Fingers user can have at once. Clusters of over 100 zipped blocks get laggy.")
+                    .comment("Currently Unused: Set the maximum amount of zipped blocks a Sticky Fingers user can have at once. Clusters of over 100 zipped blocks get laggy.")
                     .defineInRange("stickyFingersLimit", 100, 10, 200);
 
             builder.pop();
@@ -62,7 +62,8 @@ public class DiamondIsUncraftableConfig {
 
     public static class Client {
         public final ForgeConfigSpec.BooleanValue playStandSpawnSounds;
-        public final ForgeConfigSpec.BooleanValue reducedFlashes;
+        public final ForgeConfigSpec.BooleanValue noColorInversion;
+        public final ForgeConfigSpec.BooleanValue noTimeSkipFlash;
 
         Client(ForgeConfigSpec.Builder builder) {
             builder.push("client");
@@ -71,9 +72,13 @@ public class DiamondIsUncraftableConfig {
                     .comment("Toggle Stand spawn sounds.")
                     .define("playStandSpawnSounds", true);
 
-            reducedFlashes = builder
-                    .comment("If this is true, there is no color inversion on Time Stop or purple flash on Time Skip.")
-                    .define("reducedFlashes", false);
+            noColorInversion = builder
+                    .comment("If this is true, there is no screen color inversion on Time Stop moves.")
+                    .define("noInvertedColors", false);
+
+            noTimeSkipFlash = builder
+                    .comment("If this is true, there is no purple flash on Time Skip.")
+                    .define("noTimeSkipFlash", false);
 
             builder.pop();
         }

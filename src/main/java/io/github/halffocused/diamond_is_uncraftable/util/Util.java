@@ -689,65 +689,65 @@ public class Util {
     public static class StandID {
         public static final int KING_CRIMSON = 1;
 
-        public static final int D4C = 2;
+        public static final int KILLER_QUEEN = 2;
 
-        public static final int GOLD_EXPERIENCE = 3;
+        public static final int SILVER_CHARIOT = 3;
 
-        public static final int MADE_IN_HEAVEN = 4;
+        public static final int THE_WORLD = 4;
 
-        public static final int GER = 5;
+        public static final int D4C = -1;
 
-        public static final int AEROSMITH = 6;
+        public static final int GOLD_EXPERIENCE = -2;
 
-        public static final int WEATHER_REPORT = 7;
+        public static final int MADE_IN_HEAVEN = -3;
 
-        public static final int KILLER_QUEEN = 8;
+        public static final int GER = -4;
 
-        public static final int CRAZY_DIAMOND = 9;
+        public static final int AEROSMITH = -5;
 
-        public static final int PURPLE_HAZE = 10;
+        public static final int WEATHER_REPORT = -6;
 
-        public static final int THE_EMPEROR = 11;
+        public static final int CRAZY_DIAMOND = -8;
 
-        public static final int WHITESNAKE = 12;
+        public static final int PURPLE_HAZE = -9;
 
-        public static final int CMOON = 13;
+        public static final int THE_EMPEROR = -10;
 
-        public static final int THE_WORLD = 14;
+        public static final int WHITESNAKE = -11;
 
-        public static final int STAR_PLATINUM = 15;
+        public static final int CMOON = -12;
 
-        public static final int SILVER_CHARIOT = 16;
+        public static final int STAR_PLATINUM = -14;
 
-        public static final int MAGICIANS_RED = 17;
+        public static final int MAGICIANS_RED = -16;
 
-        public static final int THE_HAND = 18;
+        public static final int THE_HAND = -17;
 
-        public static final int HIEROPHANT_GREEN = 19;
+        public static final int HIEROPHANT_GREEN = -18;
 
-        public static final int GREEN_DAY = 20;
+        public static final int GREEN_DAY = -19;
 
-        public static final int TWENTIETH_CENTURY_BOY = 21;
+        public static final int TWENTIETH_CENTURY_BOY = -20;
 
-        public static final int THE_GRATEFUL_DEAD = 22;
+        public static final int THE_GRATEFUL_DEAD = -21;
 
-        public static final int STICKY_FINGERS = 23;
+        public static final int STICKY_FINGERS = -22;
 
-        public static final int TUSK_ACT_1 = 24;
+        public static final int TUSK_ACT_1 = -23;
 
-        public static final int TUSK_ACT_2 = 25;
+        public static final int TUSK_ACT_2 = -24;
 
-        public static final int TUSK_ACT_3 = 26;
+        public static final int TUSK_ACT_3 = -25;
 
-        public static final int TUSK_ACT_4 = 27;
+        public static final int TUSK_ACT_4 = -26;
 
-        public static final int ECHOES_ACT_1 = 28;
+        public static final int ECHOES_ACT_1 = -27;
 
-        public static final int ECHOES_ACT_2 = 29;
+        public static final int ECHOES_ACT_2 = -28;
 
-        public static final int ECHOES_ACT_3 = 30;
+        public static final int ECHOES_ACT_3 = -29;
 
-        public static final int BEACH_BOY = 31;
+        public static final int BEACH_BOY = -30;
 
         /**
          * An array of Stand's that can be obtained through the {@link StandArrowItem}.
@@ -982,6 +982,12 @@ public class Util {
         public static final ResourceLocation BUBBLE = new ResourceLocation(DiamondIsUncraftable.MOD_ID, "textures/stands/bubble.png");
     }
 
+    /**
+     * Give the player an advancement from this mod. Yep, I totally cheated implementing this.
+     * @param player The player to give the achievement.
+     * @param name The name of the advancement.
+     * @return true if the player didn't have the advancement prior to this.
+     */
     public static boolean giveAdvancement(ServerPlayerEntity player, String name) {
 
         Advancement advancement = Objects.requireNonNull(player.getServer()).getAdvancementManager().getAdvancement(new ResourceLocation(DiamondIsUncraftable.MOD_ID, name));

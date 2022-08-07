@@ -56,21 +56,23 @@ public class ItemInit {
             .addAbility("Ability 3 - First Bomb Set", "If sneaking, set the First Bomb on the block below Killer Queen's master. Otherwise, set the First Bomb on Killer Queen's master's held item, if present. Requires an open hotbar slot.");
 
     public static final RegistryObject<Item> STAND_ARROW = ITEMS.register("stand_arrow", () -> new StandArrowItem(new Item.Properties().maxStackSize(1).rarity(Rarity.create("arrow", TextFormatting.YELLOW)).group(JojoItemGroup.INSTANCE), 0, "On use, grants the user the power of a STAND."));
-    public static final RegistryObject<Item> SUMMON_KING_CRIMSON = ITEMS.register("summon_king_crimson", () -> new StandArrowItem(new Item.Properties().maxStackSize(1).rarity(Rarity.create("king_crimson", TextFormatting.DARK_RED)).group(JojoItemGroup.INSTANCE), Util.StandID.KING_CRIMSON, kingCrimsonTooltip.get()));
+    public static final RegistryObject<Item> SUMMON_KING_CRIMSON = ITEMS.register("summon_king_crimson", () -> new StandArrowItem(new Item.Properties().maxStackSize(1).rarity(Rarity.create("king_crimson", TextFormatting.DARK_RED)).group(JojoItemGroup.INSTANCE), Util.StandID.KING_CRIMSON, kingCrimsonTooltip));
+    public static final RegistryObject<Item> SUMMON_KILLER_QUEEN = ITEMS.register("summon_killer_queen", () -> new StandArrowItem(new Item.Properties().maxStackSize(1).rarity(Rarity.create("killer_queen", TextFormatting.GRAY)).group(JojoItemGroup.INSTANCE), Util.StandID.KILLER_QUEEN, killerQueenTooltip));
+    public static final RegistryObject<Item> SUMMON_SILVER_CHARIOT = ITEMS.register("summon_silver_chariot", () -> new StandArrowItem(new Item.Properties().maxStackSize(1).rarity(Rarity.create("silver_chariot", TextFormatting.GRAY)).group(JojoItemGroup.INSTANCE), Util.StandID.SILVER_CHARIOT, silverChariotTooltip));
+    public static final RegistryObject<Item> SUMMON_THE_WORLD = ITEMS.register("summon_the_world", () -> new StandArrowItem(new Item.Properties().maxStackSize(1).rarity(Rarity.create("the_world", TextFormatting.YELLOW)).group(JojoItemGroup.INSTANCE), Util.StandID.THE_WORLD, theWorldTooltip));
+
+    /*
     public static final RegistryObject<Item> SUMMON_D4C = ITEMS.register("summon_d4c", () -> new StandArrowItem(new Item.Properties().maxStackSize(1).rarity(Rarity.create("d4c", TextFormatting.AQUA)).group(JojoItemGroup.INSTANCE), Util.StandID.D4C, "Allows the user to hop to parallel worlds when between two objects.\n\nControls (All abilities require user to be holding either a Shield or a Banner): \nABILITY1: Activates a short distance teleport, effectively making the user go in and out of D4C's pocket dimension rapidly.\nABILITY2: D4C throws a punch with all of it's power, this punch is double as fast and has double the range of a regular punch, upon hitting an entity, it sends it to a parallel world."));
     public static final RegistryObject<Item> SUMMON_GOLD_EXPERIENCE = ITEMS.register("summon_gold_experience", () -> new StandArrowItem(new Item.Properties().maxStackSize(1).rarity(Rarity.create("gold_experience", TextFormatting.GOLD)).group(JojoItemGroup.INSTANCE), Util.StandID.GOLD_EXPERIENCE, "Has the ability to turn objects into living creatures."));
     public static final RegistryObject<Item> SUMMON_MADE_IN_HEAVEN = ITEMS.register("summon_made_in_heaven", () -> new StandArrowItem(new Item.Properties().maxStackSize(1).rarity(Rarity.create("made_in_heaven", TextFormatting.GREEN)).group(JojoItemGroup.INSTANCE), Util.StandID.MADE_IN_HEAVEN, "Possess the ability to accelerate the passage of time. \n\nControls: \nABILITY1: Dashes forward, seemingly teleporting Made in Heaven and it's user 70 blocks forwards. \nABILITY2: Made in Heaven uses it's immense speed to dodge and counter all attacks for the next 10 seconds."));
     public static final RegistryObject<Item> SUMMON_AEROSMITH = ITEMS.register("summon_aerosmith", () -> new StandArrowItem(new Item.Properties().maxStackSize(1).rarity(Rarity.create("aerosmith", TextFormatting.LIGHT_PURPLE)).group(JojoItemGroup.INSTANCE), Util.StandID.AEROSMITH, "Remote controlled Stand, allows the user to detect entities by their breathing.\n\nControls: \nABILITY1: Shoots a piece of TNT with a fuse of only 1 second."));
     public static final RegistryObject<Item> SUMMON_WEATHER_REPORT = ITEMS.register("summon_weather_report", () -> new StandArrowItem(new Item.Properties().maxStackSize(1).rarity(Rarity.create("weather_report", TextFormatting.WHITE)).group(JojoItemGroup.INSTANCE), Util.StandID.WEATHER_REPORT, "Possess the ability to control the weather, is there something more to this ability?\n\nControls: \nABILITY1: Changes the current Weather of the world."));
-    public static final RegistryObject<Item> SUMMON_KILLER_QUEEN = ITEMS.register("summon_killer_queen", () -> new StandArrowItem(new Item.Properties().maxStackSize(1).rarity(Rarity.create("killer_queen", TextFormatting.GRAY)).group(JojoItemGroup.INSTANCE), Util.StandID.KILLER_QUEEN, killerQueenTooltip.get()));
     public static final RegistryObject<Item> SUMMON_CRAZY_DIAMOND = ITEMS.register("summon_crazy_diamond", () -> new StandArrowItem(new Item.Properties().maxStackSize(1).rarity(Rarity.create("crazy_diamond", TextFormatting.BLUE)).group(JojoItemGroup.INSTANCE), Util.StandID.CRAZY_DIAMOND, "Has the ability to revert objects to a previous state.\n\nControls: \nABILITY1: Reverts punched blocks to their previous state, repairing them."));
     public static final RegistryObject<Item> SUMMON_PURPLE_HAZE = ITEMS.register("summon_purple_haze", () -> new StandArrowItem(new Item.Properties().maxStackSize(1).rarity(Rarity.create("purple_haze", TextFormatting.DARK_PURPLE)).group(JojoItemGroup.INSTANCE), Util.StandID.PURPLE_HAZE, "Releases a deadly virus into the atmosphere. \n\nControls: \nABILITY1: Makes Purple Haze stop following it's user, allowing it's user to use it without being in danger of getting infected by it's virus."));
     public static final RegistryObject<Item> SUMMON_THE_EMPEROR = ITEMS.register("summon_the_emperor", () -> new StandArrowItem(new Item.Properties().maxStackSize(1).rarity(Rarity.create("emperor", TextFormatting.DARK_GRAY)).group(JojoItemGroup.INSTANCE), Util.StandID.THE_EMPEROR, "The Emperor acts like a gun, dealing massive damage to entities it hits."));
     public static final RegistryObject<Item> SUMMON_WHITESNAKE = ITEMS.register("summon_whitesnake", () -> new StandArrowItem(new Item.Properties().maxStackSize(1).rarity(Rarity.create("whitesnake", TextFormatting.WHITE)).group(JojoItemGroup.INSTANCE), Util.StandID.WHITESNAKE, "Possesses the ability to take players' Stands and turn them into discs."));
     public static final RegistryObject<Item> SUMMON_CMOON = ITEMS.register("summon_cmoon", () -> new StandArrowItem(new Item.Properties().maxStackSize(1).rarity(Rarity.create("cmoon", TextFormatting.DARK_GREEN)).group(JojoItemGroup.INSTANCE), Util.StandID.CMOON, "Has almost perfect control over gravity, allows the user to levitate and invert entities."));
-    public static final RegistryObject<Item> SUMMON_THE_WORLD = ITEMS.register("summon_the_world", () -> new StandArrowItem(new Item.Properties().maxStackSize(1).rarity(Rarity.create("the_world", TextFormatting.YELLOW)).group(JojoItemGroup.INSTANCE), Util.StandID.THE_WORLD, theWorldTooltip.get()));
     public static final RegistryObject<Item> SUMMON_STAR_PLATINUM = ITEMS.register("summon_star_platinum", () -> new StandArrowItem(new Item.Properties().maxStackSize(1).rarity(Rarity.create("star_platinum", TextFormatting.DARK_PURPLE)).group(JojoItemGroup.INSTANCE), Util.StandID.STAR_PLATINUM, "Allows it's user to stop the flow of time for up to 5 seconds, akin to The World, only weaker.\n\nControls: \nABILITY1: Stops time briefly and walks forwards, effectively teleporting.\nABILITY2: Dodges all attacks by stopping time and moving behind the attacking entity."));
-    public static final RegistryObject<Item> SUMMON_SILVER_CHARIOT = ITEMS.register("summon_silver_chariot", () -> new StandArrowItem(new Item.Properties().maxStackSize(1).rarity(Rarity.create("silver_chariot", TextFormatting.GRAY)).group(JojoItemGroup.INSTANCE), Util.StandID.SILVER_CHARIOT, silverChariotTooltip.get()));
     public static final RegistryObject<Item> SUMMON_MAGICIANS_RED = ITEMS.register("summon_magicians_red", () -> new StandArrowItem(new Item.Properties().maxStackSize(1).rarity(Rarity.create("magicians_red", TextFormatting.RED)).group(JojoItemGroup.INSTANCE), Util.StandID.MAGICIANS_RED, "Can control and create flames, does not make it's user flame proof.\n\nControls: \nABILITY1: Shoots out the Crossfire Hurricane, an explosive flame blast."));
     public static final RegistryObject<Item> SUMMON_THE_HAND = ITEMS.register("summon_the_hand", () -> new StandArrowItem(new Item.Properties().maxStackSize(1).rarity(Rarity.create("the_hand", TextFormatting.DARK_BLUE)).group(JojoItemGroup.INSTANCE), Util.StandID.THE_HAND, "Erases anything it's right hand swipes at, very slow Stand.\n\nControls: \nABILITY1: Swipes away the space between itself and an entity, effectively pulling it.\nABILITY2: Swipes away the space in front of it's master, teleporting them forwards."));
     public static final RegistryObject<Item> SUMMON_HIEROPHANT_GREEN = ITEMS.register("summon_hierophant_green", () -> new StandArrowItem(new Item.Properties().maxStackSize(1).rarity(Rarity.create("hierophant_green", TextFormatting.GREEN)).group(JojoItemGroup.INSTANCE), Util.StandID.HIEROPHANT_GREEN, "Long range Stand, can use it' tail to whip and throw the Emerald splash.\n\nControls: \nBasic attack + Ability ON: Whips an entity with it's tail possessing it and allowing it's user to control it."));
@@ -86,6 +88,7 @@ public class ItemInit {
     public static final RegistryObject<Item> SUMMON_ECHOES_ACT_2 = ITEMS.register("summon_echoes_act_2", () -> new StandArrowItem(new Item.Properties().maxStackSize(1).rarity(Rarity.create("echoes_act_2", TextFormatting.GREEN)).group(JojoItemGroup.INSTANCE), Util.StandID.ECHOES_ACT_2, "Can put sound effects on blocks, effects include: Sizzle, Bounce, Damage or Explode.\n\nControls: \nABILITY1: Places a sound effect 2 blocks in front of Echoes' user.\nABILITY2: Removes all currently placed sound effects."));
     public static final RegistryObject<Item> SUMMON_ECHOES_ACT_3 = ITEMS.register("summon_echoes_act_3", () -> new StandArrowItem(new Item.Properties().maxStackSize(1).rarity(Rarity.create("echoes_act_3", TextFormatting.GREEN)).group(JojoItemGroup.INSTANCE), Util.StandID.ECHOES_ACT_3, "Gains access to the Three Freeze attack which makes entities heavy and unable to move.\n\nControls: \nABILITY1: Effects all entities within 7 blocks of Echoes with Three Freeze."));
     public static final RegistryObject<Item> SUMMON_BEACH_BOY = ITEMS.register("summon_beach_boy", () -> new StandArrowItem(new Item.Properties().maxStackSize(1).rarity(Rarity.create("beach_boy", TextFormatting.LIGHT_PURPLE)).group(JojoItemGroup.INSTANCE), Util.StandID.BEACH_BOY, "Acts as a fishing rod, but can also be used to attack.\n\nStates: \nFishing rod: Acts as a normal fishing rod, can also fish in lava and End portals.\nDamage: Instead of pulling entities towards itself, Beach Boy now damages entities upon pullling them.\nHoming: Beach Boy automatically homes in on entities and damages them upon pulling.\nControls: \nSWITCHACT: Switches Beach Boy's current state."));
+    */
 
     public static final RegistryObject<Item> STAND_DISC = ITEMS.register("stand_disc", () -> new StandDiscItem(new Item.Properties().maxStackSize(1).group(JojoItemGroup.INSTANCE)));
     public static final RegistryObject<Item> THE_EMPEROR = ITEMS.register("the_emperor", () -> new EmperorItem(new Item.Properties().maxStackSize(1)));
@@ -93,26 +96,35 @@ public class ItemInit {
     public static final RegistryObject<Item> CANZONI_PREFERITE = ITEMS.register("canzoni_preferite", () -> new MusicDiscItem(69, SoundInit.CANZONI_PREFERITE, new Item.Properties().maxStackSize(1).rarity(Rarity.RARE).group(JojoItemGroup.INSTANCE)));
 
 
-    static class StandArrowTooltip{ //Unneeded? Yes!
-        private final StringTextComponent text;
+    public static class StandArrowTooltip{ //Unneeded? Yes!
+        private final StringTextComponent moveset;
+        private final StringTextComponent description;
 
         Style descriptionStyle = new Style().setColor(TextFormatting.GOLD).setUnderlined(true);
         Style abilityNameStyle = new Style().setColor(TextFormatting.GRAY);
         Style abilityDescriptionStyle = new Style().setColor(TextFormatting.DARK_GRAY).setItalic(true).setUnderlined(false);
 
-        public StandArrowTooltip(String description){
-            text = new StringTextComponent(description + "\n");
-            text.setStyle(descriptionStyle);
+        public StandArrowTooltip(String descriptionIn){
+            moveset = new StringTextComponent("");
+            description = new StringTextComponent(descriptionIn);
+            description.setStyle(descriptionStyle);
         }
 
         public StandArrowTooltip addAbility(String abilityName, String abilityDescription){
-            text.appendSibling(new StringTextComponent("\n" + abilityName + ":").setStyle(abilityNameStyle));
-            text.appendSibling(new StringTextComponent(" " + abilityDescription).setStyle(abilityDescriptionStyle));
+            if(!moveset.equals(new StringTextComponent(""))) {
+                moveset.appendSibling(new StringTextComponent("\n").setStyle(abilityNameStyle));
+            }
+            moveset.appendSibling(new StringTextComponent(abilityName + ":").setStyle(abilityNameStyle));
+            moveset.appendSibling(new StringTextComponent(" " + abilityDescription).setStyle(abilityDescriptionStyle));
             return this;
         }
 
-        public StringTextComponent get(){
-            return text;
+        public StringTextComponent getDescription(){
+            return description;
+        }
+
+        public StringTextComponent getMoveset(){
+            return moveset;
         }
     }
 }

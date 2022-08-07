@@ -364,7 +364,7 @@ public class EventClientTick {
             }
             if (event.getPhase() != EventPriority.NORMAL || player == null) return;
 
-            if(!DiamondIsUncraftableConfig.CLIENT.reducedFlashes.get()) {
+            if(!DiamondIsUncraftableConfig.CLIENT.noColorInversion.get()) {
 
                 if (props.getExperiencingTimeStop()) {
                     Minecraft.getInstance().gameRenderer.loadEntityShader(new EndermanEntity(EntityType.ENDERMAN, world));
