@@ -2,6 +2,7 @@ package io.github.halffocused.diamond_is_uncraftable.entity.stand;
 
 import io.github.halffocused.diamond_is_uncraftable.capability.Stand;
 import io.github.halffocused.diamond_is_uncraftable.init.EffectInit;
+import io.github.halffocused.diamond_is_uncraftable.init.SoundInit;
 import io.github.halffocused.diamond_is_uncraftable.util.*;
 import io.github.halffocused.diamond_is_uncraftable.util.Util;
 import io.github.halffocused.diamond_is_uncraftable.util.movesets.ChargeAttackFormat;
@@ -140,6 +141,7 @@ public class KingCrimsonEntity extends AbstractStandEntity implements IAnimatabl
                 if (opportunityTicks > 0) {
                     if (getMostRecentlyDamagedEntity() != null && spendEnergy(20, true)) { //
                         stand.setTimeSkipEffectTicker(30);
+                        world.playSound(null, getPosition(), SoundInit.KING_CRIMSON_COMBO.get(), SoundCategory.NEUTRAL, 0.65f, 1.2f);
                         if(getMostRecentlyDamagedEntity() instanceof PlayerEntity){
                             Stand.getLazyOptional(((PlayerEntity) getMostRecentlyDamagedEntity())).ifPresent(props -> {
                                 props.setTimeSkipEffectTicker(30);
@@ -325,6 +327,9 @@ public class KingCrimsonEntity extends AbstractStandEntity implements IAnimatabl
             stand.setPreventUnsummon2(true);
             stand.setExperiencingTimeSkip(true);
         });
+
+        world.playSound(null, getPosition(), SoundInit.TIME_SKIP_BEGIN.get(), SoundCategory.NEUTRAL, 1, 1);
+
         timeEraseActive = true;
         activeTimeErase = true;
         getServer().getWorld(dimension).getEntities()
@@ -337,6 +342,9 @@ public class KingCrimsonEntity extends AbstractStandEntity implements IAnimatabl
 
     private void endTimeSkip(){
         timeEraseActive = false;
+
+        world.playSound(null, getPosition(), SoundInit.TIME_SKIP_END.get(), SoundCategory.NEUTRAL, 1, 1);
+
 
         Stand.getLazyOptional(master).ifPresent(stand -> {
             stand.setTimeSkipEffectTicker(30);

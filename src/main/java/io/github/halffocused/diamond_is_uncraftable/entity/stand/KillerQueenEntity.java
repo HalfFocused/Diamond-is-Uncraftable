@@ -1,6 +1,7 @@
 package io.github.halffocused.diamond_is_uncraftable.entity.stand;
 
 import io.github.halffocused.diamond_is_uncraftable.capability.*;
+import io.github.halffocused.diamond_is_uncraftable.init.SoundInit;
 import io.github.halffocused.diamond_is_uncraftable.util.*;
 import io.github.halffocused.diamond_is_uncraftable.util.movesets.ChargeAttackFormat;
 import io.github.halffocused.diamond_is_uncraftable.util.movesets.HoveringMoveHandler;
@@ -68,6 +69,7 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
 
     AttackFramedata detonateData = new AttackFramedata()
             .addMessageFrame(39, 1, null, null)
+            .addMessageFrame(29, 5, null, null)
             .setAttackDuration(43);
 
     AttackFramedata blockBombData = new AttackFramedata()
@@ -602,7 +604,6 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
     @Override
     public void messageFrame(int message1, Object message2, Object message3) {
         if (message1 == 1) {
-
             for (ItemStack stack : master.inventory.mainInventory) {
                 if (stack.getOrCreateTag().getBoolean("bomb") && stack.getOrCreateTag().getUniqueId("ownerUUID").equals(master.getUniqueID())) {
                     CompoundNBT nbt = stack.getOrCreateTag();
@@ -645,7 +646,7 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
 
                         currentWorld.loadedTileEntityList
                                 .forEach(tile -> {
-                                    if(tile instanceof LockableTileEntity){
+                                    if(tile instanceof LockableTileEntity && !((LockableTileEntity) tile).isEmpty()){
                                         int size = ((LockableTileEntity) tile).getSizeInventory();
                                         for(int i = 0; i < size; i++){
                                             if(((LockableTileEntity) tile).getStackInSlot(i).getOrCreateTag().getBoolean("bomb") && ((LockableTileEntity) tile).getStackInSlot(i).getOrCreateTag().getUniqueId("ownerUUID").equals(master.getUniqueID())){
@@ -831,6 +832,10 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
             }
         }
 
+        if(message1 == 5){
+            world.playSound(null, this.getPosition(), SoundInit.DETONATION_CLICK.get(), SoundCategory.NEUTRAL, 2f, 1);
+        }
+
     }
 
     @Override
@@ -854,7 +859,7 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
 
                 currentWorld.loadedTileEntityList
                         .forEach(tile -> {
-                            if (tile instanceof LockableTileEntity) {
+                            if (tile instanceof LockableTileEntity && !((LockableTileEntity) tile).isEmpty()) {
                                 int size = ((LockableTileEntity) tile).getSizeInventory();
                                 for (int i = 0; i < size; i++) {
                                     if (((LockableTileEntity) tile).getStackInSlot(i).getOrCreateTag().getBoolean("bomb") && ((LockableTileEntity) tile).getStackInSlot(i).getOrCreateTag().getUniqueId("ownerUUID").equals(master.getUniqueID())) {

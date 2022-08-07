@@ -35,7 +35,7 @@ public class SoundInit {
     public static final RegistryObject<SoundEvent> STOP_TIME = SOUNDS.register("stoptime", () -> new SoundEvent(new ResourceLocation(DiamondIsUncraftable.MOD_ID, "stoptime")));
     public static final RegistryObject<SoundEvent> RESUME_TIME = SOUNDS.register("resumetime", () -> new SoundEvent(new ResourceLocation(DiamondIsUncraftable.MOD_ID, "resumetime")));
     public static final RegistryObject<SoundEvent> MUDARUSH = SOUNDS.register("mudarush", () -> new SoundEvent(new ResourceLocation(DiamondIsUncraftable.MOD_ID, "mudarush")));
-    public static final RegistryObject<SoundEvent> THE_WORLD_TELEPORT = SOUNDS.register("the_world_teleport", () -> new SoundEvent(new ResourceLocation(DiamondIsUncraftable.MOD_ID, "the_world_teleport")));
+    //public static final RegistryObject<SoundEvent> THE_WORLD_TELEPORT = SOUNDS.register("the_world_teleport", () -> new SoundEvent(new ResourceLocation(DiamondIsUncraftable.MOD_ID, "the_world_teleport")));
     public static final RegistryObject<SoundEvent> SPAWN_STAR_PLATINUM = SOUNDS.register("spawn_star_platinum", () -> new SoundEvent(new ResourceLocation(DiamondIsUncraftable.MOD_ID, "spawn_star_platinum")));
     public static final RegistryObject<SoundEvent> ORARUSH = SOUNDS.register("orarush", () -> new SoundEvent(new ResourceLocation(DiamondIsUncraftable.MOD_ID, "orarush")));
     public static final RegistryObject<SoundEvent> STAR_PLATINUM_THE_WORLD = SOUNDS.register("star_platinum_the_world", () -> new SoundEvent(new ResourceLocation(DiamondIsUncraftable.MOD_ID, "star_platinum_the_world")));
@@ -66,9 +66,34 @@ public class SoundInit {
     public static final RegistryObject<SoundEvent> SPAWN_BEACH_BOY = SOUNDS.register("spawn_beach_boy", () -> new SoundEvent(new ResourceLocation(DiamondIsUncraftable.MOD_ID, "spawn_beach_boy")));
     public static final RegistryObject<SoundEvent> SPAWN_SOFT_AND_WET = SOUNDS.register("spawn_soft_and_wet", () -> new SoundEvent(new ResourceLocation(DiamondIsUncraftable.MOD_ID, "spawn_soft_and_wet")));
 
+    /*
+    Silver Chariot
+     */
     public static final RegistryObject<SoundEvent> ARMOR_OFF_1 = SOUNDS.register("silverchariotarmoroff1", () -> new SoundEvent(new ResourceLocation(DiamondIsUncraftable.MOD_ID, "silverchariotarmoroff1")));
     public static final RegistryObject<SoundEvent> ARMOR_OFF_2 = SOUNDS.register("silverchariotarmoroff2", () -> new SoundEvent(new ResourceLocation(DiamondIsUncraftable.MOD_ID, "silverchariotarmoroff2")));
     public static final RegistryObject<SoundEvent> ARMOR_OFF_3 = SOUNDS.register("silverchariotarmoroff3", () -> new SoundEvent(new ResourceLocation(DiamondIsUncraftable.MOD_ID, "silverchariotarmoroff3")));
+
+    /*
+    Killer Queen
+    */
+
+    public static final RegistryObject<SoundEvent> DETONATION_CLICK = SOUNDS.register("kq_click", () -> new SoundEvent(new ResourceLocation(DiamondIsUncraftable.MOD_ID, "kq_click")));
+
+    /*
+    The World
+     */
+    public static final RegistryObject<SoundEvent> THE_WORLD_TIME_STOP = SOUNDS.register("twstop", () -> new SoundEvent(new ResourceLocation(DiamondIsUncraftable.MOD_ID, "twstop")));
+    public static final RegistryObject<SoundEvent> THE_WORLD_TIME_RESUME = SOUNDS.register("twresume", () -> new SoundEvent(new ResourceLocation(DiamondIsUncraftable.MOD_ID, "twresume")));
+    public static final RegistryObject<SoundEvent> THE_WORLD_SUMMON = SOUNDS.register("twsummon", () -> new SoundEvent(new ResourceLocation(DiamondIsUncraftable.MOD_ID, "twsummon")));
+    public static final RegistryObject<SoundEvent> THE_WORLD_TELEPORT = SOUNDS.register("twteleport", () -> new SoundEvent(new ResourceLocation(DiamondIsUncraftable.MOD_ID, "twteleport")));
+
+    /*
+    King Crimson
+    */
+    public static final RegistryObject<SoundEvent> KING_CRIMSON_COMBO = SOUNDS.register("kccombo", () -> new SoundEvent(new ResourceLocation(DiamondIsUncraftable.MOD_ID, "kccombo")));
+    public static final RegistryObject<SoundEvent> TIME_SKIP_AMBIANCE = SOUNDS.register("kcskipambiance", () -> new SoundEvent(new ResourceLocation(DiamondIsUncraftable.MOD_ID, "kcskipambiance")));
+    public static final RegistryObject<SoundEvent> TIME_SKIP_END = SOUNDS.register("kcskipend", () -> new SoundEvent(new ResourceLocation(DiamondIsUncraftable.MOD_ID, "kcskipend")));
+    public static final RegistryObject<SoundEvent> TIME_SKIP_BEGIN = SOUNDS.register("kcskipstart", () -> new SoundEvent(new ResourceLocation(DiamondIsUncraftable.MOD_ID, "kcskipstart")));
 
 
     /*

@@ -342,6 +342,7 @@ public class TheWorldEntity extends AbstractStandEntity implements IMomentum, IO
         if (attacking) return;
 
         if(timeStopped){
+            world.playSound(null, getPosition(), SoundInit.THE_WORLD_TIME_RESUME.get(), SoundCategory.NEUTRAL, 1, 1);
             timeStopped = false;
         }else{
             Stand.getLazyOptional(master).ifPresent(props -> {
@@ -357,6 +358,8 @@ public class TheWorldEntity extends AbstractStandEntity implements IMomentum, IO
         if(!world.isRemote){
 
             if(!timeStopped && noTeleportPeriod == 0 && spendEnergy(40)) {
+                world.playSound(null, getPosition(), SoundInit.THE_WORLD_TELEPORT.get(), SoundCategory.NEUTRAL, 1, 1);
+
                 master.fallDistance = 0;
                 Util.teleportUntilWall(master, master.getLookVec(), 4);
                 Stand.getLazyOptional(master).ifPresent(stand -> {
@@ -379,7 +382,7 @@ public class TheWorldEntity extends AbstractStandEntity implements IMomentum, IO
     public void playSpawnSound() {
         Stand.getLazyOptional(getMaster()).ifPresent(props -> {
             if (!props.getAbility())
-                world.playSound(null, getMaster().getPosition(), SoundInit.SUMMON_STAND.get(), SoundCategory.NEUTRAL, 5, 1);
+                world.playSound(null, getMaster().getPosition(), SoundInit.THE_WORLD_SUMMON.get(), SoundCategory.NEUTRAL, 2, 1);
         });
     }
 
@@ -665,6 +668,11 @@ public class TheWorldEntity extends AbstractStandEntity implements IMomentum, IO
                 }
 
                 if (!ability || !spendEnergy(11 / 20.0, true)) {
+
+                    if(timestopTick > 0){
+                        world.playSound(null, getPosition(), SoundInit.THE_WORLD_TIME_RESUME.get(), SoundCategory.NEUTRAL, 1, 1);
+                    }
+
                     timestopTick = 0;
                     master.setInvulnerable(false);
                     timeStopped = false;
@@ -840,6 +848,7 @@ public class TheWorldEntity extends AbstractStandEntity implements IMomentum, IO
     public void messageFrame(int message1, Object message2, Object message3) {
         if(message1 == 1){
             if(!world.isRemote()) {
+                world.playSound(null, getPosition(), SoundInit.THE_WORLD_TIME_STOP.get(), SoundCategory.NEUTRAL, 1, 1);
                 timeStopped = true;
             }
         }
@@ -867,6 +876,7 @@ public class TheWorldEntity extends AbstractStandEntity implements IMomentum, IO
     public void chargeAttackRelease(int ticksCharged) {
         if(!timeStopped) {
 
+            world.playSound(null, getPosition(), SoundInit.THE_WORLD_TELEPORT.get(), SoundCategory.NEUTRAL, 1, 1);
             if (getTauntDistance(ticksCharged) > 0) {
 
                 Stand.getLazyOptional(master).ifPresent(effect -> {
