@@ -69,7 +69,7 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
 
     AttackFramedata detonateData = new AttackFramedata()
             .addMessageFrame(39, 1, null, null)
-            .addMessageFrame(29, 5, null, null)
+            .addMessageFrame(32, 5, null, null)
             .setAttackDuration(43);
 
     AttackFramedata blockBombData = new AttackFramedata()
