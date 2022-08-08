@@ -1,8 +1,6 @@
 package io.github.halffocused.diamond_is_uncraftable.init;
 
 import io.github.halffocused.diamond_is_uncraftable.DiamondIsUncraftable;
-import io.github.halffocused.diamond_is_uncraftable.entity.CameraEntity;
-import io.github.halffocused.diamond_is_uncraftable.entity.KingCrimsonAfterimageEntity;
 import io.github.halffocused.diamond_is_uncraftable.entity.StandArrowEntity;
 import io.github.halffocused.diamond_is_uncraftable.entity.stand.*;
 import io.github.halffocused.diamond_is_uncraftable.entity.stand.attack.*;
@@ -339,16 +337,4 @@ public class EntityInit {
                     () -> EntityType.Builder.<EchoesAct3PunchEntity>create(EchoesAct3PunchEntity::new, EntityClassification.MISC)
                             .disableSummoning().size(0.2f, 0.2f)
                             .build(new ResourceLocation(DiamondIsUncraftable.MOD_ID, "echoes_act_3_punch").toString()));
-
-    public static final RegistryObject<EntityType<KingCrimsonAfterimageEntity>> KING_CRIMSON_AFTERIMAGE = ENTITY_TYPES
-            .register("king_crimson_afterimage",
-                    () -> EntityType.Builder.<KingCrimsonAfterimageEntity>create(KingCrimsonAfterimageEntity::new, EntityClassification.MISC)
-                            .disableSummoning()
-                            .build(new ResourceLocation(DiamondIsUncraftable.MOD_ID, "king_crimson_afterimage").toString()));
-
-    public static final RegistryObject<EntityType<CameraEntity>> CAMERA = ENTITY_TYPES
-            .register("camera",
-                    () -> EntityType.Builder.<CameraEntity>create(CameraEntity::new, EntityClassification.MISC)
-                            .disableSummoning().size(0.1f, 0.1f)
-                            .build(new ResourceLocation(DiamondIsUncraftable.MOD_ID, "camera").toString()));
 }

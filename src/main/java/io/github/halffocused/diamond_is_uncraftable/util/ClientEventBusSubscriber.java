@@ -104,9 +104,6 @@ public class ClientEventBusSubscriber {
         RenderingRegistry.registerEntityRenderingHandler(EntityInit.ECHOES_ACT_3.get(), EchoesAct3Renderer::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityInit.ECHOES_ACT_3_PUNCH.get(), manager -> new StandAttackRenderer<>(manager, new EchoesAct3PunchModel()));
 
-        RenderingRegistry.registerEntityRenderingHandler(EntityInit.KING_CRIMSON_AFTERIMAGE.get(), KingCrimsonAfterimageRenderer::new);
-        RenderingRegistry.registerEntityRenderingHandler(EntityInit.CAMERA.get(), CameraRenderer::new);
-
         EventClientTick.init(event.getMinecraftSupplier().get());
     }
 }
