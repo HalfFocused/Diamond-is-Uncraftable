@@ -917,15 +917,6 @@ public class TheWorldEntity extends AbstractStandEntity implements IMomentum, IO
     }
 
     @Override
-    public boolean attackEntityFrom(DamageSource damageSource, float damage) {
-        if (master == null || damageSource.getTrueSource() == master || damageSource == DamageSource.CACTUS || damageSource == DamageSource.FALL || Util.isTimeStoppedForEntity(master))
-            return false; //Prevents Stands from taking damage they shouldn't, fall damage, cactus damage, etc.
-
-        master.attackEntityFrom(damageSource, damage * 0.65f);
-        return false;
-    }
-
-    @Override
     public void onMasterAttacked(Entity damager, float damage) {
 
         noTeleportPeriod = 40;
@@ -940,5 +931,10 @@ public class TheWorldEntity extends AbstractStandEntity implements IMomentum, IO
 
     private double getTauntDistance(int ticks){
         return ticks < 15 ? 0 : Math.min(ticks / 12.0, 8);
+    }
+
+    @Override
+    public float getDamageSharingPercentage(){
+        return 0.65f;
     }
 }

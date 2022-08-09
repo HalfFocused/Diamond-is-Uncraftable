@@ -191,21 +191,6 @@ public class SilverChariotEntity extends AbstractStandEntity implements IAnimata
     }
 
     /**
-     * Redirects attacks from Silver Chariot to it's master, increasing damage if it's armor is off.
-     *
-     * @param damageSource The {@link DamageSource} damaging the Stand.
-     * @param damage       The amount of damage taken.
-     * @return Always returns <code>false</code> to prevent the Stand from taking damage, and because I'm paranoid.
-     */
-    @Override
-    public boolean attackEntityFrom(DamageSource damageSource, float damage) {
-        if (damageSource.getTrueSource() == getMaster() || damageSource == DamageSource.CACTUS || damageSource == DamageSource.FALL || Util.isTimeStoppedForEntity(master))
-            return false;
-        getMaster().attackEntityFrom(damageSource, hasArmor() ? damage * 0.35f : damage * 1.25f);
-        return false;
-    }
-
-    /**
      * Removes the speed {@link net.minecraft.potion.Effect} from the Stand's master when it's unsummoned.
      */
     @Override
@@ -417,5 +402,10 @@ public class SilverChariotEntity extends AbstractStandEntity implements IAnimata
                 });
             }
         }
+    }
+
+    @Override
+    public float getDamageSharingPercentage(){
+        return hasArmor() ? 0.35f : 1.25f;
     }
 }

@@ -252,7 +252,7 @@ public class AttackFramedata {
                         if (bombTarget.isActiveItemStackBlocking()) {
                             entity.getHeldEquipment().forEach(itemStack -> {
                                 if (itemStack.getItem().equals(Items.SHIELD)) {
-                                    itemStack.damageItem(50, ((PlayerEntity) entity), (playerEntity) -> {
+                                    itemStack.damageItem(1, ((PlayerEntity) entity), (playerEntity) -> {
                                         playerEntity.sendBreakAnimation(Hand.MAIN_HAND);
                                         playerEntity.sendBreakAnimation(Hand.OFF_HAND);
                                     });
@@ -268,22 +268,21 @@ public class AttackFramedata {
 
                     Stand stand = Stand.getCapabilityFromPlayer(standEntityIn.getMaster());
 
-                    if(bombTarget.getHealth() / bombTarget.getMaxHealth() >= 0.16 && bombTarget.getHealth() >= 3) {
-                        ((KillerQueenEntity) standEntityIn).bombEntity = bombTarget;
-                        stand.setBombEntityId(bombTarget.getEntityId());
-                    }else if (!blockedFlag){
+
+                    if(bombTarget.getHealth() / bombTarget.getMaxHealth() <= 0.15 || bombTarget.getHealth() <= 3){
                         ((KillerQueenEntity) standEntityIn).bombEntity = bombTarget;
                         stand.setBombEntityId(bombTarget.getEntityId());
                         standEntityIn.getController().setMoveActive(8);
                     }else{
-                        ((KillerQueenEntity) standEntityIn).removeFirstBombFromAll();
-                        if(bombTarget.isActiveItemStackBlocking()){
+                        if(blockedFlag){
                             ((LivingEntity) entity).getActiveItemStack().getOrCreateTag().putBoolean("bomb", true);
                             ((LivingEntity) entity).getActiveItemStack().getOrCreateTag().putUniqueId("ownerUUID", standEntityIn.getMaster().getUniqueID());
                             ((LivingEntity) entity).getHeldItemMainhand().setDisplayName(new StringTextComponent("Bomb"));
+                        }else{
+                            ((KillerQueenEntity) standEntityIn).bombEntity = bombTarget;
+                            stand.setBombEntityId(bombTarget.getEntityId());
                         }
                     }
-
                 }
             }
         }

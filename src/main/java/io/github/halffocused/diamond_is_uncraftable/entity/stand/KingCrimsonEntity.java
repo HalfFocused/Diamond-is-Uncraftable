@@ -67,8 +67,7 @@ public class KingCrimsonEntity extends AbstractStandEntity implements IAnimatabl
             .setAttackDuration(25);
 
     AttackFramedata epitaphChopAttack = new AttackFramedata()
-            .addMenacingFrame(3)
-            .addDamageFrame(11, 17, Vec3d.ZERO, 2.0, 1)
+            .addDamageFrame(11, 17, Vec3d.ZERO, 2.0, 3)
             .setAttackDuration(30);
 
     AttackFramedata timeErase = new AttackFramedata()
@@ -173,7 +172,7 @@ public class KingCrimsonEntity extends AbstractStandEntity implements IAnimatabl
 
         Stand.getLazyOptional(master).ifPresent(stand -> {
             ability = stand.getAbility();
-            if (opportunityTicks > 0 && stand.getCooldown() <= 0 && getMostRecentlyDamagedEntity() != null && energyAtThreshold(15)) {
+            if (opportunityTicks > 0 && getMostRecentlyDamagedEntity() != null && energyAtThreshold(15)) {
                 Util.spawnParticle(this, 6, this.getPosX(), this.getPosY() + this.getEyeHeight() - 0.5, this.getPosZ(), 1.2, 2.5, 1.2, 1);
             }
         });
@@ -234,6 +233,10 @@ public class KingCrimsonEntity extends AbstractStandEntity implements IAnimatabl
                         endTimeSkip();
                         epitaphEndingOpportunityTicks = 40;
                     }
+
+                    Stand.getLazyOptional(master).ifPresent(stand -> {
+                        stand.setCounterBuffer(false);
+                    });
                 }else{
                     if(!spendEnergy(0.45, true)){ //Channeled energy spending ignores actionability
                         endTimeSkip();
@@ -249,12 +252,6 @@ public class KingCrimsonEntity extends AbstractStandEntity implements IAnimatabl
             if(epitaphTicks > 0){
                 Util.spawnParticle(this, 6, master.getPosX(), master.getPosY() + 0.75, master.getPosZ(), 1.3, 1.45, 1.3, 1);
                 Util.spawnParticle(this, 7, master.getPosX(), master.getPosY() + 0.75, master.getPosZ(), 1.3, 1.45, 1.3, 1);
-            }
-
-            if(epitaphTicks == 0){
-                Stand.getLazyOptional(master).ifPresent(stand -> {
-                    stand.setCounterBuffer(false);
-                });
             }
 
             epitaphTicks = Math.max(epitaphTicks - 1, -1);
@@ -302,7 +299,7 @@ public class KingCrimsonEntity extends AbstractStandEntity implements IAnimatabl
 
         if(message1 == 3){
             if(executionTarget != null){
-                executionTarget.attackEntityFrom(DamageSource.causeMobDamage(master), 45);
+                Util.dealStandDamage(this, executionTarget, 45f, Vec3d.ZERO, false, null);
                 executionTarget.setNoGravity(false);
                 clipToPosition = false;
             }

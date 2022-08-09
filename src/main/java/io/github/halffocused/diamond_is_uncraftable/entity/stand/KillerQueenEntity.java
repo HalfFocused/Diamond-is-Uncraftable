@@ -662,18 +662,15 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
 
                         currentWorld.getEntities()
                                 .filter(entity -> entity instanceof ItemEntity)
-                                .forEach(entity ->
-                                        StandEffects.getLazyOptional(entity).ifPresent(effects -> {
-                                            if (effects.isBomb()) {
-                                                PlayerEntity player = world.getPlayerByUuid(effects.getStandUser());
-                                                if (player != null && player.equals(master)) {
+                                .forEach(entity -> {
+                                            ItemEntity itemEntity = ((ItemEntity) entity);
+                                            CompoundNBT nbt = itemEntity.getItem().getOrCreateTag();
+                                            if (nbt.getBoolean("bomb") && nbt.getUniqueId("ownerUUID").equals(master.getUniqueID())) {
+                                                Util.standExplosion(master, this.world, entity.getPositionVec(), explosionRange, 3, maxExplosionDamage, minExplosionDamage);
 
-                                                    Util.standExplosion(master, this.world, entity.getPositionVec(), explosionRange, 3, maxExplosionDamage, minExplosionDamage);
-
-                                                    entity.remove();
-                                                }
+                                                entity.remove();
                                             }
-                                        })
+                                        }
                                 );
                         currentWorld.getEntities()
                                 .filter(entity -> entity instanceof LivingEntity)
@@ -883,6 +880,7 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
                                     CompoundNBT nbt = item.getOrCreateTag();
                                     if (nbt.getUniqueId("ownerUUID").equals(master.getUniqueID())) {
                                         nbt.remove("bomb");
+                                        nbt.remove("ownerUUID");
                                         item.clearCustomName();
                                     }
                                 }));

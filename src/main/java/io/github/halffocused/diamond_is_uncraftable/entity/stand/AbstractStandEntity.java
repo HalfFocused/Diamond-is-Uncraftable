@@ -211,7 +211,12 @@ public abstract class AbstractStandEntity extends MobEntity implements IEntityAd
         if (master == null || damageSource.getTrueSource() == master || damageSource == DamageSource.CACTUS || damageSource == DamageSource.FALL || Util.isTimeStoppedForEntity(master))
             return false; //Prevents Stands from taking damage they shouldn't, fall damage, cactus damage, etc.
 
-        master.attackEntityFrom(damageSource, damage * 0.5f);
+        Stand.getLazyOptional(master).ifPresent(stand -> {
+            if(!stand.getExperiencingTimeStop() && !stand.getExperiencingTimeSkip()) {
+                master.attackEntityFrom(damageSource, damage * getDamageSharingPercentage());
+            }
+        });
+
         return false;
     }
 
@@ -571,5 +576,12 @@ public abstract class AbstractStandEntity extends MobEntity implements IEntityAd
             doublePercentage.set(stand.getCurrentStandEnergy() / stand.getMaxStandEnergy());
         });
         return doublePercentage.get();
+    }
+
+    /**
+     * @return the modifier applied to damage received by the stand before dealt to the stand's master.
+     */
+    public float getDamageSharingPercentage(){
+        return 0.5f;
     }
 }
