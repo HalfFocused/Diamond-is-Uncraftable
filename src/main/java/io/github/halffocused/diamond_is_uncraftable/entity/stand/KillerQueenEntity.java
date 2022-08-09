@@ -850,7 +850,8 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
     /*
      Removes first bomb status from any entity, block, or item. Items have their names reset.
      */
-    public void removeFirstBombFromAll(){
+    public void removeFirstBombFromAll() {
+        if (!world.isRemote()) {
             bombEntity = null;
             Stand stand = Stand.getCapabilityFromPlayer(master);
             stand.setBombEntityId(0);
@@ -943,7 +944,7 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
                         .filter(entity -> entity instanceof ItemFrameEntity)
                         .forEach(itemFrame -> {
                             ItemFrameEntity frame = (ItemFrameEntity) itemFrame;
-                            if(frame.getDisplayedItem().getOrCreateTag().getBoolean("bomb") && frame.getDisplayedItem().getOrCreateTag().getUniqueId("ownerUUID").equals(master.getUniqueID())){
+                            if (frame.getDisplayedItem().getOrCreateTag().getBoolean("bomb") && frame.getDisplayedItem().getOrCreateTag().getUniqueId("ownerUUID").equals(master.getUniqueID())) {
                                 CompoundNBT nbt = frame.getDisplayedItem().getOrCreateTag();
                                 nbt.remove("bomb");
                                 nbt.remove("ownerUUID");
@@ -954,5 +955,6 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
             stand.setBombEntityId(0);
             stand.setBlockPos(BlockPos.ZERO);
         }
+    }
 }
 
