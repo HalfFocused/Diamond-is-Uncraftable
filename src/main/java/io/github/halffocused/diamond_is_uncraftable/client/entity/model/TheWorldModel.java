@@ -25,24 +25,6 @@ public class TheWorldModel extends AnimatedGeoModel {
 
     @Override
     public ResourceLocation getTextureLocation(Object entity) {
-
-
-        AtomicReference<ResourceLocation> returnValue = new AtomicReference<>();
-        returnValue.set(new ResourceLocation(DiamondIsUncraftable.MOD_ID, "textures/stands/the_world.png"));
-
-        if(entity instanceof TheWorldEntity) {
-            Stand.getLazyOptional(((TheWorldEntity) entity).getMaster()).ifPresent(props -> {
-
-                if (props.getAbilityActive() && !DiamondIsUncraftableConfig.CLIENT.noColorInversion.get()) {
-                    returnValue.set(new ResourceLocation(DiamondIsUncraftable.MOD_ID, "textures/stands/the_world_invert.png"));
-                }else{
-                    returnValue.set(new ResourceLocation(DiamondIsUncraftable.MOD_ID, "textures/stands/the_world.png"));
-                }
-            });
-
-            return returnValue.get();
-        }
-
         return new ResourceLocation(DiamondIsUncraftable.MOD_ID, "textures/stands/the_world.png");
     }
 
