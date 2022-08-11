@@ -80,10 +80,6 @@ public class HoveringMoveHandler {
             handleActionBar(specialKeyDown);
         });
 
-
-        unactionableTicksLastTick = unactionableTicks;
-        unactionableTicks = Math.max(unactionableTicks - 1, 0);
-
         for(Move move : moveList){ //Tick active moves
             if(move.getFramedata().isActive()){
                 move.getFramedata().attackTick(stand);
@@ -106,6 +102,9 @@ public class HoveringMoveHandler {
                 props.setPreventUnsummon(false);
             });
         }
+
+        unactionableTicksLastTick = unactionableTicks;
+        unactionableTicks = Math.max(unactionableTicks - 1, 0);
 
         if (isMoveActive()) {
             if(getActiveMove().getRepositionDistance() > 0 && !standHasAttackPosition){

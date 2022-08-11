@@ -38,8 +38,6 @@ public class TheWorldModel extends AnimatedGeoModel {
                 }else{
                     returnValue.set(new ResourceLocation(DiamondIsUncraftable.MOD_ID, "textures/stands/the_world.png"));
                 }
-
-
             });
 
             return returnValue.get();

@@ -1419,6 +1419,145 @@
 				}
 			}
 		},
+		"timestuck": {
+			"loop": true,
+			"animation_length": 1,
+			"bones": {
+				"BodyBase": {
+					"position": {
+						"vector": [-4.9, 1, 22.2]
+					}
+				},
+				"Chest": {
+					"rotation": {
+						"vector": [12, 5, 0]
+					}
+				},
+				"Neck": {
+					"rotation": {
+						"vector": [0, 9, 0]
+					}
+				},
+				"HeadBase": {
+					"rotation": {
+						"vector": [2, 37, -8]
+					}
+				},
+				"RightShoulder": {
+					"rotation": {
+						"vector": [-58, 11, 24],
+						"easing": "linear"
+					},
+					"position": {
+						"vector": [0.1, 0.7, -0.2],
+						"easing": "linear"
+					}
+				},
+				"Rightarm": {
+					"rotation": {
+						"vector": [-13, 42, 12]
+					}
+				},
+				"righthand": {
+					"rotation": {
+						"vector": [-14, 23, -35]
+					},
+					"position": {
+						"vector": [0, 0, 0]
+					}
+				},
+				"Sword": {
+					"rotation": {
+						"vector": [61, 4, 0]
+					},
+					"position": {
+						"vector": [0, 0.1, -4.3]
+					},
+					"scale": {
+						"vector": [1, 1, 1]
+					}
+				},
+				"rightshoulderarm": {
+					"rotation": {
+						"vector": [37, -8, 6]
+					}
+				},
+				"Abs": {
+					"rotation": {
+						"vector": [-9, -13, 0]
+					}
+				},
+				"waist": {
+					"rotation": {
+						"vector": [23, -35, 0]
+					},
+					"position": {
+						"vector": [0, 0, -15.1]
+					}
+				},
+				"Legs": {
+					"rotation": {
+						"vector": [-17, 0, 0]
+					}
+				},
+				"rightleg": {
+					"rotation": {
+						"vector": [-44, 18, -1]
+					}
+				},
+				"Leftlegarmor2": {
+					"rotation": {
+						"vector": [5, 0, 0]
+					}
+				},
+				"LeftFoot2": {
+					"rotation": {
+						"vector": [50, 0, 0]
+					},
+					"position": {
+						"vector": [0, 0.9, 1.6]
+					}
+				},
+				"leftleg": {
+					"rotation": {
+						"vector": [-7, 0, -9]
+					}
+				},
+				"leftShoulder": {
+					"rotation": {
+						"vector": [56, 0, -8]
+					}
+				},
+				"Rightarm2": {
+					"rotation": {
+						"vector": [-22, 0, 33]
+					}
+				},
+				"lefthand": {
+					"rotation": {
+						"vector": [0, 0, 45]
+					}
+				},
+				"leftshoulderarm": {
+					"rotation": {
+						"vector": [-18, 0, -12]
+					}
+				},
+				"LeftFoot3": {
+					"rotation": {
+						"vector": [16, 0, 0]
+					},
+					"position": {
+						"vector": [0, 0, 0.1]
+					}
+				},
+				"Sword2": {
+					"scale": {
+						"vector": [0, 0, 0]
+					}
+				}
+			}
+		},
 		"horahora": {
 			"loop": true,
 			"animation_length": 2.375,
