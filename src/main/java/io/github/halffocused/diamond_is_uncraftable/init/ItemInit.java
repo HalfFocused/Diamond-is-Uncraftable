@@ -93,8 +93,10 @@ public class ItemInit {
     public static final RegistryObject<Item> STAND_DISC = ITEMS.register("stand_disc", () -> new StandDiscItem(new Item.Properties().maxStackSize(1).group(JojoItemGroup.INSTANCE)));
     public static final RegistryObject<Item> THE_EMPEROR = ITEMS.register("the_emperor", () -> new EmperorItem(new Item.Properties().maxStackSize(1)));
     public static final RegistryObject<Item> BEACH_BOY = ITEMS.register("beach_boy", () -> new BeachBoyItem(new Item.Properties().maxStackSize(1)));
-    public static final RegistryObject<Item> CANZONI_PREFERITE = ITEMS.register("canzoni_preferite", () -> new MusicDiscItem(69, SoundInit.CANZONI_PREFERITE, new Item.Properties().maxStackSize(1).rarity(Rarity.RARE).group(JojoItemGroup.INSTANCE)));
 
+    /*
+    public static final RegistryObject<Item> CANZONI_PREFERITE = ITEMS.register("canzoni_preferite", () -> new MusicDiscItem(69, SoundInit.CANZONI_PREFERITE, new Item.Properties().maxStackSize(1).rarity(Rarity.RARE).group(JojoItemGroup.INSTANCE)));
+    */
 
     public static class StandArrowTooltip{ //Unneeded? Yes!
         private final StringTextComponent moveset;
