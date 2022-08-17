@@ -83,8 +83,8 @@ public class DiamondIsUncraftable {
 
     @SubscribeEvent
     public void registerFeatures(RegistryEvent.Register<Feature<?>> args) {
-        DesertStructurePieces.DESERT_STRUCTURE_PIECE = Registry.register(Registry.STRUCTURE_PIECE, STRUCTURE, DesertStructurePieces.Piece::new);
-        args.getRegistry().register(new DesertStructure(NoFeatureConfig::deserialize).setRegistryName(STRUCTURE));
+        //DesertStructurePieces.DESERT_STRUCTURE_PIECE = Registry.register(Registry.STRUCTURE_PIECE, STRUCTURE, DesertStructurePieces.Piece::new);
+        //args.getRegistry().register(new DesertStructure(NoFeatureConfig::deserialize).setRegistryName(STRUCTURE));
     }
 
     private void setup(FMLCommonSetupEvent event) {
@@ -98,11 +98,13 @@ public class DiamondIsUncraftable {
         StandPerWorldCapability.register();
         CombatCapability.register();
 
+        /*
         DeferredWorkQueue.runLater(() -> ForgeRegistries.BIOMES.forEach(biome -> { //This is deprecated for no reason at all.
             if (biome.getCategory() != Biome.Category.DESERT) return;
             biome.addStructure(DESERT_STRUCTURE.withConfiguration(IFeatureConfig.NO_FEATURE_CONFIG));
             biome.addFeature(GenerationStage.Decoration.UNDERGROUND_STRUCTURES, DESERT_STRUCTURE.withConfiguration(IFeatureConfig.NO_FEATURE_CONFIG).withPlacement(Placement.NOPE.configure(IPlacementConfig.NO_PLACEMENT_CONFIG)));
         }));
+         */
     }
 
     @Deprecated //Replace with RegisterCommandsEvent in 1.16, todo.
