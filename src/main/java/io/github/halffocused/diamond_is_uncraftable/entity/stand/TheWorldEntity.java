@@ -399,11 +399,7 @@ public class TheWorldEntity extends AbstractStandEntity implements IMomentum, IO
                             controller.cancelActiveMoves();
                         }
 
-                    }else if (this.ticksExisted % 12 == 0){
-                        props2.setMomentum(Math.max(0, props2.getMomentum() - 1));
                     }
-                }else if (this.ticksExisted % 12 == 0){
-                    props2.setMomentum(Math.max(0, props2.getMomentum() - 1));
                 }
 
                 ability = timeStopped;
@@ -807,7 +803,7 @@ public class TheWorldEntity extends AbstractStandEntity implements IMomentum, IO
     }
 
     @Override
-    public int addMomentumAmount() {
+    public double addMomentumAmount() {
 
         if(controller.isMoveActive()){
             if(controller.getActiveMove().getId() == 2 || ability){
@@ -816,6 +812,11 @@ public class TheWorldEntity extends AbstractStandEntity implements IMomentum, IO
         }
 
         return 7;
+    }
+
+    @Override
+    public double getMomentumDrainRate() {
+        return 5.0 / 3;
     }
 
 

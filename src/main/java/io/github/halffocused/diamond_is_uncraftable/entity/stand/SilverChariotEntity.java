@@ -214,28 +214,6 @@ public class SilverChariotEntity extends AbstractStandEntity implements IAnimata
                             world.playSound(null, new BlockPos(getPosX(), getPosY(), getPosZ()), SoundEvents.ENTITY_GENERIC_EXPLODE, getSoundCategory(), 2.0f, 1.0f);
                         }
                 }
-                if(ability){
-                    if(ticksExisted % 5 == 0){
-                        if(controller.isMoveActive()){
-                            if(controller.getActiveMove().getId() != 7 && controller.getActiveMove().getId() != 8){
-                                props.setMomentum(Math.max(props.getMomentum() - 1, 0));
-                            }
-                        }else{
-                            props.setMomentum(Math.max(props.getMomentum() - 1, 0));
-                        }
-
-                    }
-                }else{
-                    if(ticksExisted % 10 == 0){
-                        if(controller.isMoveActive()){
-                            if(controller.getActiveMove().getId() != 7 && controller.getActiveMove().getId() != 8){
-                                props.setMomentum(Math.max(props.getMomentum() - 1, 0));
-                            }
-                        }else{
-                            props.setMomentum(Math.max(props.getMomentum() - 1, 0));
-                        }
-                    }
-                }
                 if(!world.isRemote) {
                     if (!(controller.isMoveActive())) {
                         props.setCounterBuffer(false);
@@ -363,8 +341,17 @@ public class SilverChariotEntity extends AbstractStandEntity implements IAnimata
     }
 
     @Override
-    public int addMomentumAmount() {
+    public double addMomentumAmount() {
         return hasArmor ? 3 : 0;
+    }
+
+    @Override
+    public double getMomentumDrainRate() {
+        if(controller.isMoveActive() && controller.getActiveMove().getId() == 7){
+            return 0;
+        }else{
+            return hasArmor ? 2 : 4;
+        }
     }
 
     @Override

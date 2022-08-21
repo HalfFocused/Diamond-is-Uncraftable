@@ -45,7 +45,7 @@ public class StandEnergyGUI extends AbstractGui {
 
                 if (Util.StandID.MOMENTUM_METER_STANDS.contains(stand.getStandID())) {
                     mc.getTextureManager().bindTexture(new ResourceLocation(DiamondIsUncraftable.MOD_ID, "textures/gui/momentum_meter.png"));
-                    i = (int) stand.getMaxStandEnergy();
+                    i = 100;
                     if (i > 0) {
                         int j = 182;
                         int k = (int) ((stand.getMomentum() / 100.0) * 183.0F);
@@ -56,14 +56,14 @@ public class StandEnergyGUI extends AbstractGui {
                         }
                     }
 
-                    s = "" + stand.getMomentum();
+                    s = "" + (int) stand.getMomentum();
                     i1 = (scaledWidth - mc.ingameGUI.getFontRenderer().getStringWidth(s)) / 2;
                     j1 = scaledHeight - 39 - 12;
                     mc.ingameGUI.getFontRenderer().drawString(s, (float) (i1 + 1), (float) j1, 0);
                     mc.ingameGUI.getFontRenderer().drawString(s, (float) (i1 - 1), (float) j1, 0);
                     mc.ingameGUI.getFontRenderer().drawString(s, (float) i1, (float) (j1 + 1), 0);
                     mc.ingameGUI.getFontRenderer().drawString(s, (float) i1, (float) (j1 - 1), 0);
-                    mc.ingameGUI.getFontRenderer().drawString(s, (float) i1, (float) j1, stand.getMomentum() > 50 ? 7464704 : 16738665); //8453920
+                    mc.ingameGUI.getFontRenderer().drawString(s, (float) i1, (float) j1, stand.getMomentum() > 50.0 ? 7464704 : 16738665); //8453920
                 }
             }else{ //Stand off energy display
                 if(stand.getCurrentStandEnergy() / stand.getMaxStandEnergy() != 1){

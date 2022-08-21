@@ -4,10 +4,7 @@ import io.github.halffocused.diamond_is_uncraftable.DiamondIsUncraftable;
 import io.github.halffocused.diamond_is_uncraftable.capability.Stand;
 import io.github.halffocused.diamond_is_uncraftable.entity.stand.AbstractStandEntity;
 import io.github.halffocused.diamond_is_uncraftable.network.message.server.SAnimatePacket;
-import io.github.halffocused.diamond_is_uncraftable.util.AttackFramedata;
-import io.github.halffocused.diamond_is_uncraftable.util.IOverrideChargeAttack;
-import io.github.halffocused.diamond_is_uncraftable.util.MoveEffects;
-import io.github.halffocused.diamond_is_uncraftable.util.Util;
+import io.github.halffocused.diamond_is_uncraftable.util.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.Style;
@@ -74,10 +71,16 @@ public class HoveringMoveHandler {
                 setUnactionableTicks(1);
             }
 
+            if(stand instanceof IMomentum){
+                if(!props.getExperiencingTimeStop() || Util.canStandMoveInStoppedTime(props.getStandID()))
+                props.setMomentum(Math.max(0, props.getMomentum() - (((IMomentum) stand).getMomentumDrainRate() / 20.0)));
+            }
+
             handleAnimations();
             handleInputs(attackKeyDown, specialKeyDown);
             handleActionBar(specialKeyDown);
         });
+
 
         for(Move move : moveList){ //Tick active moves
             if(move.getFramedata().isActive()){
