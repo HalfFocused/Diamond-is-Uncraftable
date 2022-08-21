@@ -69,7 +69,6 @@ public class HoveringMoveHandler {
     public void tick(boolean attackKeyDown, boolean specialKeyDown){
         if(stand.world.isRemote){return;}
         Stand.getLazyOptional(stand.getMaster()).ifPresent(props -> {
-            props.setPreventUnsummon(false);
 
             if(Util.isTimeStoppedForEntity(stand.getMaster()) || props.getExperiencingTimeSkip()){
                 setUnactionableTicks(1);
@@ -86,22 +85,17 @@ public class HoveringMoveHandler {
             }
         }
 
-        if(!isMoveActive()){
-            standHasAttackPosition = false;
-            Stand.getLazyOptional(stand.getMaster()).ifPresent(props -> {
-                props.setPreventUnsummon(false);
-            });
-        }
+        Stand.getLazyOptional(stand.getMaster()).ifPresent(props -> {
+            props.setPreventUnsummon(isMoveActive());
 
-        if(unactionableTicks > 0){
-            Stand.getLazyOptional(stand.getMaster()).ifPresent(props -> {
-                props.setPreventUnsummon(true);
-            });
-        }else if (unactionableTicksLastTick > 0){
-            Stand.getLazyOptional(stand.getMaster()).ifPresent(props -> {
-                props.setPreventUnsummon(false);
-            });
-        }
+            if(unactionableTicks > 0){
+                props.setPreventUnsummon3(true);
+            }else if (unactionableTicksLastTick > 0){
+                props.setPreventUnsummon3(false);
+            }
+        });
+
+
 
         unactionableTicksLastTick = unactionableTicks;
         unactionableTicks = Math.max(unactionableTicks - 1, 0);

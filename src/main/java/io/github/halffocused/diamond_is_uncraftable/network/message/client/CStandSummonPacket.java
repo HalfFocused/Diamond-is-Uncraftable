@@ -44,7 +44,7 @@ public class CStandSummonPacket implements IMessage<CStandSummonPacket> {
                         if(!stand.getStandOn()){
                             stand.setStandOn(true);
                         }else{
-                            if(!stand.getPreventUnsummon() && !stand.getPreventUnsummon2()){
+                            if(!stand.getPreventUnsummon() && !stand.getPreventUnsummon2() && !stand.getPreventUnsummon3()){
                                 stand.setStandOn(false);
                             }else{
                                 wasUnsummonPrevented = true;

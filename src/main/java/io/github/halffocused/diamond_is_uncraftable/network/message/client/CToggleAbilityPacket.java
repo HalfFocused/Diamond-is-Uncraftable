@@ -50,6 +50,7 @@ public class CToggleAbilityPacket implements IMessage<CToggleAbilityPacket> {
                             case Util.StandID.MAGICIANS_RED:
                             case Util.StandID.KILLER_QUEEN:
                             case Util.StandID.THE_EMPEROR:
+                            case Util.StandID.THE_WORLD:
                             case Util.StandID.KING_CRIMSON:
                                 break;
                             case Util.StandID.GOLD_EXPERIENCE: {
@@ -80,6 +81,7 @@ public class CToggleAbilityPacket implements IMessage<CToggleAbilityPacket> {
                             case Util.StandID.KILLER_QUEEN:
                                 break;
                             case Util.StandID.GOLD_EXPERIENCE:
+                            case Util.StandID.THE_WORLD:
                             case Util.StandID.GER: {
                                 sender.sendMessage(new StringTextComponent("Mode: Normal"), ChatType.GAME_INFO);
                                 break;
@@ -87,9 +89,6 @@ public class CToggleAbilityPacket implements IMessage<CToggleAbilityPacket> {
                             default: {
                                 if (standID != Util.StandID.MADE_IN_HEAVEN || act != 0)
                                     sender.sendMessage(new StringTextComponent("Ability: OFF"), ChatType.GAME_INFO);
-                                if (props.getStandID() == Util.StandID.THE_WORLD && props.getStandOn() && props.getTimeLeft() > 780 && props.getCooldown() <= 0)
-                                    sender.world.playSound(null, sender.getPosition(), SoundInit.RESUME_TIME.get(), SoundCategory.NEUTRAL, 5, 1);
-
                                 else if (props.getStandID() == Util.StandID.STAR_PLATINUM && props.getStandOn() && props.getTimeLeft() > 900 && props.getCooldown() <= 0)
                                     sender.world.playSound(null, sender.getPosition(), SoundInit.RESUME_TIME_STAR_PLATINUM.get(), SoundCategory.NEUTRAL, 5, 1);
                                 break;

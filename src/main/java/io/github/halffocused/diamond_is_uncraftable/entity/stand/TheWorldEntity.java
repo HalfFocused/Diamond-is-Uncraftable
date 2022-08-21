@@ -105,7 +105,7 @@ public class TheWorldEntity extends AbstractStandEntity implements IMomentum, IO
         World world = event.world;
         if (theWorldList.size() > 0) {
             theWorldList.forEach(theWorld -> {
-                if (theWorld.ability && !theWorld.cooldown) {
+                if (theWorld.timeStopped) {
                     if (dayTime != -1 && gameTime != -1) {
                         world.setDayTime(dayTime);
                         world.setGameTime(gameTime);
@@ -237,7 +237,7 @@ public class TheWorldEntity extends AbstractStandEntity implements IMomentum, IO
     public static void fluidEvent(BlockEvent.FluidPlaceBlockEvent event) {
         if (theWorldList.size() > 0)
             theWorldList.forEach(theWorldEntity -> {
-                if (theWorldEntity.ability && !theWorldEntity.cooldown)
+                if (theWorldEntity.timeStopped)
                     event.setCanceled(true);
             });
 
@@ -247,7 +247,7 @@ public class TheWorldEntity extends AbstractStandEntity implements IMomentum, IO
     public static void blockBreakEvent(BlockEvent.BreakEvent event) {
         if (theWorldList.size() > 0)
             theWorldList.forEach(theWorldEntity -> {
-                if (theWorldEntity.ability && !theWorldEntity.cooldown)
+                if (theWorldEntity.timeStopped)
                     if (event.getPlayer().getUniqueID() != theWorldEntity.master.getUniqueID())
                         event.setCanceled(true);
             });
@@ -257,7 +257,7 @@ public class TheWorldEntity extends AbstractStandEntity implements IMomentum, IO
     public static void blockPlaceEvent(BlockEvent.EntityPlaceEvent event) {
         if (theWorldList.size() > 0)
             theWorldList.forEach(theWorldEntity -> {
-                if (theWorldEntity.ability && !theWorldEntity.cooldown) {
+                if (theWorldEntity.timeStopped) {
                     if (event.getEntity() == null)
                         event.setCanceled(true);
                     else {
@@ -272,66 +272,57 @@ public class TheWorldEntity extends AbstractStandEntity implements IMomentum, IO
     public static void pistonEvent(PistonEvent.Pre event) {
         if (theWorldList.size() > 0)
             theWorldList.forEach(theWorldEntity -> {
-                if (theWorldEntity.ability && !theWorldEntity.cooldown)
+                if (theWorldEntity.timeStopped)
                     event.setCanceled(true);
             });
     }
 
     @SubscribeEvent
     public static void playerInteract1(PlayerInteractEvent.EntityInteractSpecific event) {
-        if (theWorldList.size() > 0)
-            theWorldList.forEach(theWorldEntity -> {
-                if (theWorldEntity.ability && !theWorldEntity.cooldown)
-                    if (event.getPlayer().getUniqueID() != theWorldEntity.master.getUniqueID())
-                        event.setCanceled(true);
-            });
+
+        Stand stand = Stand.getCapabilityFromPlayer(event.getPlayer());
+        if(stand.getExperiencingTimeStop()){
+            event.setCanceled(true);
+        }
     }
 
     @SubscribeEvent
     public static void playerInteract2(PlayerInteractEvent.EntityInteract event) {
-        if (theWorldList.size() > 0)
-            theWorldList.forEach(theWorldEntity -> {
-                if (theWorldEntity.ability && !theWorldEntity.cooldown)
-                    if (event.getPlayer().getUniqueID() != theWorldEntity.master.getUniqueID())
-                        event.setCanceled(true);
-            });
+        Stand stand = Stand.getCapabilityFromPlayer(event.getPlayer());
+        if(stand.getExperiencingTimeStop()){
+            event.setCanceled(true);
+        }
     }
 
     @SubscribeEvent
     public static void playerInteract3(PlayerInteractEvent.RightClickBlock event) {
-        if (theWorldList.size() > 0)
-            theWorldList.forEach(theWorldEntity -> {
-                if (theWorldEntity.ability && !theWorldEntity.cooldown)
-                    if (event.getPlayer().getUniqueID() != theWorldEntity.master.getUniqueID())
-                        event.setCanceled(true);
-            });
+        Stand stand = Stand.getCapabilityFromPlayer(event.getPlayer());
+        if(stand.getExperiencingTimeStop()){
+            event.setCanceled(true);
+        }
     }
 
     @SubscribeEvent
     public static void playerInteract4(PlayerInteractEvent.RightClickItem event) {
-        if (theWorldList.size() > 0)
-            theWorldList.forEach(theWorldEntity -> {
-                if (theWorldEntity.ability && !theWorldEntity.cooldown)
-                    if (event.getPlayer().getUniqueID() != theWorldEntity.master.getUniqueID())
-                        event.setCanceled(true);
-            });
+        Stand stand = Stand.getCapabilityFromPlayer(event.getPlayer());
+        if(stand.getExperiencingTimeStop()){
+            event.setCanceled(true);
+        }
     }
 
     @SubscribeEvent
     public static void playerInteract5(PlayerInteractEvent.LeftClickBlock event) {
-        if (theWorldList.size() > 0)
-            theWorldList.forEach(theWorldEntity -> {
-                if (theWorldEntity.ability && !theWorldEntity.cooldown)
-                    if (event.getPlayer().getUniqueID() != theWorldEntity.master.getUniqueID())
-                        event.setCanceled(true);
-            });
+        Stand stand = Stand.getCapabilityFromPlayer(event.getPlayer());
+        if(stand.getExperiencingTimeStop()){
+            event.setCanceled(true);
+        }
     }
 
     @SubscribeEvent
     public static void enderTeleport(EnderTeleportEvent event) {
         if (theWorldList.size() > 0)
             theWorldList.forEach(theWorldEntity -> {
-                if (theWorldEntity.ability && !theWorldEntity.cooldown)
+                if (theWorldEntity.timeStopped)
                     if (event.getEntity().getUniqueID() != theWorldEntity.master.getUniqueID())
                         event.setCanceled(true);
             });

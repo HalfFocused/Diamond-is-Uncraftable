@@ -817,15 +817,16 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
                         Util.spawnParticle(this, 5, bombEntity.getPosX(), bombEntity.getPosY(), bombEntity.getPosZ(), 1, 1, 1, 1);
                         Util.spawnParticle(this, 14, bombEntity.getPosX(), bombEntity.getPosY() + 1, bombEntity.getPosZ(), 1, 1, 1, 20);
                         world.playSound(null, master.getPosition(), SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 1, 1);
+                        bombEntity.attackEntityFrom(DamageSource.causeExplosionDamage(master), Float.MAX_VALUE);
                     } else {
                         world.playSound(null, master.getPosition(), SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 1, 1);
                         Util.spawnParticle(this, 5, bombEntity.getPosX(), bombEntity.getPosY(), bombEntity.getPosZ(), 1, 1, 1, 1);
                         Util.spawnParticle(this, 14, bombEntity.getPosX(), bombEntity.getPosY() + 1, bombEntity.getPosZ(), 1, 1, 1, 20);
-                        bombEntity.setPosition(bombEntity.getPosX(), -100, bombEntity.getPosZ());
+                        bombEntity.remove();
                     }
-                    bombEntity.attackEntityFrom(DamageSource.causeExplosionDamage(master), Float.MAX_VALUE);
-                    removeFirstBombFromAll();
                 }
+                bombEntity = null;
+                removeFirstBombFromAll();
             }
         }
 
@@ -848,111 +849,108 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
      Removes first bomb status from any entity, block, or item. Items have their names reset.
      */
     public void removeFirstBombFromAll() {
-        if (!world.isRemote()) {
-            bombEntity = null;
-            Stand stand = Stand.getCapabilityFromPlayer(master);
-            stand.setBombEntityId(0);
+        bombEntity = null;
+        Stand stand = Stand.getCapabilityFromPlayer(master);
+        stand.setBombEntityId(0);
 
-            for (ServerWorld currentWorld : getServer().getWorlds()) {
-
-                currentWorld.loadedTileEntityList
-                        .forEach(tile -> {
-                            if (tile instanceof LockableTileEntity && !((LockableTileEntity) tile).isEmpty()) {
-                                int size = ((LockableTileEntity) tile).getSizeInventory();
-                                for (int i = 0; i < size; i++) {
-                                    if (((LockableTileEntity) tile).getStackInSlot(i).getOrCreateTag().getBoolean("bomb") && ((LockableTileEntity) tile).getStackInSlot(i).getOrCreateTag().getUniqueId("ownerUUID").equals(master.getUniqueID())) {
-                                        tile.markDirty();
-                                        ((LockableTileEntity) tile).getStackInSlot(i).getOrCreateTag().remove("bomb");
-                                        ((LockableTileEntity) tile).getStackInSlot(i).getOrCreateTag().remove("ownerUUID");
-                                        ((LockableTileEntity) tile).getStackInSlot(i).clearCustomName();
-                                    }
+        for (ServerWorld currentWorld : getServer().getWorlds()) {
+            currentWorld.loadedTileEntityList
+                    .forEach(tile -> {
+                        if (tile instanceof LockableTileEntity && !((LockableTileEntity) tile).isEmpty()) {
+                            int size = ((LockableTileEntity) tile).getSizeInventory();
+                            for (int i = 0; i < size; i++) {
+                                if (((LockableTileEntity) tile).getStackInSlot(i).getOrCreateTag().getBoolean("bomb") && ((LockableTileEntity) tile).getStackInSlot(i).getOrCreateTag().getUniqueId("ownerUUID").equals(master.getUniqueID())) {
+                                    tile.markDirty();
+                                    ((LockableTileEntity) tile).getStackInSlot(i).getOrCreateTag().remove("bomb");
+                                    ((LockableTileEntity) tile).getStackInSlot(i).getOrCreateTag().remove("ownerUUID");
+                                    ((LockableTileEntity) tile).getStackInSlot(i).clearCustomName();
                                 }
                             }
-                        });
+                        }
+                    });
 
-                currentWorld.getEntities()
-                        .filter(entity -> entity instanceof ItemEntity)
-                        .forEach(entity ->
-                                StandEffects.getLazyOptional(entity).ifPresent(effects -> {
-                                    effects.setBomb(false);
-                                    ItemStack item = ((ItemEntity) entity).getItem();
+            currentWorld.getEntities()
+                    .filter(entity -> entity instanceof ItemEntity)
+                    .forEach(entity ->
+                            StandEffects.getLazyOptional(entity).ifPresent(effects -> {
+                                effects.setBomb(false);
+                                ItemStack item = ((ItemEntity) entity).getItem();
 
-                                    CompoundNBT nbt = item.getOrCreateTag();
-                                    if (nbt.getUniqueId("ownerUUID").equals(master.getUniqueID())) {
-                                        nbt.remove("bomb");
-                                        nbt.remove("ownerUUID");
-                                        item.clearCustomName();
-                                    }
-                                }));
-
-                currentWorld.getEntities()
-                        .filter(entity -> entity instanceof LivingEntity)
-                        .forEach(entity -> {
-                            if (entity instanceof PlayerEntity) {
-                                PlayerEntity playerEntity = (PlayerEntity) entity;
-
-                                for (int i = 0; i < playerEntity.getInventoryEnderChest().getSizeInventory(); i++) {
-                                    if (playerEntity.getInventoryEnderChest().getStackInSlot(i).getOrCreateTag().getBoolean("bomb") && playerEntity.getInventoryEnderChest().getStackInSlot(i).getOrCreateTag().getUniqueId("ownerUUID").equals(master.getUniqueID())) {
-                                        playerEntity.getInventoryEnderChest().markDirty();
-                                        playerEntity.getInventoryEnderChest().getStackInSlot(i).getOrCreateTag().remove("bomb");
-                                        playerEntity.getInventoryEnderChest().getStackInSlot(i).getOrCreateTag().remove("ownerUUID");
-                                        playerEntity.getInventoryEnderChest().getStackInSlot(i).clearCustomName();
-                                    }
+                                CompoundNBT nbt = item.getOrCreateTag();
+                                if (nbt.getUniqueId("ownerUUID").equals(master.getUniqueID())) {
+                                    nbt.remove("bomb");
+                                    nbt.remove("ownerUUID");
+                                    item.clearCustomName();
                                 }
+                            }));
 
-                                for (ItemStack stack : playerEntity.inventory.mainInventory) {
-                                    if (stack.getOrCreateTag().getBoolean("bomb") && stack.getOrCreateTag().getUniqueId("ownerUUID").equals(master.getUniqueID())) {
-                                        CompoundNBT nbt = stack.getOrCreateTag();
-                                        playerEntity.inventory.markDirty();
-                                        nbt.remove("bomb");
-                                        nbt.remove("ownerUUID");
-                                        stack.clearCustomName();
-                                    }
+            currentWorld.getEntities()
+                    .filter(entity -> entity instanceof LivingEntity)
+                    .forEach(entity -> {
+                        if (entity instanceof PlayerEntity) {
+                            PlayerEntity playerEntity = (PlayerEntity) entity;
+
+                            for (int i = 0; i < playerEntity.getInventoryEnderChest().getSizeInventory(); i++) {
+                                if (playerEntity.getInventoryEnderChest().getStackInSlot(i).getOrCreateTag().getBoolean("bomb") && playerEntity.getInventoryEnderChest().getStackInSlot(i).getOrCreateTag().getUniqueId("ownerUUID").equals(master.getUniqueID())) {
+                                    playerEntity.getInventoryEnderChest().markDirty();
+                                    playerEntity.getInventoryEnderChest().getStackInSlot(i).getOrCreateTag().remove("bomb");
+                                    playerEntity.getInventoryEnderChest().getStackInSlot(i).getOrCreateTag().remove("ownerUUID");
+                                    playerEntity.getInventoryEnderChest().getStackInSlot(i).clearCustomName();
                                 }
-                                for (ItemStack stack : playerEntity.inventory.offHandInventory) {
-                                    if (stack.getOrCreateTag().getBoolean("bomb") && stack.getOrCreateTag().getUniqueId("ownerUUID").equals(master.getUniqueID())) {
-                                        CompoundNBT nbt = stack.getOrCreateTag();
-                                        playerEntity.inventory.markDirty();
-                                        nbt.remove("bomb");
-                                        nbt.remove("ownerUUID");
-                                        stack.clearCustomName();
-                                    }
-                                }
-                                for (ItemStack stack : playerEntity.inventory.armorInventory) {
-                                    if (stack.getOrCreateTag().getBoolean("bomb") && stack.getOrCreateTag().getUniqueId("ownerUUID").equals(master.getUniqueID())) {
-                                        CompoundNBT nbt = stack.getOrCreateTag();
-                                        playerEntity.inventory.markDirty();
-                                        nbt.remove("bomb");
-                                        nbt.remove("ownerUUID");
-                                        stack.clearCustomName();
-                                    }
-                                }
-                            } else {
-                                for (ItemStack stack : entity.getEquipmentAndArmor()) {
+                            }
+
+                            for (ItemStack stack : playerEntity.inventory.mainInventory) {
+                                if (stack.getOrCreateTag().getBoolean("bomb") && stack.getOrCreateTag().getUniqueId("ownerUUID").equals(master.getUniqueID())) {
                                     CompoundNBT nbt = stack.getOrCreateTag();
-                                    if (nbt.getBoolean("bomb") && nbt.getUniqueId("ownerUUID").equals(master.getUniqueID())) {
-                                        nbt.remove("bomb");
-                                        nbt.remove("ownerUUID");
-                                        stack.clearCustomName();
-                                    }
+                                    playerEntity.inventory.markDirty();
+                                    nbt.remove("bomb");
+                                    nbt.remove("ownerUUID");
+                                    stack.clearCustomName();
                                 }
                             }
-                        });
-                currentWorld.getEntities()
-                        .filter(entity -> entity instanceof ItemFrameEntity)
-                        .forEach(itemFrame -> {
-                            ItemFrameEntity frame = (ItemFrameEntity) itemFrame;
-                            if (frame.getDisplayedItem().getOrCreateTag().getBoolean("bomb") && frame.getDisplayedItem().getOrCreateTag().getUniqueId("ownerUUID").equals(master.getUniqueID())) {
-                                CompoundNBT nbt = frame.getDisplayedItem().getOrCreateTag();
-                                nbt.remove("bomb");
-                                nbt.remove("ownerUUID");
-                                frame.getDisplayedItem().clearCustomName();
+                            for (ItemStack stack : playerEntity.inventory.offHandInventory) {
+                                if (stack.getOrCreateTag().getBoolean("bomb") && stack.getOrCreateTag().getUniqueId("ownerUUID").equals(master.getUniqueID())) {
+                                    CompoundNBT nbt = stack.getOrCreateTag();
+                                    playerEntity.inventory.markDirty();
+                                    nbt.remove("bomb");
+                                    nbt.remove("ownerUUID");
+                                    stack.clearCustomName();
+                                }
                             }
-                        });
-            }
-            stand.setBombEntityId(0);
-            stand.setBlockPos(BlockPos.ZERO);
+                            for (ItemStack stack : playerEntity.inventory.armorInventory) {
+                                if (stack.getOrCreateTag().getBoolean("bomb") && stack.getOrCreateTag().getUniqueId("ownerUUID").equals(master.getUniqueID())) {
+                                    CompoundNBT nbt = stack.getOrCreateTag();
+                                    playerEntity.inventory.markDirty();
+                                    nbt.remove("bomb");
+                                    nbt.remove("ownerUUID");
+                                    stack.clearCustomName();
+                                }
+                            }
+                        } else {
+                            for (ItemStack stack : entity.getEquipmentAndArmor()) {
+                                CompoundNBT nbt = stack.getOrCreateTag();
+                                if (nbt.getBoolean("bomb") && nbt.getUniqueId("ownerUUID").equals(master.getUniqueID())) {
+                                    nbt.remove("bomb");
+                                    nbt.remove("ownerUUID");
+                                    stack.clearCustomName();
+                                }
+                            }
+                        }
+                    });
+            currentWorld.getEntities()
+                    .filter(entity -> entity instanceof ItemFrameEntity)
+                    .forEach(itemFrame -> {
+                        ItemFrameEntity frame = (ItemFrameEntity) itemFrame;
+                        if (frame.getDisplayedItem().getOrCreateTag().getBoolean("bomb") && frame.getDisplayedItem().getOrCreateTag().getUniqueId("ownerUUID").equals(master.getUniqueID())) {
+                            CompoundNBT nbt = frame.getDisplayedItem().getOrCreateTag();
+                            nbt.remove("bomb");
+                            nbt.remove("ownerUUID");
+                            frame.getDisplayedItem().clearCustomName();
+                        }
+                    });
         }
+        stand.setBombEntityId(0);
+        stand.setBlockPos(BlockPos.ZERO);
     }
 }
 

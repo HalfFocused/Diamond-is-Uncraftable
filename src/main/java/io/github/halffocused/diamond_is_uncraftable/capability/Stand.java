@@ -67,6 +67,7 @@ public class Stand implements ICapabilitySerializable<INBT> {
     private int abilitiesUnlocked;
     private boolean preventUnsummon;
     private boolean preventUnsummon2;
+    private boolean preventUnsummon3;
     private int momentum = 0;
     private int restraint = 0;
     private int epitaphEffectTicker = 0;
@@ -137,6 +138,7 @@ public class Stand implements ICapabilitySerializable<INBT> {
                 nbt.putInt("abilitiesUnlocked", instance.getAbilitiesUnlocked());
                 nbt.putBoolean("preventUnsummon", instance.getPreventUnsummon());
                 nbt.putBoolean("preventUnsummon2", instance.getPreventUnsummon2());
+                nbt.putBoolean("preventUnsummon3", instance.getPreventUnsummon3());
                 nbt.putInt("momentum", instance.getMomentum());
                 nbt.putInt("restraint", instance.getRestraint());
                 nbt.putInt("epitaphTicker", instance.getTimeSkipEffectTicker());
@@ -208,6 +210,7 @@ public class Stand implements ICapabilitySerializable<INBT> {
                 instance.abilitiesUnlocked = compoundNBT.getInt("abilitiesUnlocked");
                 instance.preventUnsummon = compoundNBT.getBoolean("preventUnsummon");
                 instance.preventUnsummon2 = compoundNBT.getBoolean("preventUnsummon2");
+                instance.preventUnsummon3 = compoundNBT.getBoolean("preventUnsummon3");
                 instance.momentum = compoundNBT.getInt("momentum");
                 instance.restraint = compoundNBT.getInt("restraint");
                 instance.epitaphEffectTicker = compoundNBT.getInt("epitaphTicker");
@@ -335,6 +338,15 @@ public class Stand implements ICapabilitySerializable<INBT> {
 
     public void setPreventUnsummon2(boolean preventUnsummonIn2) {
         this.preventUnsummon2 = preventUnsummonIn2;
+        onDataUpdated();
+    }
+
+    public boolean getPreventUnsummon3() {
+        return preventUnsummon3;
+    }
+
+    public void setPreventUnsummon3(boolean preventUnsummonIn3) {
+        this.preventUnsummon3 = preventUnsummonIn3;
         onDataUpdated();
     }
 
@@ -690,6 +702,7 @@ public class Stand implements ICapabilitySerializable<INBT> {
         abilitiesUnlocked = stand.getAbilitiesUnlocked();
         preventUnsummon = stand.getPreventUnsummon();
         preventUnsummon2 = stand.getPreventUnsummon2();
+        preventUnsummon3 = stand.getPreventUnsummon3();
         momentum = stand.getMomentum();
         restraint = stand.getRestraint();
         epitaphEffectTicker = stand.getTimeSkipEffectTicker();
@@ -755,6 +768,7 @@ public class Stand implements ICapabilitySerializable<INBT> {
         abilitiesUnlocked = 0;
         preventUnsummon = false;
         preventUnsummon2 = false;
+        preventUnsummon3 = false;
         momentum = 0;
         restraint = 0;
         epitaphEffectTicker = 0;

@@ -1028,6 +1028,7 @@ public class EventHandleStandAbilities {
 
                     entity.getServer().getWorld(entity.dimension).getEntities()
                             .filter(entity1 -> entity1 instanceof AbstractStandEntity)
+                            .filter(entity1 -> ((AbstractStandEntity) entity1).getMaster() != null)
                             .filter(entity1 -> ((AbstractStandEntity) entity1).getMaster().equals(entity))
                             .forEach(entity1 -> standEntity.set((AbstractStandEntity) entity1));
 

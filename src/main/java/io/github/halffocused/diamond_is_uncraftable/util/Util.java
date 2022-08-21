@@ -756,8 +756,7 @@ public class Util {
                 KING_CRIMSON,
                 KILLER_QUEEN,
                 SILVER_CHARIOT,
-                THE_WORLD,
-                STICKY_FINGERS
+                THE_WORLD
         };
 
         public static final List<Integer> MOMENTUM_METER_STANDS = Arrays.asList( //What stands should render the momentum meter on the HUD
