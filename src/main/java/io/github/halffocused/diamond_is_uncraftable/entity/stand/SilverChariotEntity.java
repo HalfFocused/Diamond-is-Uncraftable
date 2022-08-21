@@ -350,7 +350,7 @@ public class SilverChariotEntity extends AbstractStandEntity implements IAnimata
         if(controller.isMoveActive() && controller.getActiveMove().getId() == 7){
             return 0;
         }else{
-            return hasArmor ? 2 : 4;
+            return hasArmor ? 2.5 : 4;
         }
     }
 
