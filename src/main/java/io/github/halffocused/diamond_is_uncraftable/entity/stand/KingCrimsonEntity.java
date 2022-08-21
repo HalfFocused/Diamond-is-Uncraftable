@@ -292,15 +292,13 @@ public class KingCrimsonEntity extends AbstractStandEntity implements IAnimatabl
                 controller.setMoveActive(8);
             }else{
                 executionTarget = getMostRecentlyDamagedEntity();
-                executionTarget.setNoGravity(true);
                 clipToPosition = true;
             }
         }
 
         if(message1 == 3){
             if(executionTarget != null){
-                Util.dealStandDamage(this, executionTarget, 45f, Vec3d.ZERO, false, null);
-                executionTarget.setNoGravity(false);
+                Util.dealStandDamage(this, executionTarget, 50f, Vec3d.ZERO, false, null);
                 clipToPosition = false;
             }
         }

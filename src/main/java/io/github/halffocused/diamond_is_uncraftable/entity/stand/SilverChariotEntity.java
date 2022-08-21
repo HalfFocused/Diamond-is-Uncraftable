@@ -328,7 +328,7 @@ public class SilverChariotEntity extends AbstractStandEntity implements IAnimata
             world.addEntity(swordEntity);
 
 
-            Util.applyUnactionableTicks(master, 140);
+            Util.applyUnactionableTicks(master, 120);
         }
         if(message1 == 2){
             Stand.getLazyOptional(master).ifPresent(props -> {
