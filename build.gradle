@@ -12,8 +12,8 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = "1.15.2-0.0.1.0"
-group = 'io.github.novarch129.diamond_is_uncraftable'
+version = "1.15.2-0.0.1.1"
+group = 'io.github.halffocused.Diamond_is_Uncraftable'
 archivesBaseName = 'DiamondIsUncraftable'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
