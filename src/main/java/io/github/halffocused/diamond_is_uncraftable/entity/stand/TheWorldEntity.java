@@ -247,7 +247,7 @@ public class TheWorldEntity extends AbstractStandEntity implements IMomentum, IO
     public static void blockBreakEvent(BlockEvent.BreakEvent event) {
         if (theWorldList.size() > 0)
             theWorldList.forEach(theWorldEntity -> {
-                if (theWorldEntity.timeStopped)
+                if (theWorldEntity.timeStopped && Math.sqrt(theWorldEntity.getDistanceSq(event.getPlayer().getPositionVec())) < DiamondIsUncraftableConfig.COMMON.timeStopRange.get())
                     if (event.getPlayer().getUniqueID() != theWorldEntity.master.getUniqueID())
                         event.setCanceled(true);
             });
@@ -257,7 +257,7 @@ public class TheWorldEntity extends AbstractStandEntity implements IMomentum, IO
     public static void blockPlaceEvent(BlockEvent.EntityPlaceEvent event) {
         if (theWorldList.size() > 0)
             theWorldList.forEach(theWorldEntity -> {
-                if (theWorldEntity.timeStopped) {
+                if (theWorldEntity.timeStopped && Math.sqrt(theWorldEntity.getDistanceSq(new Vec3d(event.getPos()))) < DiamondIsUncraftableConfig.COMMON.timeStopRange.get()) {
                     if (event.getEntity() == null)
                         event.setCanceled(true);
                     else {
@@ -281,7 +281,7 @@ public class TheWorldEntity extends AbstractStandEntity implements IMomentum, IO
     public static void playerInteract1(PlayerInteractEvent.EntityInteractSpecific event) {
 
         Stand stand = Stand.getCapabilityFromPlayer(event.getPlayer());
-        if(stand.getExperiencingTimeStop()){
+        if(stand.getExperiencingTimeStop() && !Util.canStandMoveInStoppedTime(stand.getStandID())){
             event.setCanceled(true);
         }
     }
@@ -289,7 +289,7 @@ public class TheWorldEntity extends AbstractStandEntity implements IMomentum, IO
     @SubscribeEvent
     public static void playerInteract2(PlayerInteractEvent.EntityInteract event) {
         Stand stand = Stand.getCapabilityFromPlayer(event.getPlayer());
-        if(stand.getExperiencingTimeStop()){
+        if(stand.getExperiencingTimeStop() && !Util.canStandMoveInStoppedTime(stand.getStandID())){
             event.setCanceled(true);
         }
     }
@@ -297,7 +297,7 @@ public class TheWorldEntity extends AbstractStandEntity implements IMomentum, IO
     @SubscribeEvent
     public static void playerInteract3(PlayerInteractEvent.RightClickBlock event) {
         Stand stand = Stand.getCapabilityFromPlayer(event.getPlayer());
-        if(stand.getExperiencingTimeStop()){
+        if(stand.getExperiencingTimeStop() && !Util.canStandMoveInStoppedTime(stand.getStandID())){
             event.setCanceled(true);
         }
     }
@@ -305,7 +305,7 @@ public class TheWorldEntity extends AbstractStandEntity implements IMomentum, IO
     @SubscribeEvent
     public static void playerInteract4(PlayerInteractEvent.RightClickItem event) {
         Stand stand = Stand.getCapabilityFromPlayer(event.getPlayer());
-        if(stand.getExperiencingTimeStop()){
+        if(stand.getExperiencingTimeStop() && !Util.canStandMoveInStoppedTime(stand.getStandID())){
             event.setCanceled(true);
         }
     }
@@ -313,7 +313,7 @@ public class TheWorldEntity extends AbstractStandEntity implements IMomentum, IO
     @SubscribeEvent
     public static void playerInteract5(PlayerInteractEvent.LeftClickBlock event) {
         Stand stand = Stand.getCapabilityFromPlayer(event.getPlayer());
-        if(stand.getExperiencingTimeStop()){
+        if(stand.getExperiencingTimeStop() && !Util.canStandMoveInStoppedTime(stand.getStandID())){
             event.setCanceled(true);
         }
     }
