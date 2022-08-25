@@ -84,4 +84,8 @@ public interface ITimestop {
     void onDataUpdated();
 
     void clear();
+
+    boolean hasInfoSaved();
+
+    void setInfoSaved(boolean hasInfoSaved);
 }

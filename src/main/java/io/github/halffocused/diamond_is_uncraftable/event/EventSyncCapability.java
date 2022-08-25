@@ -28,9 +28,6 @@ import java.util.*;
 
 import static io.github.halffocused.diamond_is_uncraftable.util.Util.StandID.*;
 
-/**
- * Syncs the {@link Stand} capability to the client, for use in GUIs, {@link Timestop} is not synced because it's info is disposable and useless to the client.
- */
 @Mod.EventBusSubscriber(modid = DiamondIsUncraftable.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class EventSyncCapability {
     @SubscribeEvent
@@ -194,6 +191,7 @@ public class EventSyncCapability {
                                                 entity.attackEntityFrom(damageSource, amount);
                                                 entity.hurtResistantTime = 0;
                                             });
+                                        System.out.println("10");
                                         props2.clear();
                                     });
                                     Entity theWorld = player.world.getEntityByID(props.getPlayerStand());
@@ -317,6 +315,7 @@ public class EventSyncCapability {
                                             }
                                             entity.attackEntityFrom(damageSource, amount);
                                         });
+                                        System.out.println("11");
                                         props2.clear();
                                     });
                                     Entity starPlatinum = player.world.getEntityByID(props.getPlayerStand());

@@ -97,6 +97,7 @@ public class DiamondIsUncraftable {
         PacketHandler.register();
         StandPerWorldCapability.register();
         CombatCapability.register();
+        WorldTimestopCapability.register();
 
         /*
         DeferredWorkQueue.runLater(() -> ForgeRegistries.BIOMES.forEach(biome -> { //This is deprecated for no reason at all.

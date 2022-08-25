@@ -66,7 +66,7 @@ public class StandPerWorldCapability implements ICapabilitySerializable<INBT> {
 
                 compoundNBT.getList("TakenStandIDs", Constants.NBT.TAG_COMPOUND).forEach(inbt -> {
                     if (inbt instanceof CompoundNBT && ((CompoundNBT) inbt).contains("StandID"))
-                        instance.takenStandIDs.add(((CompoundNBT) inbt).getInt("StandID"));
+                        instance.addTakenStandId(((CompoundNBT) inbt).getInt("StandID"));
                 });
             }
         }, () -> new StandPerWorldCapability(Null()));

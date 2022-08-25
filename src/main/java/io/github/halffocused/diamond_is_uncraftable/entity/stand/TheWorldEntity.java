@@ -100,6 +100,7 @@ public class TheWorldEntity extends AbstractStandEntity implements IMomentum, IO
         return theWorldList;
     }
 
+    /*
     @SubscribeEvent
     public static void worldTick(TickEvent.WorldTickEvent event) {
         World world = event.world;
@@ -227,11 +228,13 @@ public class TheWorldEntity extends AbstractStandEntity implements IMomentum, IO
                                 });
                             dayTime = -1;
                             gameTime = -1;
+                            System.out.println("4");
                             props.clear();
                         }));
             }
         }
     }
+     */
 
     @SubscribeEvent
     public static void fluidEvent(BlockEvent.FluidPlaceBlockEvent event) {
@@ -407,7 +410,8 @@ public class TheWorldEntity extends AbstractStandEntity implements IMomentum, IO
                 props2.setPreventUnsummon2(props2.getAbilityActive());
 
                 if (props2.getAbilityActive()) {
-                    Timestop.getLazyOptional(master).ifPresent(ITimestop::clear);
+                    System.out.println("5");
+                    Timestop.getLazyOptional(master).ifPresent(Timestop::clear);
                     timestopTick++;
                     shouldDamageBeCancelled = true;
                     master.setInvulnerable(true);
@@ -649,6 +653,7 @@ public class TheWorldEntity extends AbstractStandEntity implements IMomentum, IO
                                         });
                                     dayTime = -1;
                                     gameTime = -1;
+                                    System.out.println("6");
                                     props.clear();
                                 }));
                     }
@@ -798,6 +803,7 @@ public class TheWorldEntity extends AbstractStandEntity implements IMomentum, IO
                                         entity.attackEntityFrom(damageSource, amount);
                                         entity.hurtResistantTime = 0;
                                     });
+                                System.out.println("7");
                                 props2.clear();
                             }));
     }

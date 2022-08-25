@@ -13,6 +13,7 @@ import io.github.halffocused.diamond_is_uncraftable.init.SoundInit;
 import io.github.halffocused.diamond_is_uncraftable.network.message.server.SSyncStandMasterPacket;
 import io.github.halffocused.diamond_is_uncraftable.util.IOnMasterAttacked;
 import io.github.halffocused.diamond_is_uncraftable.util.Util;
+import io.github.halffocused.diamond_is_uncraftable.util.timestop.TimestopHelper;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
@@ -778,6 +779,7 @@ public class EventHandleStandAbilities {
                                     entity.attackEntityFrom(damageSource, amount);
                                     entity.hurtResistantTime = 0;
                                 });
+                                System.out.println("8");
                                 props2.clear();
                             }));
             } else if (props.getStandID() == Util.StandID.STAR_PLATINUM) {
@@ -903,6 +905,7 @@ public class EventHandleStandAbilities {
                                         entity.attackEntityFrom(damageSource, amount);
                                         entity.hurtResistantTime = 0;
                                     });
+                                System.out.println("9");
                                 props2.clear();
                             }));
             }
@@ -921,43 +924,7 @@ public class EventHandleStandAbilities {
 
     @SubscribeEvent
     public static void cancelDamage(LivingAttackEvent event) {
-
-        float timeStopModifiedDamage = event.getAmount() * 0.5f;
         LivingEntity entity = event.getEntityLiving();
-        if (TheWorldEntity.getTheWorldList().size() > 0)
-            TheWorldEntity.getTheWorldList().forEach(theWorldEntity -> {
-                if (theWorldEntity.shouldDamageBeCancelled) {
-                    Timestop.getLazyOptional(entity).ifPresent(props -> {
-                        if (!props.getDamage().containsKey(event.getSource().getDamageType()))
-                            props.getDamage().put(event.getSource().getDamageType(), timeStopModifiedDamage);
-                        else
-                            for (int i = 0; i < 1000; i++) {
-                                if (!props.getDamage().containsKey(event.getSource().getDamageType() + i)) {
-                                    props.getDamage().put(event.getSource().getDamageType() + i, timeStopModifiedDamage);
-                                    break;
-                                }
-                            }
-                    });
-                    event.setCanceled(true);
-                }
-            });
-        if (StarPlatinumEntity.getStarPlatinumList().size() > 0)
-            StarPlatinumEntity.getStarPlatinumList().forEach(starPlatinumEntity -> {
-                if (starPlatinumEntity.shouldDamageBeCancelled) {
-                    Timestop.getLazyOptional(entity).ifPresent(props -> {
-                        if (!props.getDamage().containsKey(event.getSource().getDamageType()))
-                            props.getDamage().put(event.getSource().getDamageType(), timeStopModifiedDamage);
-                        else
-                            for (int i = 0; i < 1000; i++) {
-                                if (!props.getDamage().containsKey(event.getSource().getDamageType() + i)) {
-                                    props.getDamage().put(event.getSource().getDamageType() + i, timeStopModifiedDamage);
-                                    break;
-                                }
-                            }
-                    });
-                    event.setCanceled(true);
-                }
-            });
         if (entity instanceof PlayerEntity) {
             Stand.getLazyOptional((PlayerEntity) entity).ifPresent(stand -> {
 
@@ -1260,12 +1227,6 @@ public class EventHandleStandAbilities {
                 }
             }
 
-        });
-
-        CombatCapability.getLazyOptional(entity).ifPresent(combatCapability -> {
-            if(combatCapability.getHitstun() > 0){
-                entity.setMotion(0,0,0);
-            }
         });
 
         StandChunkEffects.getLazyOptional(entity.world.getChunkAt(entity.getPosition())).ifPresent(props ->

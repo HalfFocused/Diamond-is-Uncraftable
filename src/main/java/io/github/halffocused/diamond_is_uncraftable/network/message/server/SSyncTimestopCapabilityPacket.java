@@ -22,7 +22,7 @@ public class SSyncTimestopCapabilityPacket implements IMessage<SSyncTimestopCapa
         data = compoundNBT;
     }
 
-    public SSyncTimestopCapabilityPacket(ITimestop props) {
+    public SSyncTimestopCapabilityPacket(Timestop props) {
         data = Timestop.TIMESTOP.getStorage().writeNBT(Timestop.TIMESTOP, props, null);
     }
 

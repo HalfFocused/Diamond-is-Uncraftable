@@ -49,8 +49,8 @@ public class DiamondIsUncraftableConfig {
                     .define("saveStandOnDeath", true);
 
             timeStopRange = builder
-                    .comment("Set the Range (in blocks) of Star Platinum and The World's time stops. \n If you want the stop to have infinite range, set the range to -1")
-                    .defineInRange("timeStopRange", 64, -1, 300);
+                    .comment("Set the range (in Chunks) of all time stop effects.")
+                    .defineInRange("timeStopRange", 16, 1, 32);
 
             maxStickyFingersBlocks = builder
                     .comment("Currently Unused: Set the maximum amount of zipped blocks a Sticky Fingers user can have at once. Clusters of over 100 zipped blocks get laggy.")

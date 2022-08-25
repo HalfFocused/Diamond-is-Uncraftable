@@ -41,6 +41,9 @@ public class PacketHandler {
         registerPacket(CTimeSkipEffectPacket.class, new CTimeSkipEffectPacket(), NetworkDirection.PLAY_TO_SERVER);
 
         registerPacket(CAddStandToWorldData.class, new CAddStandToWorldData(), NetworkDirection.PLAY_TO_SERVER);
+
+        registerPacket(SSyncWorldTimestopCapability.class, new SSyncWorldTimestopCapability(), NetworkDirection.PLAY_TO_CLIENT);
+
     }
 
     public static <MSG> void registerPacket(Class<MSG> clazz, IMessage<MSG> message) {

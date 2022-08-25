@@ -21,6 +21,7 @@ public class EventAttachCapabilities {
     public static final ResourceLocation STAND_PLAYER_EFFECTS_CAPABILITY = new ResourceLocation(DiamondIsUncraftable.MOD_ID, "stand_player_effects_capability");
     public static final ResourceLocation STAND_TILE_ENTITY_EFFECTS_CAPABILITY = new ResourceLocation(DiamondIsUncraftable.MOD_ID, "stand_tile_entity_effects_capability");
     public static final ResourceLocation STAND_PER_WORLD_CAPABILITY = new ResourceLocation(DiamondIsUncraftable.MOD_ID, "stand_per_world_capability");
+    public static final ResourceLocation WORLD_TIMESTOP_CAPABILITY = new ResourceLocation(DiamondIsUncraftable.MOD_ID, "world_timestop_capability");
     public static final ResourceLocation COMBAT_CAPABILITY = new ResourceLocation(DiamondIsUncraftable.MOD_ID, "combat_capability");
 
 
@@ -54,5 +55,6 @@ public class EventAttachCapabilities {
         World world = event.getObject();
         if (world == null) return;
         event.addCapability(STAND_PER_WORLD_CAPABILITY, new StandPerWorldCapability(world));
+        event.addCapability(WORLD_TIMESTOP_CAPABILITY, new WorldTimestopCapability(world));
     }
 }

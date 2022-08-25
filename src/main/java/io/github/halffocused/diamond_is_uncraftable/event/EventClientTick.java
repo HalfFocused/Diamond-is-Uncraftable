@@ -11,14 +11,17 @@ import io.github.halffocused.diamond_is_uncraftable.entity.stand.StickyFingersEn
 import io.github.halffocused.diamond_is_uncraftable.item.StandDiscItem;
 import io.github.halffocused.diamond_is_uncraftable.network.message.client.CAerosmithRotationPacket;
 import io.github.halffocused.diamond_is_uncraftable.util.Util;
+import io.github.halffocused.diamond_is_uncraftable.util.timestop.TimestopHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.renderer.entity.model.EntityModel;
+import net.minecraft.client.shader.Shader;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.monster.EndermanEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.StringTextComponent;
@@ -31,6 +34,7 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import java.io.IOException;
 import java.util.stream.StreamSupport;
 
 @SuppressWarnings("ConstantConditions")
@@ -340,6 +344,7 @@ public class EventClientTick {
         ClientPlayerEntity player = Minecraft.getInstance().player;
         float partialTicks = event.getPartialTicks();
         if (world == null) return;
+
         Stand.getLazyOptional(player).ifPresent(props -> {
 
             if ((props.getStandID() == Util.StandID.AEROSMITH && props.getStandOn() && props.getAbility()) ||
@@ -364,18 +369,16 @@ public class EventClientTick {
             }
             if (event.getPhase() != EventPriority.NORMAL || player == null) return;
 
+            /*
             if(!DiamondIsUncraftableConfig.CLIENT.noColorInversion.get()) {
-
                 if (props.getExperiencingTimeStop()) {
-                    Minecraft.getInstance().gameRenderer.loadEntityShader(new EndermanEntity(EntityType.ENDERMAN, world));
+                    Minecraft.getInstance().gameRenderer.loadShader(new ResourceLocation(DiamondIsUncraftable.MOD_ID, "shaders/timestop.json"));
                 } else {
                     Minecraft.getInstance().gameRenderer.stopUseShader();
                 }
-
-                if (props.getInstantTimeStopFrame() > 0) {
-                    Minecraft.getInstance().gameRenderer.loadEntityShader(new EndermanEntity(EntityType.ENDERMAN, world));
-                }
             }
+
+             */
 
         });
     }

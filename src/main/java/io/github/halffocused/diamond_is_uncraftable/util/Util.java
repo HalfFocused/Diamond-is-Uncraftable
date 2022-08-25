@@ -717,7 +717,7 @@ public class Util {
 
         public static final int CMOON = -12;
 
-        public static final int STAR_PLATINUM = -14;
+        public static final int STAR_PLATINUM = 69;
 
         public static final int MAGICIANS_RED = -16;
 

@@ -25,6 +25,8 @@ public class StandCommand {
                                         .executes(context -> setPlayerStandID(context.getSource(), EntityArgument.getPlayer(context, "target"), Util.StandID.THE_WORLD)))
                                 .then(Commands.literal("silver_chariot")
                                         .executes(context -> setPlayerStandID(context.getSource(), EntityArgument.getPlayer(context, "target"), Util.StandID.SILVER_CHARIOT)))
+                                .then(Commands.literal("star_platinum")
+                                        .executes(context -> setPlayerStandID(context.getSource(), EntityArgument.getPlayer(context, "target"), Util.StandID.STAR_PLATINUM)))
                         ))
                 .then(Commands.literal("remove")
                         .then(Commands.argument("target", EntityArgument.player())
