@@ -104,11 +104,13 @@ public class TimestopHelper {
                 if(chunkWithinTimestopRange(masterChunkPos, new ChunkPos(i,j))){
 
                     WorldTimestopCapability.TimestoppedChunk chunk = new WorldTimestopCapability.TimestoppedChunk(new ChunkPos(i,j), uuid);
-
-                    timestoppedChunks.addTimestoppedChunk(chunk.getChunkPos(), chunk.getUUID());
+                    if(timestoppedChunks.getTimestoppedChunkPosList().stream().noneMatch(timestoppedChunk -> timestoppedChunk.equals(chunk))) {
+                        timestoppedChunks.addTimestoppedChunk(chunk.getChunkPos(), chunk.getUUID());
+                    }
                 }
             }
         }
+        System.out.println(timestoppedChunks.getTimestoppedChunkPosList().size());
     }
 
     /**

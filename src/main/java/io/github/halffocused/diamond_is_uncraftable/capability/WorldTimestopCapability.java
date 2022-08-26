@@ -83,9 +83,7 @@ public class WorldTimestopCapability implements ICapabilitySerializable<INBT> {
 
     public void addTimestoppedChunk(ChunkPos posIn, UUID uuidIn){
         TimestoppedChunk chunk = new TimestoppedChunk(posIn, uuidIn);
-        if(!timestoppedChunks.contains(chunk)) {
-            timestoppedChunks.add(chunk);
-        }
+        timestoppedChunks.add(chunk);
         onDataUpdated();
     }
 
