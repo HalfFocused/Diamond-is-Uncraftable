@@ -67,8 +67,21 @@ public class EventClientTick {
         ClientPlayerEntity player = Minecraft.getInstance().player;
 
 
+
         Stand.getLazyOptional(player).ifPresent(stand -> {
             if (Minecraft.getInstance().world == null) return;
+
+            if (stand.getExperiencingTimeStop()) {
+                Minecraft.getInstance().gameRenderer.loadShader(new ResourceLocation("shaders/post/desaturate.json"));
+            } else {
+                Minecraft.getInstance().gameRenderer.stopUseShader();
+            }
+
+
+
+            if (stand.getInstantTimeStopFrame() > 0) {
+                Minecraft.getInstance().gameRenderer.loadShader(new ResourceLocation("shaders/post/desaturate.json"));
+            }
 
             if (stand.getStandID() == Util.StandID.AEROSMITH && stand.getStandOn() && stand.getAbility())
                 StreamSupport.stream(Minecraft.getInstance().world.getAllEntities().spliterator(), false)
@@ -338,6 +351,7 @@ public class EventClientTick {
 
     @SubscribeEvent
     public static void onRenderWorldLast(RenderWorldLastEvent event) {
+
         ClientWorld world = Minecraft.getInstance().world;
         Vec3d projectedView = Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getProjectedView();
         MatrixStack matrixStack = event.getMatrixStack();
@@ -369,30 +383,9 @@ public class EventClientTick {
             }
             if (event.getPhase() != EventPriority.NORMAL || player == null) return;
 
-            if (props.getExperiencingTimeStop()) {
-                Minecraft.getInstance().gameRenderer.loadEntityShader(new EndermanEntity(EntityType.ENDERMAN, world));
-            } else {
-                Minecraft.getInstance().gameRenderer.stopUseShader();
-            }
-
-            if (props.getInstantTimeStopFrame() > 0) {
-                Minecraft.getInstance().gameRenderer.loadEntityShader(new EndermanEntity(EntityType.ENDERMAN, world));
-            }
-
 
 
         });
-    }
-
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public <T extends LivingEntity, M extends EntityModel<T>> void onRenderLiving(RenderLivingEvent.Pre<T, M> event) {
-        if (Util.isTimeStoppedForEntity(mc.player)) {
-            T entity = (T) event.getEntity();
-            if (!entity.canUpdate() && event.getPartialRenderTick() != partialTickStoppedAt) {
-                event.getRenderer().render(entity, MathHelper.lerp(partialTickStoppedAt, entity.rotationYaw, entity.prevRotationYaw), partialTickStoppedAt, event.getMatrixStack(), event.getBuffers(), event.getLight());
-                event.setCanceled(true);
-            }
-        }
     }
 
     @SubscribeEvent
