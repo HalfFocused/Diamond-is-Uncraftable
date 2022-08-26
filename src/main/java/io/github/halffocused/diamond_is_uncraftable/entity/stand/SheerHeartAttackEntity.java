@@ -91,7 +91,9 @@ public class SheerHeartAttackEntity extends AbstractStandAttackEntity {
                 if(stalled){
                     setNoGravity(world.getBlockState(new BlockPos(this.getPosX(), this.getPosY() + 1, this.getPosZ())).isSolid());
                     setMotion(0, this.getMotion().getY(), 0);
-                    masterFuse -= 2; //After hitting the ground, SHA fuses 3x as fast.
+                    if(!TimestopHelper.isTimeStopped(world, this)) {
+                        masterFuse -= 2; //After hitting the ground, SHA fuses 3x as fast.
+                    }
                 }
                 if(target == null) {
                     getServer().getWorld(dimension).getEntities()
