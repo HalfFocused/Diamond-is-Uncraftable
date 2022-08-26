@@ -1,14 +1,12 @@
 package io.github.halffocused.diamond_is_uncraftable.util.timestop;
 
 import io.github.halffocused.diamond_is_uncraftable.DiamondIsUncraftable;
-import io.github.halffocused.diamond_is_uncraftable.capability.ITimestop;
 import io.github.halffocused.diamond_is_uncraftable.capability.Stand;
 import io.github.halffocused.diamond_is_uncraftable.capability.Timestop;
 import io.github.halffocused.diamond_is_uncraftable.capability.WorldTimestopCapability;
 import io.github.halffocused.diamond_is_uncraftable.config.DiamondIsUncraftableConfig;
 import io.github.halffocused.diamond_is_uncraftable.entity.stand.AbstractStandEntity;
 import io.github.halffocused.diamond_is_uncraftable.util.Util;
-import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.IProjectile;
 import net.minecraft.entity.LivingEntity;
@@ -17,7 +15,6 @@ import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.item.TNTEntity;
 import net.minecraft.entity.item.minecart.TNTMinecartEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.entity.projectile.DamagingProjectileEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
@@ -25,22 +22,15 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.server.ServerChunkProvider;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
-import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
-import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.event.world.PistonEvent;
-import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import org.apache.logging.log4j.core.jmx.Server;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -86,7 +76,7 @@ public class TimestopHelper {
     public static void timeStopTick(PlayerEntity timeStopper){
         World world = timeStopper.getEntityWorld();
         UUID uuid = timeStopper.getUniqueID();
-        int timeStopRange = DiamondIsUncraftableConfig.COMMON.timeStopRange.get();
+        int timeStopRange = DiamondIsUncraftableConfig.COMMON.timeStopChunkRange.get();
         WorldTimestopCapability timestoppedChunks = WorldTimestopCapability.getCapabilityFromWorld(world);
 
         ChunkPos masterChunkPos = world.getChunkAt(timeStopper.getPosition()).getPos();
@@ -140,7 +130,7 @@ public class TimestopHelper {
     }
 
     public static boolean chunkWithinTimestopRange(ChunkPos timestopPos, ChunkPos testPos) {
-        int timeStopRange = DiamondIsUncraftableConfig.COMMON.timeStopRange.get();
+        int timeStopRange = DiamondIsUncraftableConfig.COMMON.timeStopChunkRange.get();
         return Math.abs(timestopPos.x - testPos.x) < timeStopRange && Math.abs(timestopPos.z - testPos.z) < timeStopRange;
     }
 

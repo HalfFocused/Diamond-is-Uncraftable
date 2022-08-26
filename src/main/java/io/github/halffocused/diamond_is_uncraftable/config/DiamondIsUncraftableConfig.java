@@ -28,7 +28,7 @@ public class DiamondIsUncraftableConfig {
 
     public static class Common {
         public final ForgeConfigSpec.BooleanValue saveStandOnDeath;
-        public final ForgeConfigSpec.IntValue timeStopRange;
+        public final ForgeConfigSpec.IntValue timeStopChunkRange;
         public final ForgeConfigSpec.IntValue maxStickyFingersBlocks;
         public final ForgeConfigSpec.DoubleValue standDamageMultiplier;
         public final ForgeConfigSpec.BooleanValue uniqueStandMode;
@@ -48,9 +48,9 @@ public class DiamondIsUncraftableConfig {
                     .comment("Toggle save Stand on death")
                     .define("saveStandOnDeath", true);
 
-            timeStopRange = builder
+            timeStopChunkRange = builder
                     .comment("Set the range (in Chunks) of all time stop effects. Time stop's range is a square centered on it's user.\n Total chunks affected for ranges: \n Range of 1 = 1 chunk. Range of 8 ~= 225 chunks. Range of 16 ~= 1000 chunks. Range of 32 ~= 4000 chunks.")
-                    .defineInRange("timeStopRange", 8, 1, 32);
+                    .defineInRange("timeStopChunkRange", 8, 1, 32);
 
             maxStickyFingersBlocks = builder
                     .comment("Currently Unused: Set the maximum amount of zipped blocks a Sticky Fingers user can have at once. Clusters of over 100 zipped blocks get laggy.")
