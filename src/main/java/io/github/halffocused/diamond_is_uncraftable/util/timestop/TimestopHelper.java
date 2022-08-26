@@ -62,9 +62,15 @@ public class TimestopHelper {
         return isTimeStopped(worldIn, playerIn.getPosition()) && !Util.canStandMoveInStoppedTime(stand.getStandID());
     }
 
+    public static boolean isTimeStopped(World worldIn, AbstractStandEntity standIn) {
+        return isTimeStopped(worldIn, standIn.getMaster());
+    }
+
     public static boolean isTimeStopped(World worldIn, Entity entityIn) {
-        if(entityIn instanceof PlayerEntity){
+        if(entityIn instanceof PlayerEntity) {
             return isTimeStopped(worldIn, (PlayerEntity) entityIn);
+        }else if(entityIn instanceof AbstractStandEntity){
+            return isTimeStopped(worldIn, (AbstractStandEntity) entityIn);
         }else {
             return isTimeStopped(worldIn, entityIn.getPosition());
         }
@@ -421,19 +427,49 @@ public class TimestopHelper {
     @SubscribeEvent
     public static void cancelDamage(LivingAttackEvent event) {
         LivingEntity entity = event.getEntityLiving();
-        if(isTimeStopped(entity.getEntityWorld(), entity)) {
-            Timestop.getLazyOptional(entity).ifPresent(props -> {
-                if (!props.getDamage().containsKey(event.getSource().getDamageType()))
-                    props.getDamage().put(event.getSource().getDamageType(), event.getAmount());
-                else
-                    for (int i = 0; i < 1000; i++) {
-                        if (!props.getDamage().containsKey(event.getSource().getDamageType() + i)) {
-                            props.getDamage().put(event.getSource().getDamageType() + i, event.getAmount());
-                            break;
-                        }
+
+        if(entity instanceof PlayerEntity) {
+            PlayerEntity playerEntity = (PlayerEntity) entity;
+
+            if(isTimeStopped(playerEntity.world, playerEntity.getPosition())){
+                if(isTimeStopped(playerEntity.world, playerEntity)){ //If time is stopped, and the player is not moving in stopped time.
+                    Timestop.getLazyOptional(playerEntity).ifPresent(props -> {
+                        if (!props.getDamage().containsKey(event.getSource().getDamageType()))
+                            props.getDamage().put(event.getSource().getDamageType(), event.getAmount());
+                        else
+                            for (int i = 0; i < 1000; i++) {
+                                if (!props.getDamage().containsKey(event.getSource().getDamageType() + i)) {
+                                    props.getDamage().put(event.getSource().getDamageType() + i, event.getAmount());
+                                    break;
+                                }
+                            }
+                    });
+                    event.setCanceled(true);
+                }else{ //If time is stopped, but the player is moving in stopped time.
+                    Entity trueSource = event.getSource().getTrueSource();
+                    if(trueSource == null){ //No environmental damage during timestop
+                        event.setCanceled(true);
+                    }else{
+                        event.setCanceled(isTimeStopped(trueSource.getEntityWorld(), trueSource));
                     }
-            });
-            event.setCanceled(true);
+                }
+            }
+
+        }else if (!(entity instanceof AbstractStandEntity)){
+            if (isTimeStopped(entity.getEntityWorld(), entity)) {
+                Timestop.getLazyOptional(entity).ifPresent(props -> {
+                    if (!props.getDamage().containsKey(event.getSource().getDamageType()))
+                        props.getDamage().put(event.getSource().getDamageType(), event.getAmount());
+                    else
+                        for (int i = 0; i < 1000; i++) {
+                            if (!props.getDamage().containsKey(event.getSource().getDamageType() + i)) {
+                                props.getDamage().put(event.getSource().getDamageType() + i, event.getAmount());
+                                break;
+                            }
+                        }
+                });
+                event.setCanceled(true);
+            }
         }
     }
 

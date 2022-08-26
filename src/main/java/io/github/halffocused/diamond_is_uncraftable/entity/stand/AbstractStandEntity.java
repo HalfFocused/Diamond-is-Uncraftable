@@ -174,6 +174,8 @@ public abstract class AbstractStandEntity extends MobEntity implements IEntityAd
         fallDistance = 0; //Mutes that god forsaken fall sound, not even overriding the playFallSound method helps without this.
         if (!world.isRemote && getMaster() != null) { //Calls getMaster to set the master to a @Nonnull value.
 
+            stopRiding();
+
             if (!master.isAlive()) {
                 MinecraftForge.EVENT_BUS.post(new StandEvent.MasterDeathEvent(master, this));
                 remove();

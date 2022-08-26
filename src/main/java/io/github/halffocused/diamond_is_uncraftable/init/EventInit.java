@@ -1,5 +1,6 @@
 package io.github.halffocused.diamond_is_uncraftable.init;
 
+import io.github.halffocused.diamond_is_uncraftable.entity.stand.KingCrimsonEntity;
 import io.github.halffocused.diamond_is_uncraftable.entity.stand.StarPlatinumEntity;
 import io.github.halffocused.diamond_is_uncraftable.entity.stand.TheWorldEntity;
 import io.github.halffocused.diamond_is_uncraftable.event.*;

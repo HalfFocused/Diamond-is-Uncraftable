@@ -49,8 +49,8 @@ public class DiamondIsUncraftableConfig {
                     .define("saveStandOnDeath", true);
 
             timeStopRange = builder
-                    .comment("Set the range (in Chunks) of all time stop effects.")
-                    .defineInRange("timeStopRange", 16, 1, 32);
+                    .comment("Set the range (in Chunks) of all time stop effects. Time stop's range is a square centered on it's user.\n Total chunks affected for ranges: \n Range of 1 = 1 chunk. Range of 8 ~= 225 chunks. Range of 16 ~= 1000 chunks. Range of 32 ~= 4000 chunks.")
+                    .defineInRange("timeStopRange", 8, 1, 32);
 
             maxStickyFingersBlocks = builder
                     .comment("Currently Unused: Set the maximum amount of zipped blocks a Sticky Fingers user can have at once. Clusters of over 100 zipped blocks get laggy.")
@@ -62,7 +62,7 @@ public class DiamondIsUncraftableConfig {
 
     public static class Client {
         public final ForgeConfigSpec.BooleanValue playStandSpawnSounds;
-        public final ForgeConfigSpec.BooleanValue noColorInversion;
+        public final ForgeConfigSpec.BooleanValue noTimestopDesaturation;
         public final ForgeConfigSpec.BooleanValue noTimeSkipFlash;
 
         Client(ForgeConfigSpec.Builder builder) {
@@ -72,8 +72,8 @@ public class DiamondIsUncraftableConfig {
                     .comment("Toggle Stand spawn sounds.")
                     .define("playStandSpawnSounds", true);
 
-            noColorInversion = builder
-                    .comment("If this is true, there is no screen color inversion on Time Stop moves.")
+            noTimestopDesaturation = builder
+                    .comment("If this is true, there is no screen color desaturation on Time Stop moves.")
                     .define("noInvertedColors", false);
 
             noTimeSkipFlash = builder

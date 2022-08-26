@@ -51,6 +51,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerXpEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
+import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -518,10 +519,36 @@ public class EventHandleStandAbilities {
             });
         }
 
+        if(!event.getEntity().world.isRemote() && event.getEntity() instanceof PlayerEntity){
+            ServerPlayerEntity playerEntity = (ServerPlayerEntity) event.getEntity();
+            Stand.getLazyOptional(playerEntity).ifPresent(props -> {
+
+
+                //This is completely safe to call on players who cannot stop time. All it does is remove any timestopped chunks matching the player's UUID.
+                TimestopHelper.endTimeStop(playerEntity);
+
+                playerEntity.getServerWorld().getEntities()
+                        .filter(entity -> entity instanceof SheerHeartAttackEntity)
+                        .filter(entity -> ((SheerHeartAttackEntity) entity).getMaster().equals(playerEntity))
+                        .forEach(Entity::remove);
+
+                playerEntity.getServerWorld().getEntities()
+                        .filter(entity -> entity instanceof AbstractStandEntity)
+                        .filter(entity -> ((AbstractStandEntity) entity).getMaster().equals(playerEntity))
+                        .forEach(entity -> {
+                            if (entity instanceof KingCrimsonEntity) {
+                                if (((KingCrimsonEntity) entity).timeEraseActive) {
+                                    ((KingCrimsonEntity) entity).endTimeSkip();
+                                }
+                            }
+                            entity.remove();
+                        });
+            });
+        }
+
         if(event.getEntity() instanceof PlayerEntity && event.getSource() != null &&event.getSource().getTrueSource() != null){
 
             PlayerEntity player = (PlayerEntity) event.getEntity();
-            LivingEntity trueSource = (LivingEntity) event.getSource().getTrueSource();
 
             Stand stand = Stand.getCapabilityFromPlayer(player);
 
@@ -677,67 +704,11 @@ public class EventHandleStandAbilities {
         if (entity instanceof PlayerEntity) {
             Stand.getLazyOptional((PlayerEntity) entity).ifPresent(stand -> {
 
-                if (stand.getStandID() == Util.StandID.KILLER_QUEEN && stand.getGameTime() != -1 && entity.getHealth() <= entity.getMaxHealth() / 4) {
-                    entity.world.setGameTime(stand.getGameTime());
-                    entity.world.setDayTime(stand.getDayTime());
-                    stand.setGameTime(-1);
-                    stand.setDayTime(-1);
-                    entity.setHealth(entity.getMaxHealth());
-                    entity.getServer().getWorld(entity.dimension).getEntities().forEach(entity1 -> {
-                        if (entity1 instanceof PlayerEntity && !entity1.world.isRemote)
-                            StandPlayerEffects.getLazyOptional((PlayerEntity) entity1).ifPresent(standPlayerEffects -> {
-                                ((PlayerEntity) entity1).inventory.clear();
-                                for (int i = 0; i < standPlayerEffects.getMainInventory().size(); i++) {
-                                    ItemStack stack = standPlayerEffects.getMainInventory().get(i);
-                                    ((PlayerEntity) entity1).inventory.setInventorySlotContents(i, stack);
-                                    standPlayerEffects.getMainInventory().set(i, ItemStack.EMPTY);
-                                }
-                                for (int i = 0; i < standPlayerEffects.getArmorInventory().size(); i++) {
-                                    ItemStack stack = standPlayerEffects.getArmorInventory().get(i);
-                                    ((PlayerEntity) entity1).inventory.setInventorySlotContents(i + 36, stack);
-                                    standPlayerEffects.getArmorInventory().set(i, ItemStack.EMPTY);
-                                }
-                                for (int i = 0; i < standPlayerEffects.getOffHandInventory().size(); i++) {
-                                    ItemStack stack = standPlayerEffects.getOffHandInventory().get(i);
-                                    ((PlayerEntity) entity1).inventory.setInventorySlotContents(i + 40, stack);
-                                    standPlayerEffects.getOffHandInventory().set(i, ItemStack.EMPTY);
-                                }
-                            });
-                        StandEffects.getLazyOptional(entity1).ifPresent(standEffects -> {
-                            if (standEffects.isShouldBeRemoved())
-                                entity1.remove();
-                            if (entity1 instanceof ItemEntity && standEffects.getBitesTheDustPos() == BlockPos.ZERO)
-                                entity.remove();
-                            if (!standEffects.getDestroyedBlocks().isEmpty())
-                                standEffects.getDestroyedBlocks().forEach((pos, list) ->
-                                        list.forEach((blockPos, blockState) -> {
-                                            if (entity.world.getChunkProvider().isChunkLoaded(pos))
-                                                entity.world.getChunkProvider().forceChunk(pos, true);
-                                            entity.world.setBlockState(blockPos, blockState);
-                                        }));
-                            if (standEffects.getBitesTheDustPos() != BlockPos.ZERO) {
-                                entity1.setPositionAndUpdate(standEffects.getBitesTheDustPos().getX(), standEffects.getBitesTheDustPos().getY(), standEffects.getBitesTheDustPos().getZ());
-                                standEffects.setBitesTheDustPos(BlockPos.ZERO);
-                            }
-                        });
-
-
-                    });
-
-                    stand.setCooldown(36000);
-                }
-                if (stand.getStandID() == Util.StandID.TWENTIETH_CENTURY_BOY && stand.getAbilityActive()) {
-                    if (!entity.world.isRemote)
-                        entity.getServer().getWorld(entity.dimension).getEntities()
-                                .filter(entity1 -> entity1.getDistance(entity) <= 3)
-                                .filter(entity1 -> !entity1.equals(entity))
-                                .forEach(entity1 -> {
-                                    if (entity1 instanceof AbstractStandEntity && ((AbstractStandEntity) entity1).getMaster().equals(entity))
-                                        return;
-                                    entity1.attackEntityFrom(event.getSource(), event.getAmount() / 1.4f);
-                                });
+                if(stand.getExperiencingTimeSkip()){
                     event.setCanceled(true);
+                    return;
                 }
+
                 if (!entity.world.isRemote() && stand.getStandOn()) {
                     boolean shouldCancelDamage = false;
                     AtomicReference<AbstractStandEntity> standEntity = new AtomicReference<>();
