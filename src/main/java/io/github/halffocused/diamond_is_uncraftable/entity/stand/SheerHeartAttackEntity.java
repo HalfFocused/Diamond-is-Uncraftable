@@ -3,6 +3,7 @@ package io.github.halffocused.diamond_is_uncraftable.entity.stand;
 import io.github.halffocused.diamond_is_uncraftable.entity.stand.attack.AbstractStandAttackEntity;
 import io.github.halffocused.diamond_is_uncraftable.init.EntityInit;
 import io.github.halffocused.diamond_is_uncraftable.util.Util;
+import io.github.halffocused.diamond_is_uncraftable.util.timestop.TimestopHelper;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
 import net.minecraft.entity.player.PlayerEntity;
@@ -68,7 +69,9 @@ public class SheerHeartAttackEntity extends AbstractStandAttackEntity {
         if(!world.isRemote()) {
             if (detonating) {
                 setNoGravity(world.getBlockState(new BlockPos(this.getPosX(), this.getPosY() + 1, this.getPosZ())).isSolid());
-                detonationTime = Math.max(0, detonationTime - 1);
+                if(!TimestopHelper.isTimeStopped(world, this)) {
+                    detonationTime = Math.max(0, detonationTime - 1);
+                }
                 setMotion(0, this.getMotion().getY(), 0);
                 Util.spawnParticle(masterStand, 14, this.getPosX(), this.getPosY() + 1, this.getPosZ(), 0.4, 0.4, 0.4, 2);
 
@@ -119,9 +122,11 @@ public class SheerHeartAttackEntity extends AbstractStandAttackEntity {
                     prevRotationPitch = rotationPitch;
                 }
 
-                masterFuse--;
-                if(masterFuse <= 0){
-                    detonating = true;
+                if(!TimestopHelper.isTimeStopped(world, this)) {
+                    masterFuse--;
+                    if (masterFuse <= 0) {
+                        detonating = true;
+                    }
                 }
             }
             if (detonationTime == 0) {

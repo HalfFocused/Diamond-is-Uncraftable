@@ -369,16 +369,17 @@ public class EventClientTick {
             }
             if (event.getPhase() != EventPriority.NORMAL || player == null) return;
 
-            /*
-            if(!DiamondIsUncraftableConfig.CLIENT.noColorInversion.get()) {
-                if (props.getExperiencingTimeStop()) {
-                    Minecraft.getInstance().gameRenderer.loadShader(new ResourceLocation(DiamondIsUncraftable.MOD_ID, "shaders/timestop.json"));
-                } else {
-                    Minecraft.getInstance().gameRenderer.stopUseShader();
-                }
+            if (props.getExperiencingTimeStop()) {
+                Minecraft.getInstance().gameRenderer.loadEntityShader(new EndermanEntity(EntityType.ENDERMAN, world));
+            } else {
+                Minecraft.getInstance().gameRenderer.stopUseShader();
             }
 
-             */
+            if (props.getInstantTimeStopFrame() > 0) {
+                Minecraft.getInstance().gameRenderer.loadEntityShader(new EndermanEntity(EntityType.ENDERMAN, world));
+            }
+
+
 
         });
     }

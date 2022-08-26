@@ -6,16 +6,16 @@ import io.github.halffocused.diamond_is_uncraftable.capability.StandEffects;
 import io.github.halffocused.diamond_is_uncraftable.capability.StandPerWorldCapability;
 import io.github.halffocused.diamond_is_uncraftable.capability.Timestop;
 import io.github.halffocused.diamond_is_uncraftable.config.DiamondIsUncraftableConfig;
-import io.github.halffocused.diamond_is_uncraftable.entity.stand.SheerHeartAttackEntity;
-import io.github.halffocused.diamond_is_uncraftable.entity.stand.StarPlatinumEntity;
-import io.github.halffocused.diamond_is_uncraftable.entity.stand.TheWorldEntity;
+import io.github.halffocused.diamond_is_uncraftable.entity.stand.*;
 import io.github.halffocused.diamond_is_uncraftable.network.message.server.SSyncStandCapabilityPacket;
+import io.github.halffocused.diamond_is_uncraftable.util.timestop.TimestopHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.IProjectile;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.entity.projectile.DamagingProjectileEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.dimension.DimensionType;
@@ -78,267 +78,27 @@ public class EventSyncCapability {
         player.setInvulnerable(false);
         Stand.getLazyOptional(player).ifPresent(props -> { //It's a lot of code to run on logout, but some horrible bugs occur without it.
             if (!player.world.isRemote) {
+
+                //This is completely safe to call on players who cannot stop time. All it does is remove any timestopped chunks matching the player's UUID.
+                TimestopHelper.endTimeStop(player);
+
                 player.getServerWorld().getEntities()
                         .filter(entity -> entity instanceof SheerHeartAttackEntity)
-                        .filter(entity -> ((SheerHeartAttackEntity) entity).getMaster() == player)
+                        .filter(entity -> ((SheerHeartAttackEntity) entity).getMaster().equals(player))
                         .forEach(Entity::remove);
-                switch (props.getStandID()) {
-                    case THE_WORLD: {
-                        player.getServerWorld().getEntities()
-                                .forEach(entity -> {
-                                    Timestop.getLazyOptional(entity).ifPresent(props2 -> {
-                                        if ((entity instanceof IProjectile || entity instanceof ItemEntity || entity instanceof DamagingProjectileEntity) && (props2.getMotionX() != 0 && props2.getMotionY() != 0 && props2.getMotionZ() != 0)) {
-                                            entity.setMotion(props2.getMotionX(), props2.getMotionY(), props2.getMotionZ());
-                                            entity.setNoGravity(false);
-                                        } else if (props2.getMotionX() != 0 && props2.getMotionY() != 0 && props2.getMotionZ() != 0)
-                                            entity.setMotion(props2.getMotionX(), props2.getMotionY(), props2.getMotionZ());
-                                        if (entity instanceof MobEntity)
-                                            ((MobEntity) entity).setNoAI(false);
-                                        entity.velocityChanged = true;
-                                        entity.setMotion(props2.getMotionX(), props2.getMotionY(), props2.getMotionZ());
-                                        entity.fallDistance = props2.getFallDistance();
-                                        entity.setInvulnerable(false);
-                                        if (props2.getDamage().size() > 0)
-                                            props2.getDamage().forEach((source, amount) -> {
-                                                DamageSource damageSource = DamageSource.GENERIC;
-                                                String newSource = source.replaceAll("[0123456789]", "");
-                                                switch (newSource) {
-                                                    case "inFire": {
-                                                        damageSource = DamageSource.IN_FIRE;
-                                                        break;
-                                                    }
-                                                    case "onFire": {
-                                                        damageSource = DamageSource.ON_FIRE;
-                                                        break;
-                                                    }
-                                                    case "lightningBolt": {
-                                                        damageSource = DamageSource.LIGHTNING_BOLT;
-                                                        break;
-                                                    }
-                                                    case "lava": {
-                                                        damageSource = DamageSource.LAVA;
-                                                        break;
-                                                    }
-                                                    case "hotFloor": {
-                                                        damageSource = DamageSource.HOT_FLOOR;
-                                                        break;
-                                                    }
-                                                    case "inWall": {
-                                                        damageSource = DamageSource.IN_WALL;
-                                                        break;
-                                                    }
-                                                    case "cramming": {
-                                                        damageSource = DamageSource.CRAMMING;
-                                                        break;
-                                                    }
-                                                    case "drown": {
-                                                        damageSource = DamageSource.DROWN;
-                                                        break;
-                                                    }
-                                                    case "starve": {
-                                                        damageSource = DamageSource.STARVE;
-                                                        break;
-                                                    }
-                                                    case "cactus": {
-                                                        damageSource = DamageSource.CACTUS;
-                                                        break;
-                                                    }
-                                                    case "fall": {
-                                                        damageSource = DamageSource.FALL;
-                                                        break;
-                                                    }
-                                                    case "flyIntoWall": {
-                                                        damageSource = DamageSource.FLY_INTO_WALL;
-                                                        break;
-                                                    }
-                                                    case "outOfWorld": {
-                                                        damageSource = DamageSource.OUT_OF_WORLD;
-                                                        break;
-                                                    }
-                                                    case "magic": {
-                                                        damageSource = DamageSource.MAGIC;
-                                                        break;
-                                                    }
-                                                    case "wither": {
-                                                        damageSource = DamageSource.WITHER;
-                                                        break;
-                                                    }
-                                                    case "anvil": {
-                                                        damageSource = DamageSource.ANVIL;
-                                                        break;
-                                                    }
-                                                    case "fallingBlock": {
-                                                        damageSource = DamageSource.FALLING_BLOCK;
-                                                        break;
-                                                    }
-                                                    case "dragonBreath": {
-                                                        damageSource = DamageSource.DRAGON_BREATH;
-                                                        break;
-                                                    }
-                                                    case "fireworks": {
-                                                        damageSource = DamageSource.FIREWORKS;
-                                                        break;
-                                                    }
-                                                    case "dryout": {
-                                                        damageSource = DamageSource.DRYOUT;
-                                                        break;
-                                                    }
-                                                    case "sweetBerryBush": {
-                                                        damageSource = DamageSource.SWEET_BERRY_BUSH;
-                                                        break;
-                                                    }
-                                                }
-                                                entity.attackEntityFrom(damageSource, amount);
-                                                entity.hurtResistantTime = 0;
-                                            });
-                                        System.out.println("10");
-                                        props2.clear();
-                                    });
-                                    Entity theWorld = player.world.getEntityByID(props.getPlayerStand());
-                                    if (theWorld instanceof TheWorldEntity) {
-                                        ((TheWorldEntity) theWorld).shouldDamageBeCancelled = false;
-                                        TheWorldEntity.getTheWorldList().remove(theWorld);
-                                        ((TheWorldEntity) theWorld).getBrokenBlocks().forEach(pos -> {
-                                            theWorld.world.getBlockState(pos).getBlock().harvestBlock(theWorld.world, player, pos, theWorld.world.getBlockState(pos), null, player.getActiveItemStack());
-                                            theWorld.world.removeBlock(pos, false);
-                                        });
-                                        ((TheWorldEntity) theWorld).getBrokenBlocks().clear();
-                                    }
-                                });
-                        break;
-                    }
-                    case STAR_PLATINUM: {
-                        player.getServerWorld().getEntities()
-                                .forEach(entity -> {
-                                    Timestop.getLazyOptional(entity).ifPresent(props2 -> {
-                                        if ((entity instanceof IProjectile || entity instanceof ItemEntity || entity instanceof DamagingProjectileEntity) && (props2.getMotionX() != 0 && props2.getMotionY() != 0 && props2.getMotionZ() != 0)) {
-                                            entity.setMotion(props2.getMotionX(), props2.getMotionY(), props2.getMotionZ());
-                                            entity.setNoGravity(false);
-                                        } else {
-                                            if (props2.getMotionX() != 0 && props2.getMotionY() != 0 && props2.getMotionZ() != 0)
-                                                entity.setMotion(props2.getMotionX(), props2.getMotionY(), props2.getMotionZ());
-                                        }
-                                        if (entity instanceof MobEntity)
-                                            ((MobEntity) entity).setNoAI(false);
-                                        entity.velocityChanged = true;
-                                        entity.setMotion(props2.getMotionX(), props2.getMotionY(), props2.getMotionZ());
-                                        entity.fallDistance = props2.getFallDistance();
-                                        entity.setInvulnerable(false);
-                                        props2.getDamage().forEach((source, amount) -> {
-                                            DamageSource damageSource = DamageSource.GENERIC;
-                                            String newSource = source.replaceAll("[0123456789]", "");
-                                            switch (newSource) {
-                                                case "inFire": {
-                                                    damageSource = DamageSource.IN_FIRE;
-                                                    break;
-                                                }
-                                                case "onFire": {
-                                                    damageSource = DamageSource.ON_FIRE;
-                                                    break;
-                                                }
-                                                case "lightningBolt": {
-                                                    damageSource = DamageSource.LIGHTNING_BOLT;
-                                                    break;
-                                                }
-                                                case "lava": {
-                                                    damageSource = DamageSource.LAVA;
-                                                    break;
-                                                }
-                                                case "hotFloor": {
-                                                    damageSource = DamageSource.HOT_FLOOR;
-                                                    break;
-                                                }
-                                                case "inWall": {
-                                                    damageSource = DamageSource.IN_WALL;
-                                                    break;
-                                                }
-                                                case "cramming": {
-                                                    damageSource = DamageSource.CRAMMING;
-                                                    break;
-                                                }
-                                                case "drown": {
-                                                    damageSource = DamageSource.DROWN;
-                                                    break;
-                                                }
-                                                case "starve": {
-                                                    damageSource = DamageSource.STARVE;
-                                                    break;
-                                                }
-                                                case "cactus": {
-                                                    damageSource = DamageSource.CACTUS;
-                                                    break;
-                                                }
-                                                case "fall": {
-                                                    damageSource = DamageSource.FALL;
-                                                    break;
-                                                }
-                                                case "flyIntoWall": {
-                                                    damageSource = DamageSource.FLY_INTO_WALL;
-                                                    break;
-                                                }
-                                                case "outOfWorld": {
-                                                    damageSource = DamageSource.OUT_OF_WORLD;
-                                                    break;
-                                                }
-                                                case "magic": {
-                                                    damageSource = DamageSource.MAGIC;
-                                                    break;
-                                                }
-                                                case "wither": {
-                                                    damageSource = DamageSource.WITHER;
-                                                    break;
-                                                }
-                                                case "anvil": {
-                                                    damageSource = DamageSource.ANVIL;
-                                                    break;
-                                                }
-                                                case "fallingBlock": {
-                                                    damageSource = DamageSource.FALLING_BLOCK;
-                                                    break;
-                                                }
-                                                case "dragonBreath": {
-                                                    damageSource = DamageSource.DRAGON_BREATH;
-                                                    break;
-                                                }
-                                                case "fireworks": {
-                                                    damageSource = DamageSource.FIREWORKS;
-                                                    break;
-                                                }
-                                                case "dryout": {
-                                                    damageSource = DamageSource.DRYOUT;
-                                                    break;
-                                                }
-                                                case "sweetBerryBush": {
-                                                    damageSource = DamageSource.SWEET_BERRY_BUSH;
-                                                    break;
-                                                }
-                                            }
-                                            entity.attackEntityFrom(damageSource, amount);
-                                        });
-                                        System.out.println("11");
-                                        props2.clear();
-                                    });
-                                    Entity starPlatinum = player.world.getEntityByID(props.getPlayerStand());
-                                    if (starPlatinum instanceof StarPlatinumEntity) {
-                                        ((StarPlatinumEntity) starPlatinum).shouldDamageBeCancelled = false;
-                                        StarPlatinumEntity.getStarPlatinumList().remove(starPlatinum);
-                                        ((StarPlatinumEntity) starPlatinum).getBrokenBlocks().forEach(pos -> {
-                                            starPlatinum.world.getBlockState(pos).getBlock().harvestBlock(starPlatinum.world, player, pos, starPlatinum.world.getBlockState(pos), null, player.getActiveItemStack());
-                                            starPlatinum.world.removeBlock(pos, false);
-                                        });
-                                        ((StarPlatinumEntity) starPlatinum).getBrokenBlocks().clear();
-                                    }
-                                });
-                        break;
-                    }
-                    case THE_GRATEFUL_DEAD: {
-                        player.getServerWorld().getEntities()
-                                .filter(entity -> !entity.equals(player))
-                                .filter(entity -> entity instanceof LivingEntity)
-                                .forEach(entity -> StandEffects.getLazyOptional(entity).ifPresent(props2 -> props2.setAging(false)));
-                        break;
-                    }
-                }
+
+                player.getServerWorld().getEntities()
+                        .filter(entity -> entity instanceof AbstractStandEntity)
+                        .filter(entity -> ((AbstractStandEntity) entity).getMaster().equals(player))
+                        .forEach(entity -> {
+                            if(entity instanceof KingCrimsonEntity){
+                                if(((KingCrimsonEntity) entity).timeEraseActive){
+                                    ((KingCrimsonEntity) entity).endTimeSkip();
+                                }
+                            }
+                            entity.remove();
+                        });
+
                 DiamondIsUncraftable.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new SSyncStandCapabilityPacket(props));
             }
         });

@@ -6,6 +6,7 @@ import io.github.halffocused.diamond_is_uncraftable.capability.Stand;
 import io.github.halffocused.diamond_is_uncraftable.capability.Timestop;
 import io.github.halffocused.diamond_is_uncraftable.capability.WorldTimestopCapability;
 import io.github.halffocused.diamond_is_uncraftable.config.DiamondIsUncraftableConfig;
+import io.github.halffocused.diamond_is_uncraftable.entity.stand.AbstractStandEntity;
 import io.github.halffocused.diamond_is_uncraftable.util.Util;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
@@ -16,6 +17,7 @@ import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.item.TNTEntity;
 import net.minecraft.entity.item.minecart.TNTMinecartEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.entity.projectile.DamagingProjectileEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
@@ -43,9 +45,6 @@ import org.apache.logging.log4j.core.jmx.Server;
 import java.util.ArrayList;
 import java.util.UUID;
 
-/*
-Trying to rewrite Timestop to be chunk based. Wish me luck.
- */
 @Mod.EventBusSubscriber(modid = DiamondIsUncraftable.MOD_ID)
 public class TimestopHelper {
 
@@ -72,6 +71,12 @@ public class TimestopHelper {
     }
 
 
+    /**
+     * Called every tick when a player is stopping time. It does, in order:
+     * 1) Remove any timestopped chunks by the player if the player is no longer in range of them.
+     * 2) Add all chunks within timestop range of the user to the WorldTimestopCapability
+     * @param timeStopper The player who is stopping time.
+     */
     public static void timeStopTick(PlayerEntity timeStopper){
         World world = timeStopper.getEntityWorld();
         UUID uuid = timeStopper.getUniqueID();
@@ -104,9 +109,12 @@ public class TimestopHelper {
                 }
             }
         }
-        isTimeStopped(world, timeStopper.getPosition());
     }
 
+    /**
+     * Remove all timestopped chunks that were stopped by the supplied player.
+     * @param timeStopper The player who is no longer stopping time.
+     */
     public static void endTimeStop(PlayerEntity timeStopper) {
         World world = timeStopper.getEntityWorld();
         WorldTimestopCapability timestoppedChunks = WorldTimestopCapability.getCapabilityFromWorld(world);
@@ -230,6 +238,7 @@ public class TimestopHelper {
 
         if (!world.isRemote) {
             world.getEntities()
+                    .filter(entity -> !(entity instanceof AbstractStandEntity))
                     .forEach(entity -> {
 
                         if(entity instanceof PlayerEntity){
@@ -399,8 +408,6 @@ public class TimestopHelper {
                                             entity.attackEntityFrom(damageSource, amount);
                                             entity.hurtResistantTime = 0;
                                         });
-
-                                    System.out.println("1");
                                     timestop.clear();
                                 }
                             });

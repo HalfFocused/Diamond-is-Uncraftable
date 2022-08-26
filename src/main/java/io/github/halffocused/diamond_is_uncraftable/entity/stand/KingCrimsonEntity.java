@@ -37,7 +37,7 @@ public class KingCrimsonEntity extends AbstractStandEntity implements IAnimatabl
     int epitaphTicks = -1;
     boolean epitaphFlag = false;
     int epitaphEndingOpportunityTicks = 0;
-    boolean timeEraseActive;
+    public boolean timeEraseActive;
     int timeEraseDuration = 0;
     boolean clipToPosition = false;
     LivingEntity executionTarget = null;
@@ -335,7 +335,7 @@ public class KingCrimsonEntity extends AbstractStandEntity implements IAnimatabl
                 .forEach(entity -> createPairing((LivingEntity) entity));
     }
 
-    private void endTimeSkip(){
+    public void endTimeSkip(){
         timeEraseActive = false;
 
         world.playSound(null, getPosition(), SoundInit.TIME_SKIP_END.get(), SoundCategory.NEUTRAL, 1, 1);
