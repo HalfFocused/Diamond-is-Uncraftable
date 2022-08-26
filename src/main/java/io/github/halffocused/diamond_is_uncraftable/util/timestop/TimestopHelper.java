@@ -247,7 +247,7 @@ public class TimestopHelper {
 
                         if (isTimeStopped(world, entity)) {
                             Timestop.getLazyOptional(entity).ifPresent(timestop -> {
-                                if (timestop.getPosX() == 0 && timestop.getPosY() == 0 && timestop.getPosZ() == 0) {
+                                if (timestop.isEmpty()) {
                                     timestop.setPosition(entity.getPosX(), entity.getPosY(), entity.getPosZ());
                                     timestop.setMotion(entity.getMotion().getX(), entity.getMotion().getY(), entity.getMotion().getZ());
                                     timestop.setRotation(entity.rotationYaw, entity.rotationPitch, entity.getRotationYawHead());
@@ -259,40 +259,40 @@ public class TimestopHelper {
                                         timestop.setFuse(((TNTMinecartEntity) entity).minecartTNTFuse);
                                     if (entity instanceof ItemEntity)
                                         timestop.setAge(((ItemEntity) entity).age);
-                                } else { //Load information from capability
-
-                                    entity.setPosition(timestop.getPosX(), timestop.getPosY(), timestop.getPosZ());
-
-                                    if ((entity instanceof IProjectile) || (entity instanceof ItemEntity) || (entity instanceof DamagingProjectileEntity))
-                                        entity.setNoGravity(true);
-                                    else {
-                                        entity.rotationYaw = timestop.getRotationYaw();
-                                        entity.rotationPitch = timestop.getRotationPitch();
-                                        entity.setRotationYawHead(timestop.getRotationYawHead());
-                                    }
-
-                                    if (entity instanceof MobEntity) {
-                                        ((MobEntity) entity).setNoAI(true);
-                                    }
-                                    entity.setMotion(0, 0, 0);
-                                    entity.fallDistance = timestop.getFallDistance();
-                                    entity.setFireTimer(timestop.getFire());
-
-                                    if (entity instanceof TNTEntity)
-                                        ((TNTEntity) entity).setFuse(timestop.getFuse());
-                                    if (entity instanceof TNTMinecartEntity)
-                                        ((TNTMinecartEntity) entity).minecartTNTFuse = timestop.getFuse();
-                                    if (entity instanceof ItemEntity)
-                                        ((ItemEntity) entity).age = timestop.getAge();
-
-                                    if(entity instanceof PlayerEntity){
-                                        Stand.getLazyOptional(((PlayerEntity) entity)).ifPresent(stand -> {
-                                            Util.applyUnactionableTicks(((PlayerEntity) entity), 1);
-                                        });
-                                        ((PlayerEntity) entity).addPotionEffect(new EffectInstance(Effects.SLOWNESS, 50, 255, false, false));
-                                    }
-                                    entity.velocityChanged = true;
                                 }
+
+                                entity.setPosition(timestop.getPosX(), timestop.getPosY(), timestop.getPosZ());
+
+                                if ((entity instanceof IProjectile) || (entity instanceof ItemEntity) || (entity instanceof DamagingProjectileEntity))
+                                    entity.setNoGravity(true);
+                                else {
+                                    entity.rotationYaw = timestop.getRotationYaw();
+                                    entity.rotationPitch = timestop.getRotationPitch();
+                                    entity.setRotationYawHead(timestop.getRotationYawHead());
+                                }
+
+                                if (entity instanceof MobEntity) {
+                                    ((MobEntity) entity).setNoAI(true);
+                                }
+                                entity.setMotion(0, 0, 0);
+                                entity.fallDistance = timestop.getFallDistance();
+                                entity.setFireTimer(timestop.getFire());
+
+                                if (entity instanceof TNTEntity)
+                                    ((TNTEntity) entity).setFuse(timestop.getFuse());
+                                if (entity instanceof TNTMinecartEntity)
+                                    ((TNTMinecartEntity) entity).minecartTNTFuse = timestop.getFuse();
+                                if (entity instanceof ItemEntity)
+                                    ((ItemEntity) entity).age = timestop.getAge();
+
+                                if(entity instanceof PlayerEntity){
+                                    Stand.getLazyOptional(((PlayerEntity) entity)).ifPresent(stand -> {
+                                        Util.applyUnactionableTicks(((PlayerEntity) entity), 1);
+                                    });
+                                    ((PlayerEntity) entity).addPotionEffect(new EffectInstance(Effects.SLOWNESS, 50, 255, false, false));
+                                }
+                                entity.velocityChanged = true;
+
                             });
                         } else {
                             Timestop.getLazyOptional(entity).ifPresent(timestop -> {

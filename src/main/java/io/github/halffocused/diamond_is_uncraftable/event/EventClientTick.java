@@ -72,7 +72,7 @@ public class EventClientTick {
             if (Minecraft.getInstance().world == null) return;
 
             if (stand.getExperiencingTimeStop()) {
-                Minecraft.getInstance().gameRenderer.loadShader(new ResourceLocation("shaders/post/desaturate.json"));
+                Minecraft.getInstance().gameRenderer.loadShader(new ResourceLocation(DiamondIsUncraftable.MOD_ID, "shaders/timestop.json"));
             } else {
                 Minecraft.getInstance().gameRenderer.stopUseShader();
             }
@@ -80,7 +80,7 @@ public class EventClientTick {
 
 
             if (stand.getInstantTimeStopFrame() > 0) {
-                Minecraft.getInstance().gameRenderer.loadShader(new ResourceLocation("shaders/post/desaturate.json"));
+                Minecraft.getInstance().gameRenderer.loadShader(new ResourceLocation(DiamondIsUncraftable.MOD_ID, "shaders/timestop.json"));
             }
 
             if (stand.getStandID() == Util.StandID.AEROSMITH && stand.getStandOn() && stand.getAbility())
