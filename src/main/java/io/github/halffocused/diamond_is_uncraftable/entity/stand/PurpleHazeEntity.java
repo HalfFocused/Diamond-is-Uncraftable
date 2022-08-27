@@ -24,9 +24,6 @@ import software.bernie.geckolib3.core.IAnimatable;
 @SuppressWarnings("ConstantConditions")
 public class PurpleHazeEntity extends AbstractStandEntity implements IAnimatable, IWalkingStand, IOnHit, ICommandGrab {
 
-
-    MoveEffects punchEffectsHolder = new MoveEffects(3, null, null);
-
     int viralModifier = 0;
 
     AttackFramedata normalPunchData = new AttackFramedata()
@@ -39,7 +36,7 @@ public class PurpleHazeEntity extends AbstractStandEntity implements IAnimatable
             .setAttackDuration(14);
 
     AttackFramedata rageSlam = new AttackFramedata()
-            .addRadialDamageFrame(31, 16, new Vec3d(0, 0.7, 0), 8, false)
+            .addRadialDamageFrame(31, 16, new Vec3d(0, 0.7, 0), 6, false)
             .addMessageFrame(31, 1, 0,0)
             .setAttackDuration(50);
 
@@ -58,15 +55,15 @@ public class PurpleHazeEntity extends AbstractStandEntity implements IAnimatable
     }
 
     Stance normalStance = new Stance(1, 0.17, 0.5, 3, 2, 12,"idle", "forward", false)
-            .addWalkingMove(1, new Move("Double Punch", normalPunchData, "jab", 1, -3, punchEffectsHolder), 1.0, 3, 20);
+            .addWalkingMove(1, new Move("Double Punch", normalPunchData, "jab", 1, -3), 1.0, 3, 20);
 
     Stance enragedStance = new Stance(3, 0.25, 0.5, 10, -1, 15,"rageidle", "ragesprint", true)
-            .addWalkingMove(1, new Move("Rage Punch", ragePunchData, "ragepunch", 1, -3, punchEffectsHolder, true), 0.7, 3, 15)
-            .addWalkingMove(2, new Move("Rage Slam", rageSlam, "rageslam", 2, -3, punchEffectsHolder, true), 0.3, 6, 20);
+            .addWalkingMove(1, new Move("Rage Punch", ragePunchData, "ragepunch", 1, -3, true), 0.7, 3, 15)
+            .addWalkingMove(2, new Move("Rage Slam", rageSlam, "rageslam", 2, -3, true), 0.3, 6, 20);
 
     Stance violentStance = new Stance(2, 0.17, 0.5, 3, 2, 12,"idle", "forward", false)
-            .addWalkingMove(1, new Move("Double Punch", normalPunchData, "jab", 1, -3, punchEffectsHolder), 0.6, 3, 20)
-            .addWalkingMove(2, new Move("Rage Punch", ragePunchData, "ragepunch", 2, -3, punchEffectsHolder), 0.4, 3, 20);
+            .addWalkingMove(1, new Move("Double Punch", normalPunchData, "jab", 1, -3), 0.6, 3, 20)
+            .addWalkingMove(2, new Move("Rage Punch", ragePunchData, "ragepunch", 2, -3), 0.4, 3, 20);
 
     WalkingMoveHandler controller = new WalkingMoveHandler(this, 1)
             .addStance(normalStance)
@@ -77,17 +74,10 @@ public class PurpleHazeEntity extends AbstractStandEntity implements IAnimatable
         super(type, world);
     }
 
-    public void burstCapsule() {
-        if (world.isRemote) return;
-        getServer().getWorld(dimension).getEntities()
-                .filter(entity -> entity instanceof LivingEntity)
-                .filter(entity -> !(entity instanceof AbstractStandEntity))
-                .filter(entity -> entity.getDistance(this) < 7.5f)
-                .forEach(entity -> ((LivingEntity) entity).addPotionEffect(new EffectInstance(EffectInit.HAZE.get(), 200, 2)));
-    }
-
     public void commandGrab() {
-        controller.setMoveActive(7);
+        if(controller.getActiveStance().getId() != 3){
+            controller.setMoveActive(3);
+        }
     }
 
     @Override
@@ -104,11 +94,11 @@ public class PurpleHazeEntity extends AbstractStandEntity implements IAnimatable
 
                 if(controller.getActiveStanceId() == 3) {
                     if (this.ticksExisted % 40 == 0) {
-                        stand.setRestraint(Math.max(stand.getRestraint() - 1, 0));
+                        stand.setRage(Math.max(stand.getRage() - 1, 0));
                     }
                 }else{
                     if (this.ticksExisted % 25 == 0) {
-                        stand.setRestraint(Math.max(stand.getRestraint() - 1, 0));
+                        stand.setRage(Math.max(stand.getRage() - 1, 0));
                     }
                 }
 
@@ -116,16 +106,13 @@ public class PurpleHazeEntity extends AbstractStandEntity implements IAnimatable
 
             if(controller.getActiveStanceId() == 3){
                 if(getDistance(master) > 20){
-                    //Move master towards stand
-                    Vec3d movement = this.getPositionVec().subtract(master.getPositionVec()).normalize().mul(0.5, 0.5, 0.5);
-                        master.setMotion(movement);
-
+                    this.setPosition(master.getPosX(), master.getPosY(), master.getPosZ());
                 }
             }
         }
 
         Stand.getLazyOptional(master).ifPresent(stand -> {
-            stand.setPreventUnsummon2(stand.getRestraint() >= 25);
+            stand.setPreventUnsummon2(stand.getRage() >= 25);
 
             Style warningStyle = new Style().setUnderlined(true);
             if((this.ticksExisted + 20) % 20 >= 11){
@@ -134,23 +121,23 @@ public class PurpleHazeEntity extends AbstractStandEntity implements IAnimatable
                 warningStyle.setColor(TextFormatting.GRAY);
             }
             String message = "";
-            if(stand.getRestraint() < 25){
+            if(stand.getRage() < 25){
                 message = "Purple Haze: Under Control";
                 viralModifier = 0;
                 controller.setActiveStance(1);
-            }else if(stand.getRestraint() < 50){
+            }else if(stand.getRage() < 50){
                 message = "Purple Haze: Mildly Angered";
                 viralModifier = 0;
                 controller.setActiveStance(1);
-            }else if(stand.getRestraint() < 75){
+            }else if(stand.getRage() < 75){
                 message = "Purple Haze: Violent";
                 viralModifier = 1;
                 controller.setActiveStance(2);
-            }else if(stand.getRestraint() < 100){
+            }else if(stand.getRage() < 100){
                 message = "Purple Haze: On The Verge!";
                 viralModifier = 1;
                 controller.setActiveStance(2);
-            }else if(stand.getRestraint() >= 100){
+            }else if(stand.getRage() >= 100){
                 message = "Purple Haze: Rampaging!";
                 viralModifier = 2;
                 controller.setActiveStance(3);
@@ -183,8 +170,8 @@ public class PurpleHazeEntity extends AbstractStandEntity implements IAnimatable
 
     private void addRage(int incrementRage){
         Stand.getLazyOptional(master).ifPresent(props -> {
-            int newRage = (Math.max(0, props.getRestraint() + incrementRage));
-            props.setRestraint(Math.min(200, newRage));
+            int newRage = (Math.max(0, props.getRage() + incrementRage));
+            props.setRage(Math.min(200, newRage));
         });
     }
 
