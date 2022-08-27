@@ -374,7 +374,7 @@ public class TimestopHelper {
                                                     break;
                                                 }
                                             }
-                                            entity.attackEntityFrom(damageSource, amount);
+                                            entity.attackEntityFrom(damageSource, amount * 0.5f);
                                             entity.hurtResistantTime = 0;
                                         });
                                     timestop.clear();
