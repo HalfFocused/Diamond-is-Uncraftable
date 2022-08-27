@@ -198,7 +198,7 @@ public class TheWorldEntity extends AbstractStandEntity implements IMomentum, IO
     public double addMomentumAmount() {
 
         if(controller.isMoveActive()){
-            if(controller.getActiveMove().getId() == 2 || ability){
+            if(controller.getActiveMove().getId() == 2 || TimestopHelper.isTimeStopped(world, master.getPosition())){
                 return 0;
             }
         }

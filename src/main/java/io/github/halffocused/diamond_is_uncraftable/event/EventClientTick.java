@@ -3,6 +3,7 @@ package io.github.halffocused.diamond_is_uncraftable.event;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import io.github.halffocused.diamond_is_uncraftable.DiamondIsUncraftable;
 import io.github.halffocused.diamond_is_uncraftable.capability.Stand;
+import io.github.halffocused.diamond_is_uncraftable.capability.Timestop;
 import io.github.halffocused.diamond_is_uncraftable.client.gui.*;
 import io.github.halffocused.diamond_is_uncraftable.config.DiamondIsUncraftableConfig;
 import io.github.halffocused.diamond_is_uncraftable.entity.stand.AerosmithEntity;
@@ -66,9 +67,8 @@ public class EventClientTick {
         if (Minecraft.getInstance().player == null) return;
         ClientPlayerEntity player = Minecraft.getInstance().player;
 
-
-
         Stand.getLazyOptional(player).ifPresent(stand -> {
+
             if (Minecraft.getInstance().world == null) return;
 
             if (stand.getExperiencingTimeStop()) {

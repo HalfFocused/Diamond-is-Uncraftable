@@ -32,6 +32,7 @@ import net.minecraftforge.event.world.PistonEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -49,7 +50,7 @@ public class TimestopHelper {
 
     public static boolean isTimeStopped(World worldIn, PlayerEntity playerIn) {
         Stand stand = Stand.getCapabilityFromPlayer(playerIn);
-        return isTimeStopped(worldIn, playerIn.getPosition()) && !Util.canStandMoveInStoppedTime(stand.getStandID());
+        return isTimeStopped(worldIn, playerIn.getPosition()) /* && !Util.canStandMoveInStoppedTime(stand.getStandID()) */;
     }
 
     public static boolean isTimeStopped(World worldIn, AbstractStandEntity standIn) {
@@ -259,37 +260,7 @@ public class TimestopHelper {
                                         timestop.setAge(((ItemEntity) entity).age);
                                 }
 
-                                entity.setPosition(timestop.getPosX(), timestop.getPosY(), timestop.getPosZ());
-
-                                if ((entity instanceof IProjectile) || (entity instanceof ItemEntity) || (entity instanceof DamagingProjectileEntity))
-                                    entity.setNoGravity(true);
-                                else {
-                                    entity.rotationYaw = timestop.getRotationYaw();
-                                    entity.rotationPitch = timestop.getRotationPitch();
-                                    entity.setRotationYawHead(timestop.getRotationYawHead());
-                                }
-
-                                if (entity instanceof MobEntity) {
-                                    ((MobEntity) entity).setNoAI(true);
-                                }
-                                entity.setMotion(0, 0, 0);
-                                entity.fallDistance = timestop.getFallDistance();
-                                entity.setFireTimer(timestop.getFire());
-
-                                if (entity instanceof TNTEntity)
-                                    ((TNTEntity) entity).setFuse(timestop.getFuse());
-                                if (entity instanceof TNTMinecartEntity)
-                                    ((TNTMinecartEntity) entity).minecartTNTFuse = timestop.getFuse();
-                                if (entity instanceof ItemEntity)
-                                    ((ItemEntity) entity).age = timestop.getAge();
-
-                                if(entity instanceof PlayerEntity){
-                                    Stand.getLazyOptional(((PlayerEntity) entity)).ifPresent(stand -> {
-                                        Util.applyUnactionableTicks(((PlayerEntity) entity), 1);
-                                    });
-                                    ((PlayerEntity) entity).addPotionEffect(new EffectInstance(Effects.SLOWNESS, 50, 255, false, false));
-                                }
-                                entity.velocityChanged = true;
+                                timestoppedEntityTick(entity);
 
                             });
                         } else {
@@ -460,6 +431,44 @@ public class TimestopHelper {
                 });
                 event.setCanceled(true);
             }
+        }
+    }
+
+    public static void timestoppedEntityTick(Entity entity){
+        Timestop timestop = Timestop.getCapabilityFromEntity(entity);
+
+        if(!timestop.isEmpty()) {
+            entity.setPosition(timestop.getPosX(), timestop.getPosY(), timestop.getPosZ());
+
+            if ((entity instanceof IProjectile) || (entity instanceof ItemEntity) || (entity instanceof DamagingProjectileEntity))
+                entity.setNoGravity(true);
+            else {
+                entity.rotationYaw = timestop.getRotationYaw();
+                entity.rotationPitch = timestop.getRotationPitch();
+                entity.setRotationYawHead(timestop.getRotationYawHead());
+            }
+
+            if (entity instanceof MobEntity) {
+                ((MobEntity) entity).setNoAI(true);
+            }
+            entity.setMotion(0, 0, 0);
+            entity.fallDistance = timestop.getFallDistance();
+            entity.setFireTimer(timestop.getFire());
+
+            if (entity instanceof TNTEntity)
+                ((TNTEntity) entity).setFuse(timestop.getFuse());
+            if (entity instanceof TNTMinecartEntity)
+                ((TNTMinecartEntity) entity).minecartTNTFuse = timestop.getFuse();
+            if (entity instanceof ItemEntity)
+                ((ItemEntity) entity).age = timestop.getAge();
+
+            if (entity instanceof PlayerEntity) {
+                Stand.getLazyOptional(((PlayerEntity) entity)).ifPresent(stand -> {
+                    Util.applyUnactionableTicks(((PlayerEntity) entity), 1);
+                });
+                ((PlayerEntity) entity).addPotionEffect(new EffectInstance(Effects.SLOWNESS, 50, 255, false, false));
+            }
+            entity.velocityChanged = true;
         }
     }
 

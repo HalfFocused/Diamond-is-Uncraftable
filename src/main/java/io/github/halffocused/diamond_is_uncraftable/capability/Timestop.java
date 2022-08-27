@@ -41,7 +41,7 @@ public class Timestop implements ICapabilitySerializable<INBT> {
     private int fire;
     private int age;
     private Map<String, Float> damage = new ConcurrentHashMap<>();
-    private LazyOptional<Timestop> holder = LazyOptional.of(() -> new Timestop(entity));
+    private LazyOptional<Timestop> holder = LazyOptional.of(() -> new Timestop(getEntity()));
 
     public Timestop(@Nonnull Entity entity) {
         this.entity = entity;
