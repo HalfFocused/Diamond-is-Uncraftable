@@ -159,7 +159,7 @@ public class SheerHeartAttackEntity extends AbstractStandAttackEntity {
 
     @Override
     public int getRange(){
-        return 200;
+        return 1000;
     }
 
     @Override
