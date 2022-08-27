@@ -13,11 +13,8 @@ import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.item.ItemFrameEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tileentity.*;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundCategory;
@@ -32,8 +29,8 @@ import net.minecraft.world.server.ServerWorld;
 import software.bernie.geckolib3.core.IAnimatable;
 
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @SuppressWarnings("ConstantConditions")
 public class KillerQueenEntity extends AbstractStandEntity implements IAnimatable, IOnMasterAttacked {
@@ -601,8 +598,17 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
 
     @Override
     public void messageFrame(int message1, Object message2, Object message3) {
+
+        AtomicInteger processes = new AtomicInteger();
+
         if (message1 == 1) {
             for (ItemStack stack : master.inventory.mainInventory) {
+
+                processes.getAndIncrement();
+                if (processes.get() > 1000) {
+                    return;
+                }
+
                 if (stack.getOrCreateTag().getBoolean("bomb") && stack.getOrCreateTag().getUniqueId("ownerUUID").equals(master.getUniqueID())) {
                     CompoundNBT nbt = stack.getOrCreateTag();
                     master.inventory.markDirty();
@@ -612,6 +618,12 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
                 }
             }
             for (ItemStack stack : master.inventory.offHandInventory) {
+
+                processes.getAndIncrement();
+                if (processes.get() > 1000) {
+                    return;
+                }
+
                 if (stack.getOrCreateTag().getBoolean("bomb") && stack.getOrCreateTag().getUniqueId("ownerUUID").equals(master.getUniqueID())) {
                     CompoundNBT nbt = stack.getOrCreateTag();
                     master.inventory.markDirty();
@@ -621,6 +633,12 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
                 }
             }
             for (ItemStack stack : master.inventory.armorInventory) {
+
+                processes.getAndIncrement();
+                if (processes.get() > 1000) {
+                    return;
+                }
+
                 if (stack.getOrCreateTag().getBoolean("bomb") && stack.getOrCreateTag().getUniqueId("ownerUUID").equals(master.getUniqueID())) {
                     CompoundNBT nbt = stack.getOrCreateTag();
                     master.inventory.markDirty();
@@ -644,6 +662,12 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
 
                         currentWorld.loadedTileEntityList
                                 .forEach(tile -> {
+
+                                    processes.getAndIncrement();
+                                    if (processes.get() > 1000) {
+                                        return;
+                                    }
+
                                     if(tile instanceof LockableTileEntity && !((LockableTileEntity) tile).isEmpty()){
                                         int size = ((LockableTileEntity) tile).getSizeInventory();
                                         for(int i = 0; i < size; i++){
@@ -661,18 +685,30 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
                         currentWorld.getEntities()
                                 .filter(entity -> entity instanceof ItemEntity)
                                 .forEach(entity -> {
-                                            ItemEntity itemEntity = ((ItemEntity) entity);
-                                            CompoundNBT nbt = itemEntity.getItem().getOrCreateTag();
-                                            if (nbt.getBoolean("bomb") && nbt.getUniqueId("ownerUUID").equals(master.getUniqueID())) {
-                                                Util.standExplosion(master, this.world, entity.getPositionVec(), explosionRange, 3, maxExplosionDamage, minExplosionDamage);
 
-                                                entity.remove();
-                                            }
-                                        }
+                                    processes.getAndIncrement();
+                                    if (processes.get() > 1000) {
+                                        return;
+                                    }
+
+                                    ItemEntity itemEntity = ((ItemEntity) entity);
+                                    CompoundNBT nbt = itemEntity.getItem().getOrCreateTag();
+                                    if (nbt.getBoolean("bomb") && nbt.getUniqueId("ownerUUID").equals(master.getUniqueID())) {
+                                        Util.standExplosion(master, this.world, entity.getPositionVec(), explosionRange, 3, maxExplosionDamage, minExplosionDamage);
+
+                                        entity.remove();
+                                    }
+                                }
                                 );
                         currentWorld.getEntities()
                                 .filter(entity -> entity instanceof LivingEntity)
                                 .forEach(entity -> {
+
+                                    processes.getAndIncrement();
+                                    if (processes.get() > 1000) {
+                                        return;
+                                    }
+
                                     if (entity instanceof PlayerEntity) {
                                         PlayerEntity playerEntity = (PlayerEntity) entity;
 
@@ -687,6 +723,12 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
                                         }
 
                                         for (ItemStack stack : playerEntity.inventory.mainInventory) {
+
+                                            processes.getAndIncrement();
+                                            if (processes.get() > 1000) {
+                                                return;
+                                            }
+
                                             if (stack.getOrCreateTag().getBoolean("bomb") && stack.getOrCreateTag().getUniqueId("ownerUUID").equals(master.getUniqueID())) {
                                                 playerEntity.inventory.markDirty();
                                                 Util.standExplosion(master, this.world, entity.getPositionVec(), explosionRange, 3, maxExplosionDamage, minExplosionDamage);
@@ -696,6 +738,12 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
                                             }
                                         }
                                         for (ItemStack stack : playerEntity.inventory.offHandInventory) {
+
+                                            processes.getAndIncrement();
+                                            if (processes.get() > 1000) {
+                                                return;
+                                            }
+
                                             if (stack.getOrCreateTag().getBoolean("bomb") && stack.getOrCreateTag().getUniqueId("ownerUUID").equals(master.getUniqueID())) {
                                                 playerEntity.inventory.markDirty();
                                                 Util.standExplosion(master, this.world, entity.getPositionVec(), explosionRange, 3, maxExplosionDamage, minExplosionDamage);
@@ -705,6 +753,12 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
                                             }
                                         }
                                         for (ItemStack stack : playerEntity.inventory.armorInventory) {
+
+                                            processes.getAndIncrement();
+                                            if (processes.get() > 1000) {
+                                                return;
+                                            }
+
                                             if (stack.getOrCreateTag().getBoolean("bomb") && stack.getOrCreateTag().getUniqueId("ownerUUID").equals(master.getUniqueID())) {
                                                 playerEntity.inventory.markDirty();
                                                 Util.standExplosion(master, this.world, entity.getPositionVec(), explosionRange, 3, maxExplosionDamage, minExplosionDamage);
@@ -715,6 +769,12 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
                                         }
                                     }else{
                                         for (ItemStack stack : entity.getEquipmentAndArmor()){
+
+                                            processes.getAndIncrement();
+                                            if (processes.get() > 1000) {
+                                                return;
+                                            }
+
                                             CompoundNBT nbt = stack.getOrCreateTag();
                                             if(nbt.getBoolean("bomb") && nbt.getUniqueId("ownerUUID").equals(master.getUniqueID())){
                                                 Util.standExplosion(master, this.world, entity.getPositionVec(), explosionRange, 3, maxExplosionDamage, minExplosionDamage);
@@ -729,6 +789,12 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
                         currentWorld.getEntities()
                                 .filter(entity -> entity instanceof ItemFrameEntity)
                                 .forEach(itemFrame -> {
+
+                                    processes.getAndIncrement();
+                                    if (processes.get() > 1000) {
+                                        return;
+                                    }
+
                                     ItemFrameEntity frame = (ItemFrameEntity) itemFrame;
                                     if(frame.getDisplayedItem().getOrCreateTag().getBoolean("bomb") && frame.getDisplayedItem().getOrCreateTag().getUniqueId("ownerUUID").equals(master.getUniqueID())){
                                         Util.standExplosion(master, this.world, frame.getPositionVec(), explosionRange, 3, maxExplosionDamage, minExplosionDamage);
@@ -847,6 +913,8 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
      Removes first bomb status from any entity, block, or item. Items have their names reset.
      */
     public void removeFirstBombFromAll() {
+        AtomicInteger processes = new AtomicInteger();
+
         bombEntity = null;
         Stand stand = Stand.getCapabilityFromPlayer(master);
         stand.setBombEntityId(0);
@@ -854,6 +922,11 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
         for (ServerWorld currentWorld : getServer().getWorlds()) {
             currentWorld.loadedTileEntityList
                     .forEach(tile -> {
+
+                        processes.getAndIncrement();
+                        if(processes.get() > 1000){
+                            return;
+                        }
                         if (tile instanceof LockableTileEntity && !((LockableTileEntity) tile).isEmpty()) {
                             int size = ((LockableTileEntity) tile).getSizeInventory();
                             for (int i = 0; i < size; i++) {
@@ -869,22 +942,35 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
 
             currentWorld.getEntities()
                     .filter(entity -> entity instanceof ItemEntity)
-                    .forEach(entity ->
-                            StandEffects.getLazyOptional(entity).ifPresent(effects -> {
-                                effects.setBomb(false);
-                                ItemStack item = ((ItemEntity) entity).getItem();
+                    .forEach(entity -> {
 
-                                CompoundNBT nbt = item.getOrCreateTag();
-                                if (nbt.getUniqueId("ownerUUID").equals(master.getUniqueID())) {
-                                    nbt.remove("bomb");
-                                    nbt.remove("ownerUUID");
-                                    item.clearCustomName();
+                                processes.getAndIncrement();
+                                if (processes.get() > 1000) {
+                                    return;
                                 }
-                            }));
+
+                                StandEffects.getLazyOptional(entity).ifPresent(effects -> {
+                                    effects.setBomb(false);
+                                    ItemStack item = ((ItemEntity) entity).getItem();
+
+                                    CompoundNBT nbt = item.getOrCreateTag();
+                                    if (nbt.getUniqueId("ownerUUID").equals(master.getUniqueID())) {
+                                        nbt.remove("bomb");
+                                        nbt.remove("ownerUUID");
+                                        item.clearCustomName();
+                                    }
+                                });
+                            });
 
             currentWorld.getEntities()
                     .filter(entity -> entity instanceof LivingEntity)
                     .forEach(entity -> {
+
+                        processes.getAndIncrement();
+                        if (processes.get() > 1000) {
+                            return;
+                        }
+
                         if (entity instanceof PlayerEntity) {
                             PlayerEntity playerEntity = (PlayerEntity) entity;
 
@@ -898,6 +984,12 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
                             }
 
                             for (ItemStack stack : playerEntity.inventory.mainInventory) {
+
+                                processes.getAndIncrement();
+                                if (processes.get() > 1000) {
+                                    return;
+                                }
+
                                 if (stack.getOrCreateTag().getBoolean("bomb") && stack.getOrCreateTag().getUniqueId("ownerUUID").equals(master.getUniqueID())) {
                                     CompoundNBT nbt = stack.getOrCreateTag();
                                     playerEntity.inventory.markDirty();
@@ -907,6 +999,12 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
                                 }
                             }
                             for (ItemStack stack : playerEntity.inventory.offHandInventory) {
+
+                                processes.getAndIncrement();
+                                if (processes.get() > 1000) {
+                                    return;
+                                }
+
                                 if (stack.getOrCreateTag().getBoolean("bomb") && stack.getOrCreateTag().getUniqueId("ownerUUID").equals(master.getUniqueID())) {
                                     CompoundNBT nbt = stack.getOrCreateTag();
                                     playerEntity.inventory.markDirty();
@@ -916,6 +1014,12 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
                                 }
                             }
                             for (ItemStack stack : playerEntity.inventory.armorInventory) {
+
+                                processes.getAndIncrement();
+                                if (processes.get() > 1000) {
+                                    return;
+                                }
+
                                 if (stack.getOrCreateTag().getBoolean("bomb") && stack.getOrCreateTag().getUniqueId("ownerUUID").equals(master.getUniqueID())) {
                                     CompoundNBT nbt = stack.getOrCreateTag();
                                     playerEntity.inventory.markDirty();
@@ -926,6 +1030,12 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
                             }
                         } else {
                             for (ItemStack stack : entity.getEquipmentAndArmor()) {
+
+                                processes.getAndIncrement();
+                                if (processes.get() > 1000) {
+                                    return;
+                                }
+
                                 CompoundNBT nbt = stack.getOrCreateTag();
                                 if (nbt.getBoolean("bomb") && nbt.getUniqueId("ownerUUID").equals(master.getUniqueID())) {
                                     nbt.remove("bomb");
@@ -938,6 +1048,12 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
             currentWorld.getEntities()
                     .filter(entity -> entity instanceof ItemFrameEntity)
                     .forEach(itemFrame -> {
+
+                        processes.getAndIncrement();
+                        if (processes.get() > 1000) {
+                            return;
+                        }
+
                         ItemFrameEntity frame = (ItemFrameEntity) itemFrame;
                         if (frame.getDisplayedItem().getOrCreateTag().getBoolean("bomb") && frame.getDisplayedItem().getOrCreateTag().getUniqueId("ownerUUID").equals(master.getUniqueID())) {
                             CompoundNBT nbt = frame.getDisplayedItem().getOrCreateTag();
