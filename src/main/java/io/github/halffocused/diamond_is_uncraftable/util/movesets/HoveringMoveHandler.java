@@ -183,13 +183,8 @@ public class HoveringMoveHandler {
         return this;
     }
 
-    public HoveringMoveHandler addMove(String nameIn, int idIn, AttackFramedata frameIn, String animationIn, double repositionDistanceIn){
+    public HoveringMoveHandler addMove(String nameIn, int idIn, AttackFramedata frameIn,String animationIn, double repositionDistanceIn){
         moveList.add(new Move(nameIn, frameIn, animationIn, idIn, repositionDistanceIn));
-        return this;
-    }
-
-    public HoveringMoveHandler addMove(String nameIn, int idIn, AttackFramedata frameIn, String animationIn, double repositionDistanceIn, MoveEffects moveEffectsIn){
-        moveList.add(new Move(nameIn, frameIn, animationIn, idIn, repositionDistanceIn, moveEffectsIn));
         return this;
     }
 

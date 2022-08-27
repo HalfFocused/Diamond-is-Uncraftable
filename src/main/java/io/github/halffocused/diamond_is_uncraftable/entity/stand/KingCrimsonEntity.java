@@ -88,9 +88,6 @@ public class KingCrimsonEntity extends AbstractStandEntity implements IAnimatabl
             .addMessageFrame(11, 5, null, null)
             .setAttackDuration(30);
 
-    MoveEffects punchEffectsHolder = new MoveEffects(3, null, null);
-    MoveEffects strongPunchEffectHolder = new MoveEffects(5, null, null);
-
     ChargeAttackFormat chargeAttackFormat = new ChargeAttackFormat("charging")
             .addChargeNode(60, 3, true)
             .addChargeNode(140, 4, true)
@@ -99,16 +96,16 @@ public class KingCrimsonEntity extends AbstractStandEntity implements IAnimatabl
 
 
     HoveringMoveHandler controller = new HoveringMoveHandler(this)
-            .addMove("Punch", 1, mainPunchData, "crimsonpunch", 1.65, punchEffectsHolder)
-            .addMove("Barrage",2, barrageData, "crimsonbarrage", HoveringMoveHandler.RepositionConstants.MASTER_POSITION, punchEffectsHolder)
-            .addMove("Medium Punch",3, lightChargeAttack, "weakcharge", 2.0, punchEffectsHolder)
-            .addMove("Strong Punch",4, mediumChargeAttack, "midcharge", 2.0, strongPunchEffectHolder)
-            .addMove("Time Erase Follow Up",5, chopAttack, "chop", HoveringMoveHandler.RepositionConstants.DO_NOT_MOVE, punchEffectsHolder)
-            .addMove("Donut Punch",6, execution, "execution", HoveringMoveHandler.RepositionConstants.DO_NOT_MOVE, punchEffectsHolder)
+            .addMove("Punch", 1, mainPunchData, "crimsonpunch", 1.65)
+            .addMove("Barrage",2, barrageData, "crimsonbarrage", HoveringMoveHandler.RepositionConstants.MASTER_POSITION)
+            .addMove("Medium Punch",3, lightChargeAttack, "weakcharge", 2.0)
+            .addMove("Strong Punch",4, mediumChargeAttack, "midcharge", 2.0)
+            .addMove("Time Erase Follow Up",5, chopAttack, "chop", HoveringMoveHandler.RepositionConstants.DO_NOT_MOVE)
+            .addMove("Donut Punch",6, execution, "execution", HoveringMoveHandler.RepositionConstants.DO_NOT_MOVE)
             .addMove("Time Erase",7, timeErase, "erase", 1.35)
             .addMove("Recovery",8, recovery, "recovery", HoveringMoveHandler.RepositionConstants.IDLE_POSITION)
             .addMove("Epitaph Prediction",9, epitaph, "epitaph", HoveringMoveHandler.RepositionConstants.IDLE_POSITION)
-            .addMove("Epitaph Counter-Attack",10, epitaphChopAttack, "chop", 1.85, punchEffectsHolder)
+            .addMove("Epitaph Counter-Attack",10, epitaphChopAttack, "chop", 1.85)
             .addChargeAttack(chargeAttackFormat);
 
     public HoveringMoveHandler getController(){
@@ -298,7 +295,7 @@ public class KingCrimsonEntity extends AbstractStandEntity implements IAnimatabl
 
         if(message1 == 3){
             if(executionTarget != null){
-                Util.dealStandDamage(this, executionTarget, 50f, Vec3d.ZERO, false, null);
+                Util.dealStandDamage(this, executionTarget, 50f, Vec3d.ZERO, false);
                 clipToPosition = false;
             }
         }

@@ -9,7 +9,6 @@ import io.github.halffocused.diamond_is_uncraftable.event.custom.StandEvent;
 import io.github.halffocused.diamond_is_uncraftable.init.EffectInit;
 import io.github.halffocused.diamond_is_uncraftable.init.EntityInit;
 import io.github.halffocused.diamond_is_uncraftable.init.ItemInit;
-import io.github.halffocused.diamond_is_uncraftable.init.SoundInit;
 import io.github.halffocused.diamond_is_uncraftable.network.message.server.SSyncStandMasterPacket;
 import io.github.halffocused.diamond_is_uncraftable.util.IOnMasterAttacked;
 import io.github.halffocused.diamond_is_uncraftable.util.Util;
@@ -17,14 +16,12 @@ import io.github.halffocused.diamond_is_uncraftable.util.timestop.TimestopHelper
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.IProjectile;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.entity.projectile.DamagingProjectileEntity;
 import net.minecraft.item.EnchantedGoldenAppleItem;
 import net.minecraft.item.HoneyBottleItem;
 import net.minecraft.item.ItemStack;
@@ -51,7 +48,6 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerXpEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
-import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -595,7 +591,7 @@ public class EventHandleStandAbilities {
 
             }else {
                 stand.setMomentum(0);
-                stand.setRestraint(0);
+                stand.setRage(0);
                 stand.setPreventUnsummon(false);
                 stand.setPreventUnsummon2(false);
                 stand.setStandOn(false);

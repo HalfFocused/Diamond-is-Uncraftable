@@ -206,7 +206,7 @@ public class AttackFramedata {
                 if (entity != standEntityIn && entitiesHit < damageFrame.getPierce()) {
                     if (!(entity.equals(standEntityIn.getMaster())) || (entity.equals(standEntityIn.getMaster()) && assignedMove.getCanDamageMaster())) {
 
-                        Util.dealStandDamage(standEntityIn, (LivingEntity) entity, damageFrame.getDamage(), damageFrame.getMotion(), damageFrame.getBlockable(), standEntityIn.getController().getActiveMove().getMoveEffects());
+                        Util.dealStandDamage(standEntityIn, (LivingEntity) entity, damageFrame.getDamage(), damageFrame.getMotion(), damageFrame.getBlockable());
 
                         entitiesHit++;
                     }
@@ -353,19 +353,16 @@ public class AttackFramedata {
 
         if (entity != standIn) {
             if (!(entity.equals(standIn.getMaster())) || (entity.equals(standIn.getMaster()) && assignedMove.getCanDamageMaster())) {
-                    Util.dealStandDamage(standIn, entity, frame.getDamage(), frame.getMotion(), frame.getBlockable(), standIn.getController().getActiveMove().getMoveEffects());
+                    Util.dealStandDamage(standIn, entity, frame.getDamage(), frame.getMotion(), frame.getBlockable());
                     entitiesHit++;
             }
         }
 
-        if (assignedMove != null) { // This should literally never happen but it's always good to check.
-            if (assignedMove.getMoveEffects() != null) {
-                if (!(entity.equals(standIn.getMaster())) || (entity.equals(standIn.getMaster()) && assignedMove.getCanDamageMaster())) {
-                    Util.spawnParticle(standIn, assignedMove.getMoveEffects().getParticleId(), entity.getPosX(), entity.getEyeHeight() + entity.getPosY(), entity.getPosZ(), 2.4, 1.4, 2.4, 1);
-                    Util.spawnParticle(standIn, 4, entity.getPosX() + (random.nextFloat() - 0.5), entity.getEyeHeight() + entity.getPosY() + (random.nextFloat() - 0.5), entity.getPosZ() + (random.nextFloat() - 0.5), 0.7, 0.9, 0.7, (int) (frame.getDamage() * 8.5));
-                }
-            }
+        if (!(entity.equals(standIn.getMaster())) || (entity.equals(standIn.getMaster()) && assignedMove.getCanDamageMaster())) {
+            Util.spawnParticle(standIn, 3, entity.getPosX(), entity.getEyeHeight() + entity.getPosY(), entity.getPosZ(), 2.4, 1.4, 2.4, 1);
+            Util.spawnParticle(standIn, 4, entity.getPosX() + (random.nextFloat() - 0.5), entity.getEyeHeight() + entity.getPosY() + (random.nextFloat() - 0.5), entity.getPosZ() + (random.nextFloat() - 0.5), 0.7, 0.9, 0.7, (int) (frame.getDamage() * 8.5));
         }
+
 
         if(entitiesHit > 0){
             world.playSound(null, standIn.getPosition(), Util.getHitSound(standIn), SoundCategory.NEUTRAL, 0.5F, 0.6f / (random.nextFloat() * 0.6f + 1) * 2);

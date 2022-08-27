@@ -49,8 +49,6 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
     public static final double minExplosionDamage = 5;
     public static final double explosionRange = 7;
 
-    MoveEffects punchEffectsHolder = new MoveEffects(3, null, null);
-
     AttackFramedata leftPunchData = new AttackFramedata()
             .addDamageFrame(13, 8, Vec3d.ZERO, 2.3, 2)
             .setAttackDuration(20);
@@ -89,9 +87,9 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
             .addChargeNode(54, 4, true);
 
     HoveringMoveHandler controller = new HoveringMoveHandler(this)
-            .addMove("Jab",1, rightPunchData, "rightpunch", 2.0, punchEffectsHolder)
-            .addMove("Jab",2, leftPunchData, "leftpunch", 2.0, punchEffectsHolder)
-            .addMove("Barrage",3, barrageData, "barrage", HoveringMoveHandler.RepositionConstants.MASTER_POSITION, punchEffectsHolder)
+            .addMove("Jab",1, rightPunchData, "rightpunch", 2.0)
+            .addMove("Jab",2, leftPunchData, "leftpunch", 2.0)
+            .addMove("Barrage",3, barrageData, "barrage", HoveringMoveHandler.RepositionConstants.MASTER_POSITION)
             .addMove("First Bomb (Entity)",4, bombData,"firstbomb", 2.0)
             .addMove("Detonate",5, detonateData, "click", HoveringMoveHandler.RepositionConstants.IDLE_POSITION)
             .addMove("First Bomb (Block)",6, blockBombData, "blockbomb", HoveringMoveHandler.RepositionConstants.DO_NOT_MOVE)
@@ -764,7 +762,7 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
                                         explosion.doExplosionB(true);
                                         Util.spawnParticle(this, 5, bombEntity.getPosX(), bombEntity.getPosY(), bombEntity.getPosZ(), 1, 1, 1, 1);
                                         Util.spawnParticle(this, 14, bombEntity.getPosX(), bombEntity.getPosY() + 1, bombEntity.getPosZ(), 1, 1, 1, 20);
-                                        Util.dealStandDamage(this, bombEntity, 15, Vec3d.ZERO, false, null);
+                                        Util.dealStandDamage(this, bombEntity, 15, Vec3d.ZERO, false);
                                         removeFirstBombFromAll();
                                     } else {
                                         Explosion explosion = new Explosion(master.world, master, master.getPosX(), master.getPosY(), master.getPosZ(), 4, true, Explosion.Mode.NONE);

@@ -200,7 +200,7 @@ public class WalkingMoveHandler {
             outOfRange = stand.getDistance(currentTarget) > nextMove.distanceToUse * 0.8;
 
             if (outOfRange) {
-                if (stand.canEntityBeSeen(currentTarget) && attackCooldown == 0 && !isMoveActive()) {
+                if (stand.canEntityBeSeen(currentTarget) && !isMoveActive()) {
                     walkingOrIdle = true;
                     Vec3d movementVector = currentTarget.getPositionVector().subtract(stand.getPositionVec()).normalize().mul(getActiveStance().getMovementSpeed(), 0, getActiveStance().getMovementSpeed());
                     stand.setMotion(movementVector.x, stand.getMotion().y, movementVector.z);
@@ -294,7 +294,7 @@ public class WalkingMoveHandler {
                 if(currentTargeting == Targeting.ALL || getActiveStance().getAttackMaster()) {
                     stand.getServer().getWorld(stand.dimension).getEntities()
                             .filter(entity -> !entity.equals(stand))
-                            .filter(entity -> stand.canEntityBeSeen(entity))
+                            .filter(stand::canEntityBeSeen)
                             .filter(entity -> entity instanceof LivingEntity)
                             .filter(entity -> isEntityWithinAttackRange(getActiveStance(), (LivingEntity) entity))
                             .filter(entity -> !(entity instanceof PlayerEntity) || !((PlayerEntity) entity).isCreative() || entity.isSpectator())
@@ -302,14 +302,14 @@ public class WalkingMoveHandler {
                 }else if(currentTargeting == Targeting.HOSTILE_ONLY){
                     stand.getServer().getWorld(stand.dimension).getEntities()
                             .filter(entity -> !entity.equals(stand))
-                            .filter(entity -> stand.canEntityBeSeen(entity))
+                            .filter(stand::canEntityBeSeen)
                             .filter(entity -> entity instanceof MobEntity)
                             .filter(entity -> isEntityWithinAttackRange(getActiveStance(), (LivingEntity) entity))
                             .forEach(entity -> possibleTargets.add((LivingEntity) entity));
                 }else if(currentTargeting == Targeting.PLAYERS_ONLY){
                     stand.getServer().getWorld(stand.dimension).getEntities()
                             .filter(entity -> !entity.equals(stand))
-                            .filter(entity -> stand.canEntityBeSeen(entity))
+                            .filter(stand::canEntityBeSeen)
                             .filter(entity -> entity instanceof PlayerEntity)
                             .filter(entity -> isEntityWithinAttackRange(getActiveStance(), (LivingEntity) entity))
                             .filter(entity -> !((PlayerEntity) entity).isCreative() || entity.isSpectator())

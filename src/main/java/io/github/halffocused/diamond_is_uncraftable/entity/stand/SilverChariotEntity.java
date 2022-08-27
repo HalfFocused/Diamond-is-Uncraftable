@@ -47,8 +47,6 @@ public class SilverChariotEntity extends AbstractStandEntity implements IAnimata
 
     final int ARMOR_OFF_FRAME = 40;
 
-    MoveEffects swingEffectsHolder = new MoveEffects(2, null, null);
-
     AttackFramedata jabData = new AttackFramedata()
             .addDamageFrame(6, 1, Vec3d.ZERO, 2.6, 3)
             .addDamageFrame(8, 1, Vec3d.ZERO, 2.6, 3)
@@ -107,12 +105,12 @@ public class SilverChariotEntity extends AbstractStandEntity implements IAnimata
             .setAttackDuration(4);
 
     HoveringMoveHandler controller = new HoveringMoveHandler(this)
-            .addMove("Rapid Swings", 1, jabData, "jabs", 2.0, swingEffectsHolder)
-            .addMove("Light-Speed Swings",2, fastJabData, "offjab", 2.0, swingEffectsHolder)
-            .addMove("Sword Barrage",3, barrageData, "horahora", 2.0, swingEffectsHolder)
-            .addMove("Spin Attack",4, spinAttack, "spintowin", -1, swingEffectsHolder)
+            .addMove("Rapid Swings", 1, jabData, "jabs", 2.0)
+            .addMove("Light-Speed Swings",2, fastJabData, "offjab", 2.0)
+            .addMove("Sword Barrage",3, barrageData, "horahora", 2.0)
+            .addMove("Spin Attack",4, spinAttack, "spintowin", -1)
             .addMove("Counter",5, countering, "parry", -1)
-            .addMove("Counter-Attack",6, counterSlash, "counter", -3, swingEffectsHolder)
+            .addMove("Counter-Attack",6, counterSlash, "counter", -3)
             .addMove("Shed Armor",7, shedArmor, "armoroff", -3)
             .addMove("Equip Armor",8, armorOn, "armoron", -3)
             .addMove("Aim Sword",9, aimSword, "aim", -2)

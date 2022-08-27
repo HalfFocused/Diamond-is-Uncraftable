@@ -28,7 +28,7 @@ public class SilverChariotSwordEntity extends AbstractStandAttackEntity {
     protected void onEntityHit(EntityRayTraceResult result) {
         Entity entity = result.getEntity();
         if(entity instanceof LivingEntity){
-            Util.dealStandDamage(shootingStand, (LivingEntity) entity, 18, Vec3d.ZERO, false, null);
+            Util.dealStandDamage(shootingStand, (LivingEntity) entity, 18, Vec3d.ZERO, false);
         }
         entity.hurtResistantTime = 0;
     }

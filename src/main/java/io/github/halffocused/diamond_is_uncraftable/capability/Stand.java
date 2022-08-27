@@ -69,7 +69,7 @@ public class Stand implements ICapabilitySerializable<INBT> {
     private boolean preventUnsummon2;
     private boolean preventUnsummon3;
     private double momentum = 0;
-    private int restraint = 0;
+    private int rage = 0;
     private int epitaphEffectTicker = 0;
     private double maxStandEnergy = 100;
     private double currentStandEnergy = 100;
@@ -140,7 +140,7 @@ public class Stand implements ICapabilitySerializable<INBT> {
                 nbt.putBoolean("preventUnsummon2", instance.getPreventUnsummon2());
                 nbt.putBoolean("preventUnsummon3", instance.getPreventUnsummon3());
                 nbt.putDouble("momentum", instance.getMomentum());
-                nbt.putInt("restraint", instance.getRestraint());
+                nbt.putInt("rage", instance.getRage());
                 nbt.putInt("epitaphTicker", instance.getTimeSkipEffectTicker());
                 nbt.putDouble("currentEnergy", instance.getCurrentStandEnergy());
                 nbt.putDouble("maxEnergy", instance.getMaxStandEnergy());
@@ -212,7 +212,7 @@ public class Stand implements ICapabilitySerializable<INBT> {
                 instance.preventUnsummon2 = compoundNBT.getBoolean("preventUnsummon2");
                 instance.preventUnsummon3 = compoundNBT.getBoolean("preventUnsummon3");
                 instance.momentum = compoundNBT.getDouble("momentum");
-                instance.restraint = compoundNBT.getInt("restraint");
+                instance.rage = compoundNBT.getInt("rage");
                 instance.epitaphEffectTicker = compoundNBT.getInt("epitaphTicker");
                 instance.currentStandEnergy = compoundNBT.getDouble("currentEnergy");
                 instance.maxStandEnergy = compoundNBT.getDouble("maxEnergy");
@@ -386,12 +386,12 @@ public class Stand implements ICapabilitySerializable<INBT> {
         onDataUpdated();
     }
 
-    public int getRestraint() {
-        return restraint;
+    public int getRage() {
+        return rage;
     }
 
-    public void setRestraint(int restraintIn) {
-        this.restraint = restraintIn;
+    public void setRage(int restraintIn) {
+        this.rage = restraintIn;
         onDataUpdated();
     }
 
@@ -704,7 +704,7 @@ public class Stand implements ICapabilitySerializable<INBT> {
         preventUnsummon2 = stand.getPreventUnsummon2();
         preventUnsummon3 = stand.getPreventUnsummon3();
         momentum = stand.getMomentum();
-        restraint = stand.getRestraint();
+        rage = stand.getRage();
         epitaphEffectTicker = stand.getTimeSkipEffectTicker();
         currentStandEnergy = stand.getCurrentStandEnergy();
         maxStandEnergy = stand.getMaxStandEnergy();
@@ -770,7 +770,7 @@ public class Stand implements ICapabilitySerializable<INBT> {
         preventUnsummon2 = false;
         preventUnsummon3 = false;
         momentum = 0;
-        restraint = 0;
+        rage = 0;
         epitaphEffectTicker = 0;
         experiencingTimeSkip = false;
         experiencingTimeStop = false;

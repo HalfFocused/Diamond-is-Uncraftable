@@ -89,12 +89,10 @@ public class TheWorldEntity extends AbstractStandEntity implements IMomentum, IO
             .addMenacingFrame(45)
             .setAttackDuration(62);
 
-    MoveEffects punchEffectsHolder = new MoveEffects(3, null, null);
-
     HoveringMoveHandler controller = new HoveringMoveHandler(this)
-            .addMove("Jab",1, punchData, "jab", 1.6, punchEffectsHolder)
-            .addMove("Barrage",2, barrageData, "MUDA", HoveringMoveHandler.RepositionConstants.MASTER_POSITION, punchEffectsHolder)
-            .addMove("Taunt",3, tauntTp, null, -1, punchEffectsHolder)
+            .addMove("Jab",1, punchData, "jab", 1.6)
+            .addMove("Barrage",2, barrageData, "MUDA", HoveringMoveHandler.RepositionConstants.MASTER_POSITION)
+            .addMove("Taunt",3, tauntTp, null, -1)
             .addMove("Timestop", 4, timestop, "timestop", 2)
             .addChargeAttack(chargeAttack);
 

@@ -138,7 +138,7 @@ public class SheerHeartAttackEntity extends AbstractStandAttackEntity {
                         .filter(entity -> entity.getDistance(this) < 8)
                         .filter(Entity::isAlive)
                         .forEach(entity -> {
-                                Util.dealStandDamage(shootingStand, (LivingEntity) entity, (9f - entity.getDistance(this)) * 5f, Vec3d.ZERO, entity.getDistance(this) > 3, null);
+                                Util.dealStandDamage(shootingStand, (LivingEntity) entity, (9f - entity.getDistance(this)) * 5f, Vec3d.ZERO, entity.getDistance(this) > 3);
                         });
 
                 Util.spawnParticle(masterStand, 5, this.getPosX(), this.getPosY(), this.getPosZ(), 0.5, 0.5, 0.5, 1);

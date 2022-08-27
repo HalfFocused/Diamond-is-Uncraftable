@@ -85,15 +85,15 @@ public class Util {
     }
 
     /**
-     * Returns wheter or not the exact point pos is in any block's collision box.
+     * Returns whether or not the exact point pos is in any block's collision box.
      * world.getBlockState().isSolid() has a lot of issues that necessitated the creation of this method.
      * @param world The world that the collision check is taking place in.
      * @param pos The position vector being checked.
      * @return if the pos exists in any block's collision.
      */
     public static boolean isPointAtVecSolid(World world, Vec3d pos){
-        VoxelShape collison = world.getBlockState(new BlockPos(pos)).getCollisionShape(world, new BlockPos(pos));
-        for(AxisAlignedBB box : collison.toBoundingBoxList()){
+        VoxelShape collision = world.getBlockState(new BlockPos(pos)).getCollisionShape(world, new BlockPos(pos));
+        for(AxisAlignedBB box : collision.toBoundingBoxList()){
             if(box.offset(new BlockPos(pos)).contains(pos)){
                 return true;
             }
@@ -475,7 +475,7 @@ public class Util {
         DiamondIsUncraftable.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new SParticlePacket(particleId, posX, posY, posZ, dX, dY, dZ, amount));
     }
 
-    public static void dealStandDamage(AbstractStandEntity stand, LivingEntity entity, float damage, Vec3d motion, boolean blockable, @Nullable MoveEffects moveEffects){
+    public static void dealStandDamage(AbstractStandEntity stand, LivingEntity entity, float damage, Vec3d motion, boolean blockable){
 
         LivingEntity attackedEntity;
 
@@ -542,10 +542,8 @@ public class Util {
 
             stand.setMostRecentlyDamagedEntity(entity);
 
-            if (moveEffects != null) {
-                Util.spawnParticle(stand, moveEffects.getParticleId(), entity.getPosX(), entity.getEyeHeight() + entity.getPosY(), entity.getPosZ(), 2.4, 1.4, 2.4, 1);
-                Util.spawnParticle(stand, 4, entity.getPosX() + (random.nextFloat() - 0.5), entity.getEyeHeight() + entity.getPosY() + (random.nextFloat() - 0.5), entity.getPosZ() + (random.nextFloat() - 0.5), 0.7, 0.9, 0.7, (int) (damage * 8.5));
-            }
+            Util.spawnParticle(stand, 3, entity.getPosX(), entity.getEyeHeight() + entity.getPosY(), entity.getPosZ(), 2.4, 1.4, 2.4, 1);
+            Util.spawnParticle(stand, 4, entity.getPosX() + (random.nextFloat() - 0.5), entity.getEyeHeight() + entity.getPosY() + (random.nextFloat() - 0.5), entity.getPosZ() + (random.nextFloat() - 0.5), 0.7, 0.9, 0.7, (int) (damage * 8.5));
 
 
             Stand.getLazyOptional(stand.getMaster()).ifPresent(props -> {
@@ -563,7 +561,7 @@ public class Util {
 
     }
 
-    public static void dealUnsummonedStandDamage(PlayerEntity standMaster, LivingEntity entity, float damage, Vec3d motion, boolean blockable, @Nullable MoveEffects moveEffects){
+    public static void dealUnsummonedStandDamage(PlayerEntity standMaster, LivingEntity entity, float damage, Vec3d motion, boolean blockable){
 
         LivingEntity attackedEntity;
 
@@ -695,6 +693,8 @@ public class Util {
 
         public static final int THE_WORLD = 4;
 
+        public static final int PURPLE_HAZE = -69;
+
         public static final int D4C = -1;
 
         public static final int GOLD_EXPERIENCE = -2;
@@ -708,8 +708,6 @@ public class Util {
         public static final int WEATHER_REPORT = -6;
 
         public static final int CRAZY_DIAMOND = -8;
-
-        public static final int PURPLE_HAZE = -9;
 
         public static final int THE_EMPEROR = -10;
 
@@ -1021,7 +1019,7 @@ public class Util {
                     .filter(entity -> !(entity instanceof AbstractStandEntity))
                     .filter(entity -> Math.sqrt((entity.getDistanceSq(position))) <= range)
                     .filter(Entity::isAlive)
-                    .forEach(entity -> Util.dealUnsummonedStandDamage(master, (LivingEntity) entity, (float) lerp(minDamage, maxDamage, Math.sqrt((entity.getDistanceSq(position))) / range), Vec3d.ZERO, Math.sqrt((entity.getDistanceSq(position))) >= blockableDistance, null));
+                    .forEach(entity -> Util.dealUnsummonedStandDamage(master, (LivingEntity) entity, (float) lerp(minDamage, maxDamage, Math.sqrt((entity.getDistanceSq(position))) / range), Vec3d.ZERO, Math.sqrt((entity.getDistanceSq(position))) >= blockableDistance));
         }
     }
 

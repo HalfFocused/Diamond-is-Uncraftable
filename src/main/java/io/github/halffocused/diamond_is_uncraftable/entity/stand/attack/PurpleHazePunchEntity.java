@@ -52,8 +52,6 @@ public class PurpleHazePunchEntity extends AbstractStandAttackEntity {
             world.removeBlock(pos, false);
             if (world.rand.nextBoolean())
                 state.getBlock().harvestBlock(world, standMaster, pos, state, null, standMaster.getActiveItemStack());
-            if (shootingStand.ability)
-                ((PurpleHazeEntity) shootingStand).burstCapsule();
         }
     }
 

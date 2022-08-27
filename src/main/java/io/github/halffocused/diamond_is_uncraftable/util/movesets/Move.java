@@ -1,7 +1,6 @@
 package io.github.halffocused.diamond_is_uncraftable.util.movesets;
 
 import io.github.halffocused.diamond_is_uncraftable.util.AttackFramedata;
-import io.github.halffocused.diamond_is_uncraftable.util.MoveEffects;
 
 public class Move {
 
@@ -9,7 +8,6 @@ public class Move {
     String animation;
     int id;
     double repositionDistance;
-    MoveEffects moveEffects;
     String name;
     boolean canDamageMaster = false;
 
@@ -31,22 +29,11 @@ public class Move {
         name = nameIn;
     }
 
-    public Move(String nameIn, AttackFramedata framedataIn, String animationNameIn, int idIn, double repositionDistanceIn, MoveEffects moveEffectsIn){
+    public Move(String nameIn, AttackFramedata framedataIn, String animationNameIn, int idIn, double repositionDistanceIn, boolean canDamageMasterIn){
         framedata = framedataIn;
         animation = animationNameIn;
         id = idIn;
         repositionDistance = repositionDistanceIn;
-        moveEffects = moveEffectsIn;
-        framedata.assignMove(this);
-        name = nameIn;
-    }
-
-    public Move(String nameIn, AttackFramedata framedataIn, String animationNameIn, int idIn, double repositionDistanceIn, MoveEffects moveEffectsIn, boolean canDamageMasterIn){
-        framedata = framedataIn;
-        animation = animationNameIn;
-        id = idIn;
-        repositionDistance = repositionDistanceIn;
-        moveEffects = moveEffectsIn;
         framedata.assignMove(this);
         name = nameIn;
         canDamageMaster = canDamageMasterIn;
@@ -66,10 +53,6 @@ public class Move {
 
     public double getRepositionDistance(){
         return repositionDistance;
-    }
-
-    public MoveEffects getMoveEffects(){
-        return moveEffects;
     }
 
     public String getName(){return name;}
