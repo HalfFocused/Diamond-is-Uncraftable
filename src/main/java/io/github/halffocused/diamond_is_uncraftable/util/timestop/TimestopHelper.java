@@ -50,7 +50,7 @@ public class TimestopHelper {
 
     public static boolean isTimeStopped(World worldIn, PlayerEntity playerIn) {
         Stand stand = Stand.getCapabilityFromPlayer(playerIn);
-        return isTimeStopped(worldIn, playerIn.getPosition()) /* && !Util.canStandMoveInStoppedTime(stand.getStandID()) */;
+        return isTimeStopped(worldIn, playerIn.getPosition()) && !Util.canStandMoveInStoppedTime(stand.getStandID());
     }
 
     public static boolean isTimeStopped(World worldIn, AbstractStandEntity standIn) {
@@ -438,7 +438,7 @@ public class TimestopHelper {
         Timestop timestop = Timestop.getCapabilityFromEntity(entity);
 
         if(!timestop.isEmpty()) {
-            entity.setPosition(timestop.getPosX(), timestop.getPosY(), timestop.getPosZ());
+            entity.setPositionAndUpdate(timestop.getPosX(), timestop.getPosY(), timestop.getPosZ());
 
             if ((entity instanceof IProjectile) || (entity instanceof ItemEntity) || (entity instanceof DamagingProjectileEntity))
                 entity.setNoGravity(true);
