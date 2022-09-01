@@ -36,6 +36,7 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.PistonEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.lwjgl.system.CallbackI;
 
 import java.sql.Time;
 import java.text.DecimalFormat;
@@ -165,6 +166,14 @@ public class TheWorldEntity extends AbstractStandEntity implements IMomentum, IO
 
                 if (controller.isMoveActive()) {
                     if (controller.getActiveMove().getId() == 2 && controller.getActiveMove().getFramedata().getTicker() > 10) {
+
+                        if(props2.getMomentum() == 0){
+                            Style warningStyle = new Style().setColor(TextFormatting.RED);
+                            StringTextComponent warning = new StringTextComponent("The world needs momentum to perform it's barrage!");
+                            warning.setStyle(warningStyle);
+                            master.sendStatusMessage(warning, false);
+                        }
+
                         props2.setMomentum(Math.max(0, props2.getMomentum() - 1));
 
                         if (props2.getMomentum() == 0) {
