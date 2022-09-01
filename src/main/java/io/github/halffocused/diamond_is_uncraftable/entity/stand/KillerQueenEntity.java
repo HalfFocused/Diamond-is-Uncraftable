@@ -742,6 +742,7 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
         Stand stand = Stand.getCapabilityFromPlayer(master);
         stand.setBlockPos(BlockPos.ZERO);
         stand.setBombEntityId(0);
+        bombEntity = null;
 
         /*
 

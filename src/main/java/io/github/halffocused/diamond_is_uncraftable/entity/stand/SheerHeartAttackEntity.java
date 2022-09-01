@@ -77,7 +77,7 @@ public class SheerHeartAttackEntity extends AbstractStandAttackEntity {
 
                 double verticalAdjustment = Util.heightAboveGround(world, this.getPositionVec());
                 int circleDots = 32;
-                int circleRadius = 8;
+                int circleRadius = 7;
                 for(int i = 0; i < circleDots; i++){
                     double radians = ((Math.PI * 2.0) / circleDots) * i;
                     double xOffset = Math.sin(radians) * circleRadius;
@@ -100,7 +100,7 @@ public class SheerHeartAttackEntity extends AbstractStandAttackEntity {
                             .filter(entity -> !entity.equals(standMaster))
                             .filter(entity -> entity instanceof LivingEntity)
                             .filter(entity -> !(entity instanceof AbstractStandEntity))
-                            .filter(entity -> entity.getDistance(this) < 7)
+                            .filter(entity -> entity.getDistance(this) < 6)
                             .filter(Entity::isAlive)
                             .filter(entity -> ((LivingEntity) entity).canEntityBeSeen(this))
                             .forEach(entity -> target = (LivingEntity) entity);
@@ -132,14 +132,8 @@ public class SheerHeartAttackEntity extends AbstractStandAttackEntity {
                 }
             }
             if (detonationTime == 0) {
-                getServer().getWorld(dimension).getEntities()
-                        .filter(entity -> entity instanceof LivingEntity)
-                        .filter(entity -> !(entity instanceof AbstractStandEntity))
-                        .filter(entity -> entity.getDistance(this) < 8)
-                        .filter(Entity::isAlive)
-                        .forEach(entity -> {
-                                Util.dealStandDamage(shootingStand, (LivingEntity) entity, (9f - entity.getDistance(this)) * 5f, Vec3d.ZERO, entity.getDistance(this) > 3);
-                        });
+
+                Util.standExplosion(master, world, this.getPositionVec(), 7, 3, 7.5, 35);
 
                 Util.spawnParticle(masterStand, 5, this.getPosX(), this.getPosY(), this.getPosZ(), 0.5, 0.5, 0.5, 1);
                 world.playSound(null, this.getPosition(), SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.HOSTILE, 2.0f, 1.0f);
