@@ -602,52 +602,6 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
         AtomicInteger processes = new AtomicInteger();
 
         if (message1 == 1) {
-            for (ItemStack stack : master.inventory.mainInventory) {
-
-                processes.getAndIncrement();
-                if (processes.get() > 1000) {
-                    return;
-                }
-
-                if (stack.getOrCreateTag().getBoolean("bomb") && stack.getOrCreateTag().getUniqueId("ownerUUID").equals(master.getUniqueID())) {
-                    CompoundNBT nbt = stack.getOrCreateTag();
-                    master.inventory.markDirty();
-                    nbt.remove("bomb");
-                    nbt.remove("ownerUUID");
-                    stack.clearCustomName();
-                }
-            }
-            for (ItemStack stack : master.inventory.offHandInventory) {
-
-                processes.getAndIncrement();
-                if (processes.get() > 1000) {
-                    return;
-                }
-
-                if (stack.getOrCreateTag().getBoolean("bomb") && stack.getOrCreateTag().getUniqueId("ownerUUID").equals(master.getUniqueID())) {
-                    CompoundNBT nbt = stack.getOrCreateTag();
-                    master.inventory.markDirty();
-                    nbt.remove("bomb");
-                    nbt.remove("ownerUUID");
-                    stack.clearCustomName();
-                }
-            }
-            for (ItemStack stack : master.inventory.armorInventory) {
-
-                processes.getAndIncrement();
-                if (processes.get() > 1000) {
-                    return;
-                }
-
-                if (stack.getOrCreateTag().getBoolean("bomb") && stack.getOrCreateTag().getUniqueId("ownerUUID").equals(master.getUniqueID())) {
-                    CompoundNBT nbt = stack.getOrCreateTag();
-                    master.inventory.markDirty();
-                    nbt.remove("bomb");
-                    nbt.remove("ownerUUID");
-                    stack.clearCustomName();
-                }
-            }
-
             Stand stand = Stand.getCapabilityFromPlayer(master);
             if (stand.getCooldown() == 0 && master.isCrouching() && !world.isRemote && stand.getAbilitiesUnlocked() > 1 && master.dimension == DimensionType.OVERWORLD) {
                 beginBitesTheDust();
@@ -655,42 +609,14 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
             }
             Stand.getLazyOptional(master).ifPresent(props -> { //Remove bomb block if it was mined.
                 if (world.getBlockState(stand.getBlockPos()).isAir(world, stand.getBlockPos())) {
-                    removeFirstBombFromAll();
+                    stand.setBlockPos(BlockPos.ZERO);
                 }
 
                     for(ServerWorld currentWorld : getServer().getWorlds()){
 
-                        currentWorld.loadedTileEntityList
-                                .forEach(tile -> {
-
-                                    processes.getAndIncrement();
-                                    if (processes.get() > 1000) {
-                                        return;
-                                    }
-
-                                    if(tile instanceof LockableTileEntity && !((LockableTileEntity) tile).isEmpty()){
-                                        int size = ((LockableTileEntity) tile).getSizeInventory();
-                                        for(int i = 0; i < size; i++){
-                                            if(((LockableTileEntity) tile).getStackInSlot(i).getOrCreateTag().getBoolean("bomb") && ((LockableTileEntity) tile).getStackInSlot(i).getOrCreateTag().getUniqueId("ownerUUID").equals(master.getUniqueID())){
-                                                tile.markDirty();
-                                                Util.standExplosion(master, this.world, new Vec3d(tile.getPos().getX(), tile.getPos().getY(), tile.getPos().getZ()), explosionRange, 3, maxExplosionDamage, minExplosionDamage);
-                                                ((LockableTileEntity) tile).getStackInSlot(i).getOrCreateTag().remove("bomb");
-                                                ((LockableTileEntity) tile).getStackInSlot(i).getOrCreateTag().remove("ownerUUID");
-                                                ((LockableTileEntity) tile).getStackInSlot(i).setCount(0);
-                                            }
-                                        }
-                                    }
-                                });
-
                         currentWorld.getEntities()
                                 .filter(entity -> entity instanceof ItemEntity)
                                 .forEach(entity -> {
-
-                                    processes.getAndIncrement();
-                                    if (processes.get() > 1000) {
-                                        return;
-                                    }
-
                                     ItemEntity itemEntity = ((ItemEntity) entity);
                                     CompoundNBT nbt = itemEntity.getItem().getOrCreateTag();
                                     if (nbt.getBoolean("bomb") && nbt.getUniqueId("ownerUUID").equals(master.getUniqueID())) {
@@ -700,107 +626,6 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
                                     }
                                 }
                                 );
-                        currentWorld.getEntities()
-                                .filter(entity -> entity instanceof LivingEntity)
-                                .forEach(entity -> {
-
-                                    processes.getAndIncrement();
-                                    if (processes.get() > 1000) {
-                                        return;
-                                    }
-
-                                    if (entity instanceof PlayerEntity) {
-                                        PlayerEntity playerEntity = (PlayerEntity) entity;
-
-                                        for(int i = 0; i < playerEntity.getInventoryEnderChest().getSizeInventory(); i++){
-                                            if(playerEntity.getInventoryEnderChest().getStackInSlot(i).getOrCreateTag().getBoolean("bomb") && playerEntity.getInventoryEnderChest().getStackInSlot(i).getOrCreateTag().getUniqueId("ownerUUID").equals(master.getUniqueID())){
-                                                playerEntity.inventory.markDirty();
-                                                playerEntity.getInventoryEnderChest().getStackInSlot(i).getOrCreateTag().remove("bomb");
-                                                playerEntity.getInventoryEnderChest().getStackInSlot(i).getOrCreateTag().remove("ownerUUID");
-                                                playerEntity.getInventoryEnderChest().getStackInSlot(i).setCount(0);
-                                                Util.standExplosion(master, this.world, playerEntity.getPositionVec(), explosionRange, 3, maxExplosionDamage, minExplosionDamage);
-                                            }
-                                        }
-
-                                        for (ItemStack stack : playerEntity.inventory.mainInventory) {
-
-                                            processes.getAndIncrement();
-                                            if (processes.get() > 1000) {
-                                                return;
-                                            }
-
-                                            if (stack.getOrCreateTag().getBoolean("bomb") && stack.getOrCreateTag().getUniqueId("ownerUUID").equals(master.getUniqueID())) {
-                                                playerEntity.inventory.markDirty();
-                                                Util.standExplosion(master, this.world, entity.getPositionVec(), explosionRange, 3, maxExplosionDamage, minExplosionDamage);
-                                                stack.getOrCreateTag().remove("bomb");
-                                                stack.getOrCreateTag().remove("ownerUUID");
-                                                stack.setCount(0);
-                                            }
-                                        }
-                                        for (ItemStack stack : playerEntity.inventory.offHandInventory) {
-
-                                            processes.getAndIncrement();
-                                            if (processes.get() > 1000) {
-                                                return;
-                                            }
-
-                                            if (stack.getOrCreateTag().getBoolean("bomb") && stack.getOrCreateTag().getUniqueId("ownerUUID").equals(master.getUniqueID())) {
-                                                playerEntity.inventory.markDirty();
-                                                Util.standExplosion(master, this.world, entity.getPositionVec(), explosionRange, 3, maxExplosionDamage, minExplosionDamage);
-                                                stack.getOrCreateTag().remove("bomb");
-                                                stack.getOrCreateTag().remove("ownerUUID");
-                                                stack.setCount(0);
-                                            }
-                                        }
-                                        for (ItemStack stack : playerEntity.inventory.armorInventory) {
-
-                                            processes.getAndIncrement();
-                                            if (processes.get() > 1000) {
-                                                return;
-                                            }
-
-                                            if (stack.getOrCreateTag().getBoolean("bomb") && stack.getOrCreateTag().getUniqueId("ownerUUID").equals(master.getUniqueID())) {
-                                                playerEntity.inventory.markDirty();
-                                                Util.standExplosion(master, this.world, entity.getPositionVec(), explosionRange, 3, maxExplosionDamage, minExplosionDamage);
-                                                stack.getOrCreateTag().remove("bomb");
-                                                stack.getOrCreateTag().remove("ownerUUID");
-                                                stack.setCount(0);
-                                            }
-                                        }
-                                    }else{
-                                        for (ItemStack stack : entity.getEquipmentAndArmor()){
-
-                                            processes.getAndIncrement();
-                                            if (processes.get() > 1000) {
-                                                return;
-                                            }
-
-                                            CompoundNBT nbt = stack.getOrCreateTag();
-                                            if(nbt.getBoolean("bomb") && nbt.getUniqueId("ownerUUID").equals(master.getUniqueID())){
-                                                Util.standExplosion(master, this.world, entity.getPositionVec(), explosionRange, 3, maxExplosionDamage, minExplosionDamage);
-                                                stack.getOrCreateTag().remove("bomb");
-                                                stack.getOrCreateTag().remove("ownerUUID");
-                                                stack.setCount(0);
-                                            }
-                                        }
-                                    }
-                                });
-
-                        currentWorld.getEntities()
-                                .filter(entity -> entity instanceof ItemFrameEntity)
-                                .forEach(itemFrame -> {
-
-                                    processes.getAndIncrement();
-                                    if (processes.get() > 1000) {
-                                        return;
-                                    }
-
-                                    ItemFrameEntity frame = (ItemFrameEntity) itemFrame;
-                                    if(frame.getDisplayedItem().getOrCreateTag().getBoolean("bomb") && frame.getDisplayedItem().getOrCreateTag().getUniqueId("ownerUUID").equals(master.getUniqueID())){
-                                        Util.standExplosion(master, this.world, frame.getPositionVec(), explosionRange, 3, maxExplosionDamage, minExplosionDamage);
-                                        frame.setDisplayedItem(ItemStack.EMPTY);
-                                    }
-                                });
                     }
                     if (stand.getBlockPos() != BlockPos.ZERO) {
                         if (!world.getChunkProvider().isChunkLoaded(world.getChunkAt(stand.getBlockPos()).getPos()))
@@ -913,6 +738,13 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
      Removes first bomb status from any entity, block, or item. Items have their names reset.
      */
     public void removeFirstBombFromAll() {
+
+        Stand stand = Stand.getCapabilityFromPlayer(master);
+        stand.setBlockPos(BlockPos.ZERO);
+        stand.setBombEntityId(0);
+
+        /*
+
         AtomicInteger processes = new AtomicInteger();
 
         bombEntity = null;
@@ -1065,6 +897,8 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
         }
         stand.setBombEntityId(0);
         stand.setBlockPos(BlockPos.ZERO);
+
+         */
     }
 }
 

@@ -256,7 +256,7 @@ public class TheWorldEntity extends AbstractStandEntity implements IMomentum, IO
 
     @Override
     public void chargeAttackRelease(int ticksCharged) {
-        if(!timeStopped) {
+        if(!TimestopHelper.isTimeStopped(world, master.getPosition())) {
 
             world.playSound(null, getPosition(), SoundInit.THE_WORLD_TELEPORT.get(), SoundCategory.NEUTRAL, 1, 1);
             if (getTauntDistance(ticksCharged) > 0) {

@@ -3,6 +3,7 @@ package io.github.halffocused.diamond_is_uncraftable.event;
 import io.github.halffocused.diamond_is_uncraftable.DiamondIsUncraftable;
 import io.github.halffocused.diamond_is_uncraftable.capability.Stand;
 import io.github.halffocused.diamond_is_uncraftable.capability.StandPerWorldCapability;
+import io.github.halffocused.diamond_is_uncraftable.capability.Timestop;
 import io.github.halffocused.diamond_is_uncraftable.config.DiamondIsUncraftableConfig;
 import io.github.halffocused.diamond_is_uncraftable.entity.stand.*;
 import io.github.halffocused.diamond_is_uncraftable.network.message.server.SSyncStandCapabilityPacket;
@@ -72,6 +73,10 @@ public class EventSyncCapability {
 
                 //This is completely safe to call on players who cannot stop time. All it does is remove any timestopped chunks matching the player's UUID.
                 TimestopHelper.endTimeStop(player);
+                Timestop.getLazyOptional(player).ifPresent(Timestop::clear);
+
+                props.setExperiencingTimeStop(false);
+                props.setExperiencingTimeSkip(false);
 
                 player.getServerWorld().getEntities()
                         .filter(entity -> entity instanceof SheerHeartAttackEntity)
