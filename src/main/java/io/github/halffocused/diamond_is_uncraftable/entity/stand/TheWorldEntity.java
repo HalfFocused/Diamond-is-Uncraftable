@@ -215,7 +215,7 @@ public class TheWorldEntity extends AbstractStandEntity implements IMomentum, IO
 
     @Override
     public double getMomentumDrainRate() {
-        return 5.0 / 3;
+        return 2;
     }
 
 
