@@ -169,7 +169,7 @@ public class TheWorldEntity extends AbstractStandEntity implements IMomentum, IO
 
                         if(props2.getMomentum() == 0){
                             Style warningStyle = new Style().setColor(TextFormatting.RED);
-                            StringTextComponent warning = new StringTextComponent("The world needs momentum to perform it's barrage!");
+                            StringTextComponent warning = new StringTextComponent("The World needs momentum to perform it's barrage!");
                             warning.setStyle(warningStyle);
                             master.sendStatusMessage(warning, false);
                         }
