@@ -1009,18 +1009,20 @@ public class Util {
 
     public static void standExplosion(PlayerEntity master, World world, Vec3d position, double range, double blockableDistance, double minDamage, double maxDamage) {
         if(!world.isRemote()) {
-            Util.spawnParticle(master.dimension, 5, position.getX(), position.getY(), position.getZ(), 1, 1, 1, 1);
-            Util.spawnParticle(master.dimension, 14, position.getX(), position.getY(), position.getZ(), 1, 1, 1, 20);
-            Explosion explosion = new Explosion(master.world, master, position.getX(), position.getY(), position.getZ(), 4, true, Explosion.Mode.NONE);
-            master.world.playSound(null, new BlockPos(position), SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 1, 1);
-            explosion.doExplosionB(true);
+            if (master.dimension != null) {
+                Util.spawnParticle(master.dimension, 5, position.getX(), position.getY(), position.getZ(), 1, 1, 1, 1);
+                Util.spawnParticle(master.dimension, 14, position.getX(), position.getY(), position.getZ(), 1, 1, 1, 20);
+                Explosion explosion = new Explosion(master.world, master, position.getX(), position.getY(), position.getZ(), 4, true, Explosion.Mode.NONE);
+                master.world.playSound(null, new BlockPos(position), SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 1, 1);
+                explosion.doExplosionB(true);
 
-            master.getServer().getWorld(master.dimension).getEntities()
-                    .filter(entity -> entity instanceof LivingEntity)
-                    .filter(entity -> !(entity instanceof AbstractStandEntity))
-                    .filter(entity -> Math.sqrt((entity.getDistanceSq(position))) <= range)
-                    .filter(Entity::isAlive)
-                    .forEach(entity -> Util.dealUnsummonedStandDamage(master, (LivingEntity) entity, (float) lerp(minDamage, maxDamage, Math.sqrt((entity.getDistanceSq(position))) / range), Vec3d.ZERO, Math.sqrt((entity.getDistanceSq(position))) >= blockableDistance));
+                Objects.requireNonNull(master.getServer()).getWorld(master.dimension).getEntities()
+                        .filter(entity -> entity instanceof LivingEntity)
+                        .filter(entity -> !(entity instanceof AbstractStandEntity))
+                        .filter(entity -> Math.sqrt((entity.getDistanceSq(position))) <= range)
+                        .filter(Entity::isAlive)
+                        .forEach(entity -> Util.dealUnsummonedStandDamage(master, (LivingEntity) entity, (float) lerp(minDamage, maxDamage, Math.sqrt((entity.getDistanceSq(position))) / range), Vec3d.ZERO, Math.sqrt((entity.getDistanceSq(position))) >= blockableDistance));
+            }
         }
     }
 
