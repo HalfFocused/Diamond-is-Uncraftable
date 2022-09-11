@@ -11,6 +11,7 @@ import io.github.halffocused.diamond_is_uncraftable.entity.stand.attack.Abstract
 import io.github.halffocused.diamond_is_uncraftable.init.*;
 import io.github.halffocused.diamond_is_uncraftable.item.StandArrowItem;
 import io.github.halffocused.diamond_is_uncraftable.network.message.server.SParticlePacket;
+import io.github.halffocused.diamond_is_uncraftable.network.message.client.CRemoveEntityPacket;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.block.BlockState;

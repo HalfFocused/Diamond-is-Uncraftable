@@ -1,4 +1,4 @@
-package io.github.halffocused.diamond_is_uncraftable.network.message.server;
+package io.github.halffocused.diamond_is_uncraftable.network.message.client;
 
 import io.github.halffocused.diamond_is_uncraftable.DiamondIsUncraftable;
 import io.github.halffocused.diamond_is_uncraftable.network.message.IMessage;
@@ -10,29 +10,29 @@ import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class SRemoveEntityPacket implements IMessage<SRemoveEntityPacket> {
+public class CRemoveEntityPacket implements IMessage<CRemoveEntityPacket> {
     private int entityID;
 
-    public SRemoveEntityPacket() {
+    public CRemoveEntityPacket() {
     }
 
-    public SRemoveEntityPacket(int entityID) {
+    public CRemoveEntityPacket(int entityID) {
         this.entityID = entityID;
     }
 
     @Override
-    public void encode(SRemoveEntityPacket message, PacketBuffer buffer) {
+    public void encode(CRemoveEntityPacket message, PacketBuffer buffer) {
         buffer.writeInt(message.entityID);
     }
 
     @Override
-    public SRemoveEntityPacket decode(PacketBuffer buffer) {
-        return new SRemoveEntityPacket(buffer.readInt());
+    public CRemoveEntityPacket decode(PacketBuffer buffer) {
+        return new CRemoveEntityPacket(buffer.readInt());
     }
 
     @Override
-    public void handle(SRemoveEntityPacket message, Supplier<NetworkEvent.Context> ctx) {
-        if (ctx.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
+    public void handle(CRemoveEntityPacket message, Supplier<NetworkEvent.Context> ctx) {
+        if (ctx.get().getDirection() == NetworkDirection.PLAY_TO_SERVER) {
             ctx.get().enqueueWork(() -> {
                 World world = DiamondIsUncraftable.PROXY.getWorld();
                 if (world == null) return;

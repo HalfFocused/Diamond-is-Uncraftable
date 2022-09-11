@@ -333,6 +333,7 @@ public class KingCrimsonEntity extends AbstractStandEntity implements IAnimatabl
     }
 
     public void endTimeSkip(){
+
         timeEraseActive = false;
 
         world.playSound(null, getPosition(), SoundInit.TIME_SKIP_END.get(), SoundCategory.NEUTRAL, 1, 1);
@@ -356,11 +357,10 @@ public class KingCrimsonEntity extends AbstractStandEntity implements IAnimatabl
 
             prediction.setGlowing(false);
             prediction.setInvulnerable(false);
-            //prediction.setPosition(prediction.getPosX(), -999, prediction.getPosZ());
-            //prediction.attackEntityFrom(DamageSource.OUT_OF_WORLD, Float.MAX_VALUE);
-            prediction.remove();
+            prediction.setPosition(prediction.getPosX(), -999, prediction.getPosZ());
+            prediction.attackEntityFrom(DamageSource.OUT_OF_WORLD, Float.MAX_VALUE);
 
-            if(predicted instanceof PlayerEntity){
+            if (predicted instanceof PlayerEntity) {
                 Stand.getLazyOptional(((PlayerEntity) predicted)).ifPresent(props -> {
                     props.setTimeSkipEffectTicker(30);
                     props.setExperiencingTimeSkip(false);

@@ -31,7 +31,7 @@ public class PacketHandler {
         registerPacket(SSyncHierophantGreenPacket.class, new SSyncHierophantGreenPacket(), NetworkDirection.PLAY_TO_CLIENT);
         registerPacket(CAerosmithRotationPacket.class, new CAerosmithRotationPacket(), NetworkDirection.PLAY_TO_SERVER);
 
-        registerPacket(SRemoveEntityPacket.class, new SRemoveEntityPacket(), NetworkDirection.PLAY_TO_CLIENT);
+        registerPacket(CRemoveEntityPacket.class, new CRemoveEntityPacket(), NetworkDirection.PLAY_TO_SERVER);
 
         registerPacket(SAnimatePacket.class, new SAnimatePacket(), NetworkDirection.PLAY_TO_CLIENT);
         registerPacket(SParticlePacket.class, new SParticlePacket(), NetworkDirection.PLAY_TO_CLIENT);
