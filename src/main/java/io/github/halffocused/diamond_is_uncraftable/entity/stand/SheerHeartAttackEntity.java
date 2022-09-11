@@ -14,12 +14,10 @@ import net.minecraft.world.World;
 @SuppressWarnings("ConstantConditions")
 public class SheerHeartAttackEntity extends AbstractStandAttackEntity {
     private KillerQueenEntity masterStand;
-    private PlayerEntity master;
     private int detonationTime = 35;
     boolean detonating = false;
     LivingEntity target = null;
     boolean stalled = false;
-    boolean hasStalledOnce = false;
     int masterFuse;
 
     public SheerHeartAttackEntity(EntityType<? extends AbstractStandAttackEntity> type, World worldIn) {
@@ -36,7 +34,7 @@ public class SheerHeartAttackEntity extends AbstractStandAttackEntity {
 
 
     public PlayerEntity getMaster() {
-        return master;
+        return standMaster;
     }
 
 
@@ -133,7 +131,7 @@ public class SheerHeartAttackEntity extends AbstractStandAttackEntity {
             }
             if (detonationTime == 0) {
 
-                Util.standExplosion(master, world, this.getPositionVec(), 7, 3, 7.5, 35);
+                Util.standExplosion(standMaster, world, this.getPositionVec(), 7, 3, 7.5, 35);
 
                 Util.spawnParticle(masterStand, 5, this.getPosX(), this.getPosY(), this.getPosZ(), 0.5, 0.5, 0.5, 1);
                 world.playSound(null, this.getPosition(), SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.HOSTILE, 2.0f, 1.0f);
