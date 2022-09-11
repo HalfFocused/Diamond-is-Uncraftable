@@ -525,6 +525,7 @@ public class EventHandleStandAbilities {
 
                 playerEntity.getServerWorld().getEntities()
                         .filter(entity -> entity instanceof SheerHeartAttackEntity)
+                        .filter(entity -> ((SheerHeartAttackEntity) entity).getMaster() != null)
                         .filter(entity -> ((SheerHeartAttackEntity) entity).getMaster().equals(playerEntity))
                         .forEach(Entity::remove);
 
