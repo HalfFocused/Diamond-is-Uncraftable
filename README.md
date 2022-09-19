@@ -3,7 +3,7 @@
 Overview
 =
 
-**Diamond Is Uncraftable** is a pvp-focused minecraft mod for Forge 1.15.2. The mod adds
+**Diamond Is Uncraftable** is a pvp-focused minecraft mod for Forge 1.16.5. The mod adds
  many of the Stands from JoJo's Bizarre Adventure to minecraft, with fully animated movesets using **Geckolib**.
 
 Every stand is completely animated and balanced around a complex and fast-paced pvp experience.
