@@ -9,6 +9,7 @@ import net.minecraft.entity.*;
 import net.minecraft.entity.monster.EndermanEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.entity.projectile.ProjectileHelper;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.IPacket;
@@ -18,6 +19,7 @@ import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.*;
 import net.minecraft.util.math.RayTraceContext.BlockMode;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -31,13 +33,13 @@ import javax.annotation.Nullable;
  * This class is a mess, I can barely read it, especially the {@link #tick()} method.
  */
 @SuppressWarnings("ALL")
-public abstract class AbstractStandAttackEntity extends Entity implements IProjectile, IEntityAdditionalSpawnData {
+public abstract class AbstractStandAttackEntity extends AbstractArrowEntity implements IEntityAdditionalSpawnData {
     public double xTile, yTile, zTile, arrowShake, ticksInAir;
     public AbstractStandEntity shootingStand;
     public PlayerEntity standMaster;
     protected boolean inGround;
 
-    public AbstractStandAttackEntity(EntityType<? extends Entity> type, World worldIn) {
+    public AbstractStandAttackEntity(EntityType<? extends AbstractArrowEntity> type, World worldIn) {
         super(type, worldIn);
         xTile = -1;
         yTile = -1;
@@ -45,12 +47,12 @@ public abstract class AbstractStandAttackEntity extends Entity implements IProje
         setNoGravity(true);
     }
 
-    public AbstractStandAttackEntity(EntityType<? extends Entity> type, World worldIn, double x, double y, double z) {
+    public AbstractStandAttackEntity(EntityType<? extends AbstractArrowEntity> type, World worldIn, double x, double y, double z) {
         this(type, worldIn);
         setPosition(x, y, z);
     }
 
-    public AbstractStandAttackEntity(EntityType<? extends Entity> type, World worldIn, AbstractStandEntity shooter, PlayerEntity player) {
+    public AbstractStandAttackEntity(EntityType<? extends AbstractArrowEntity> type, World worldIn, AbstractStandEntity shooter, PlayerEntity player) {
         this(type, worldIn, shooter.getPosX(), shooter.getPosY() + 0.5, shooter.getPosZ());
         shootingStand = shooter;
         standMaster = player;
@@ -87,12 +89,12 @@ public abstract class AbstractStandAttackEntity extends Entity implements IProje
         float y = -MathHelper.sin(pitch * ((float) Math.PI / 180));
         float z = MathHelper.cos(yaw * ((float) Math.PI / 180)) * MathHelper.cos(pitch * ((float) Math.PI / 180));
         shoot(x, y, z, velocity, inaccuracy);
-        setMotion(getMotion().add(shooter.getMotion().getX(), shooter.onGround ? 0 : shooter.getMotion().getY(), shooter.getMotion().getZ()));
+        setMotion(getMotion().add(shooter.getMotion().getX(), shooter.isOnGround() ? 0 : shooter.getMotion().getY(), shooter.getMotion().getZ()));
     }
 
     @Override
     public void shoot(double x, double y, double z, float velocity, float inaccuracy) {
-        Vec3d vec3d = (new Vec3d(x, y, z)).normalize().add(rand.nextGaussian() * (double) 0.0075 * (double) inaccuracy, rand.nextGaussian() * (double) 0.0075 * (double) inaccuracy, rand.nextGaussian() * (double) 0.0075 * (double) inaccuracy).scale(velocity);
+        Vector3d vec3d = (new Vector3d(x, y, z)).normalize().add(rand.nextGaussian() * (double) 0.0075 * (double) inaccuracy, rand.nextGaussian() * (double) 0.0075 * (double) inaccuracy, rand.nextGaussian() * (double) 0.0075 * (double) inaccuracy).scale(velocity);
         setMotion(vec3d);
         float f = MathHelper.sqrt(horizontalMag(vec3d));
         rotationYaw = (float) (MathHelper.atan2(vec3d.getX(), vec3d.getZ()) * (double) (180 / (float) Math.PI));
@@ -103,15 +105,15 @@ public abstract class AbstractStandAttackEntity extends Entity implements IProje
 
     public void randomizePositions() {
         if (shootingStand == null) return;
-        Vec3d random = new Vec3d(rand.nextDouble() * 2 - 1, rand.nextDouble() * 2 - 1, rand.nextDouble() * 2 - 1);
-        Vec3d position = getPositionVec().add(random).add(standMaster.getLookVec().mul(1.5, 0.2, 1.5));
+        Vector3d random = new Vector3d(rand.nextDouble() * 2 - 1, rand.nextDouble() * 2 - 1, rand.nextDouble() * 2 - 1);
+        Vector3d position = getPositionVec().add(random).add(standMaster.getLookVec().mul(1.5, 0.2, 1.5));
         setPosition(position.getX(), position.getY(), position.getZ());
         setRotation(rotationYaw, rotationPitch);
     }
 
     public void movePunchInFrontOfStand(AbstractStandEntity stand) {
         if (stand.getMaster() == null) return;
-        Vec3d position = getPositionVec().add(stand.getMaster().getLookVec().mul(0.5, 0.1, 0.5));
+        Vector3d position = getPositionVec().add(stand.getMaster().getLookVec().mul(0.5, 0.1, 0.5));
         setPosition(position.getX(), position.getY(), position.getZ());
     }
 
@@ -213,7 +215,7 @@ public abstract class AbstractStandAttackEntity extends Entity implements IProje
                         }
                     }
                     if (standMaster != null && !livingEntity.equals(standMaster) && livingEntity instanceof PlayerEntity && standMaster instanceof ServerPlayerEntity)
-                        ((ServerPlayerEntity) standMaster).connection.sendPacket(new SChangeGameStatePacket(6, 0));
+                        ((ServerPlayerEntity) standMaster).connection.sendPacket(new SChangeGameStatePacket(SChangeGameStatePacket.HIT_PLAYER_ARROW, 0));
                 }
                 if (!(entity instanceof EndermanEntity) && shouldRemoveOnHitEntity())
                     remove();
@@ -254,7 +256,7 @@ public abstract class AbstractStandAttackEntity extends Entity implements IProje
     }
 
     @Override
-    public void move(MoverType type, Vec3d pos) {
+    public void move(MoverType type, Vector3d pos) {
         super.move(type, pos);
         if (inGround) {
             xTile = MathHelper.floor(getPosX());
@@ -264,7 +266,7 @@ public abstract class AbstractStandAttackEntity extends Entity implements IProje
     }
 
     @Nullable
-    protected EntityRayTraceResult rayTraceEntities(Vec3d startVec, Vec3d endVec) {
+    protected EntityRayTraceResult rayTraceEntities(Vector3d startVec, Vector3d endVec) {
         return ProjectileHelper.rayTraceEntities(world, this, startVec, endVec, getBoundingBox().expand(getMotion()).grow(1), (entity) ->
                 !entity.isSpectator() && entity.isAlive() && entity.canBeCollidedWith() && (!entity.equals(shootingStand) || ticksInAir > getRange()) && !entity.equals(standMaster));
     }
@@ -312,14 +314,14 @@ public abstract class AbstractStandAttackEntity extends Entity implements IProje
     }
 
     @Override
-    protected void readAdditional(CompoundNBT compound) {
+    public void readAdditional(CompoundNBT compound) {
         xTile = compound.getDouble("xTile");
         yTile = compound.getDouble("yTile");
         zTile = compound.getDouble("zTile");
     }
 
     @Override
-    protected void writeAdditional(CompoundNBT compound) {
+    public void writeAdditional(CompoundNBT compound) {
         compound.putDouble("xTile", xTile);
         compound.putDouble("yTile", yTile);
         compound.putDouble("zTile", zTile);
@@ -331,5 +333,42 @@ public abstract class AbstractStandAttackEntity extends Entity implements IProje
 
     protected boolean shouldRemoveOnHitEntity(){
         return true;
+    }
+
+    @Override
+    public boolean getIsCritical() {
+        return false;
+    }
+
+    @Override
+    public boolean getNoClip() {
+        return false;
+    }
+
+    @Override
+    public void setNoClip(boolean noClipIn) {
+    }
+
+    @Override
+    public void setIsCritical(boolean critical) {
+    }
+
+    @Override
+    public boolean getShotFromCrossbow() {
+        return false;
+    }
+
+    @Override
+    public byte getPierceLevel() {
+        return 16;
+    }
+
+    @Override
+
+    public void setPierceLevel(byte level) {
+    }
+
+    @Override
+    public void setShotFromCrossbow(boolean fromCrossbow) {
     }
 }

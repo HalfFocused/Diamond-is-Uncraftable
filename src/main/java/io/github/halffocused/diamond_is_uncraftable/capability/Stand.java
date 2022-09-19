@@ -13,9 +13,11 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Direction;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.DimensionType;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -450,19 +452,6 @@ public class Stand implements ICapabilitySerializable<INBT> {
     }
 
     public int getMaxAct() {
-        switch (standID) {
-            case TUSK_ACT_4:
-                return 4;
-            case BEACH_BOY:
-            case ECHOES_ACT_3:
-            case TUSK_ACT_3:
-            case MADE_IN_HEAVEN:
-                return 3;
-            case ECHOES_ACT_2:
-            case TUSK_ACT_2:
-            case CMOON:
-                return 2;
-        }
         return 0;
     }
 
@@ -726,25 +715,31 @@ public class Stand implements ICapabilitySerializable<INBT> {
 
         List<int[]> standAssignments = Collections.singletonList(STANDS);
 
-        if(DiamondIsUncraftableConfig.COMMON.uniqueStandMode.get() && !evolution) {
-            Objects.requireNonNull(player.getServer()).getWorld(DimensionType.OVERWORLD);
-            StandPerWorldCapability.getLazyOptional(player.getServer().getWorld(DimensionType.OVERWORLD)).ifPresent(uniqueStandHandler -> {
-                if (uniqueStandHandler.getTakenStandIDs().contains(ArrayUtils.indexOf(STANDS, getStandID()))) {
-                    if (!isStandThatEvolves(getStandID())) {
-                        uniqueStandHandler.removeTakenStandId(ArrayUtils.indexOf(STANDS, getStandID()));
-                    } else {
-                        if (getStandID() == MADE_IN_HEAVEN || getStandID() == CMOON || getStandID() == WHITESNAKE) {
-                            uniqueStandHandler.removeTakenStandId(ArrayUtils.indexOf(STANDS, WHITESNAKE));
-                        }
-                        if (getStandID() == TUSK_ACT_1 || getStandID() == TUSK_ACT_2 || getStandID() == TUSK_ACT_3 || getStandID() == TUSK_ACT_4) {
-                            uniqueStandHandler.removeTakenStandId(ArrayUtils.indexOf(STANDS, TUSK_ACT_1));
-                        }
-                        if (getStandID() == ECHOES_ACT_1 || getStandID() == ECHOES_ACT_2 || getStandID() == ECHOES_ACT_3) {
-                            uniqueStandHandler.removeTakenStandId(ArrayUtils.indexOf(STANDS, ECHOES_ACT_1));
+        if(player.getServer() != null){
+            RegistryKey<World> world = Objects.requireNonNull(player.getServer().getWorld(player.world.getDimensionKey())).getDimensionKey();
+
+            if(DiamondIsUncraftableConfig.COMMON.uniqueStandMode.get() && !evolution) {
+                Objects.requireNonNull(player.getServer()).getWorld(world);
+                StandPerWorldCapability.getLazyOptional(player.world).ifPresent(uniqueStandHandler -> {
+                    if (uniqueStandHandler.getTakenStandIDs().contains(ArrayUtils.indexOf(STANDS, getStandID()))) {
+                        if (!isStandThatEvolves(getStandID())) {
+                            uniqueStandHandler.removeTakenStandId(ArrayUtils.indexOf(STANDS, getStandID()));
+                        } else {
+                            /*
+                            if (getStandID() == MADE_IN_HEAVEN || getStandID() == CMOON || getStandID() == WHITESNAKE) {
+                                uniqueStandHandler.removeTakenStandId(ArrayUtils.indexOf(STANDS, WHITESNAKE));
+                            }
+                            if (getStandID() == TUSK_ACT_1 || getStandID() == TUSK_ACT_2 || getStandID() == TUSK_ACT_3 || getStandID() == TUSK_ACT_4) {
+                                uniqueStandHandler.removeTakenStandId(ArrayUtils.indexOf(STANDS, TUSK_ACT_1));
+                            }
+                            if (getStandID() == ECHOES_ACT_1 || getStandID() == ECHOES_ACT_2 || getStandID() == ECHOES_ACT_3) {
+                                uniqueStandHandler.removeTakenStandId(ArrayUtils.indexOf(STANDS, ECHOES_ACT_1));
+                            }
+                             */
                         }
                     }
-                }
-            });
+                });
+            }
         }
 
         standOn = false;

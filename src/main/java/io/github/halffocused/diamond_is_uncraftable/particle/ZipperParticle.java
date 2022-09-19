@@ -1,6 +1,7 @@
 package io.github.halffocused.diamond_is_uncraftable.particle;
 
 import net.minecraft.client.particle.*;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.particles.BasicParticleType;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -10,7 +11,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class ZipperParticle extends SpriteTexturedParticle {
 
 
-    protected ZipperParticle(World worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn) {
+    protected ZipperParticle(ClientWorld worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn) {
         super(worldIn, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, zSpeedIn);
 
 
@@ -53,7 +54,7 @@ public class ZipperParticle extends SpriteTexturedParticle {
 
 
         @Override
-        public Particle makeParticle(BasicParticleType typeIn, World worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
+        public Particle makeParticle(BasicParticleType typeIn, ClientWorld worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
             ZipperParticle menacingParticle = new ZipperParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed);
             menacingParticle.setColor(1.0f, 1.0f, 1.0f);
             menacingParticle.selectSpriteRandomly(this.spriteSet);

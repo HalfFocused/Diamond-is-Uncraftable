@@ -1,17 +1,17 @@
 package io.github.halffocused.diamond_is_uncraftable.util.frame;
 
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class DamageFrame {
 
     int tick;
     float damage;
-    Vec3d motion;
+    Vector3d motion;
     double hitboxRange;
     int pierce;
     boolean blockable;
 
-    public DamageFrame(int tickIn, float damageIn, Vec3d motionIn, double hitboxRangeIn, int pierceIn, boolean blockableIn) {
+    public DamageFrame(int tickIn, float damageIn, Vector3d motionIn, double hitboxRangeIn, int pierceIn, boolean blockableIn) {
         super();
         tick = tickIn;
         damage = damageIn;
@@ -29,7 +29,7 @@ public class DamageFrame {
         return damage;
     }
 
-    public Vec3d getMotion(){
+    public Vector3d getMotion(){
         return motion;
     }
 

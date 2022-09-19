@@ -40,57 +40,23 @@ public class CToggleAbilityPacket implements IMessage<CToggleAbilityPacket> {
 
                     if (props.getAbility()) {
                         switch (standID) {
-                            case Util.StandID.BEACH_BOY:
-                            case Util.StandID.ECHOES_ACT_1:
-                            case Util.StandID.TUSK_ACT_4:
-                            case Util.StandID.TUSK_ACT_3:
-                            case Util.StandID.TUSK_ACT_2:
-                            case Util.StandID.TUSK_ACT_1:
-                            case Util.StandID.THE_HAND:
-                            case Util.StandID.MAGICIANS_RED:
-                            case Util.StandID.KILLER_QUEEN:
-                            case Util.StandID.THE_EMPEROR:
-                            case Util.StandID.THE_WORLD:
                             case Util.StandID.KING_CRIMSON:
+                            case Util.StandID.THE_WORLD:
+                            case Util.StandID.KILLER_QUEEN:
                                 break;
-                            case Util.StandID.GOLD_EXPERIENCE: {
-                                sender.sendMessage(new StringTextComponent("Mode: Lifegiver"), ChatType.GAME_INFO);
-                                break;
-                            }
-                            case Util.StandID.GER: {
-                                sender.sendMessage(new StringTextComponent("Mode: Truth"), ChatType.GAME_INFO);
-                                break;
-                            }
                             default: {
-                                if (standID != Util.StandID.MADE_IN_HEAVEN || act != 0)
-                                    sender.sendMessage(new StringTextComponent("Ability: ON"), ChatType.GAME_INFO);
+                                sender.sendStatusMessage(new StringTextComponent("Ability: ON"), true);
                                 break;
                             }
                         }
                     } else {
                         switch (standID) {
-                            case Util.StandID.BEACH_BOY:
-                            case Util.StandID.ECHOES_ACT_1:
-                            case Util.StandID.TUSK_ACT_4:
-                            case Util.StandID.TUSK_ACT_3:
-                            case Util.StandID.TUSK_ACT_2:
-                            case Util.StandID.TUSK_ACT_1:
-                            case Util.StandID.THE_HAND:
-                            case Util.StandID.MAGICIANS_RED:
-                            case Util.StandID.THE_EMPEROR:
+                            case Util.StandID.KING_CRIMSON:
+                            case Util.StandID.THE_WORLD:
                             case Util.StandID.KILLER_QUEEN:
                                 break;
-                            case Util.StandID.GOLD_EXPERIENCE:
-                            case Util.StandID.THE_WORLD:
-                            case Util.StandID.GER: {
-                                sender.sendMessage(new StringTextComponent("Mode: Normal"), ChatType.GAME_INFO);
-                                break;
-                            }
                             default: {
-                                if (standID != Util.StandID.MADE_IN_HEAVEN || act != 0)
-                                    sender.sendMessage(new StringTextComponent("Ability: OFF"), ChatType.GAME_INFO);
-                                else if (props.getStandID() == Util.StandID.STAR_PLATINUM && props.getStandOn() && props.getTimeLeft() > 900 && props.getCooldown() <= 0)
-                                    sender.world.playSound(null, sender.getPosition(), SoundInit.RESUME_TIME_STAR_PLATINUM.get(), SoundCategory.NEUTRAL, 5, 1);
+                                sender.sendStatusMessage(new StringTextComponent("Ability: OFF"), true);
                                 break;
                             }
                         }

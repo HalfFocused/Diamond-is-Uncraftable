@@ -14,6 +14,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.*;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
@@ -27,21 +28,21 @@ public class PurpleHazeEntity extends AbstractStandEntity implements IAnimatable
     int viralModifier = 0;
 
     AttackFramedata normalPunchData = new AttackFramedata()
-            .addDamageFrame(9, 4, Vec3d.ZERO, 2.0, 3)
-            .addDamageFrame(12, 6, Vec3d.ZERO, 2.0, 3)
+            .addDamageFrame(9, 4, Vector3d.ZERO, 2.0, 3)
+            .addDamageFrame(12, 6, Vector3d.ZERO, 2.0, 3)
             .setAttackDuration(22);
 
     AttackFramedata ragePunchData = new AttackFramedata()
-            .addDamageFrame(9, 10, Vec3d.ZERO, 2.0, 1, false)
+            .addDamageFrame(9, 10, Vector3d.ZERO, 2.0, 1, false)
             .setAttackDuration(14);
 
     AttackFramedata rageSlam = new AttackFramedata()
-            .addRadialDamageFrame(31, 16, new Vec3d(0, 0.7, 0), 6, false)
+            .addRadialDamageFrame(31, 16, new Vector3d(0, 0.7, 0), 6, false)
             .addMessageFrame(31, 1, 0,0)
             .setAttackDuration(50);
 
     AttackFramedata barrageData = new AttackFramedata()
-            .generateInterval(45, 108, 2, 2, Vec3d.ZERO, 3, 4)
+            .generateInterval(45, 108, 2, 2, Vector3d.ZERO, 3, 4)
             .setAttackDuration(109);
 
     AttackFramedata commandGrabData = new AttackFramedata()
@@ -114,11 +115,11 @@ public class PurpleHazeEntity extends AbstractStandEntity implements IAnimatable
         Stand.getLazyOptional(master).ifPresent(stand -> {
             stand.setPreventUnsummon2(stand.getRage() >= 25);
 
-            Style warningStyle = new Style().setUnderlined(true);
+            Style warningStyle = Style.EMPTY.setUnderlined(true);
             if((this.ticksExisted + 20) % 20 >= 11){
-                warningStyle.setColor(TextFormatting.RED);
+                warningStyle.setFormatting(TextFormatting.RED);
             }else{
-                warningStyle.setColor(TextFormatting.GRAY);
+                warningStyle.setFormatting(TextFormatting.GRAY);
             }
             String message = "";
             if(stand.getRage() < 25){

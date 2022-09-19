@@ -6,7 +6,7 @@ import io.github.halffocused.diamond_is_uncraftable.network.message.IMessage;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.DimensionType;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkEvent;
 
@@ -36,7 +36,7 @@ public class SSyncStandPerWorldCapabilityPacket implements IMessage<SSyncStandPe
         if (ctx.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
             ctx.get().enqueueWork(() -> {
                 if(DiamondIsUncraftable.PROXY.getWorld() == null) return;
-                StandPerWorldCapability.getLazyOptional(DiamondIsUncraftable.PROXY.getServer().getWorld(DimensionType.OVERWORLD)).ifPresent(props -> StandPerWorldCapability.WORLD.getStorage().readNBT(StandPerWorldCapability.WORLD, props, null, message.data));
+                StandPerWorldCapability.getLazyOptional(DiamondIsUncraftable.PROXY.getWorld()).ifPresent(props -> StandPerWorldCapability.WORLD.getStorage().readNBT(StandPerWorldCapability.WORLD, props, null, message.data));
             });
         }
         ctx.get().setPacketHandled(true);

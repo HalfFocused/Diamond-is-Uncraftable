@@ -8,11 +8,12 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.EntityRayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 
 public class SilverChariotSwordEntity extends AbstractStandAttackEntity {
@@ -26,21 +27,30 @@ public class SilverChariotSwordEntity extends AbstractStandAttackEntity {
 
     @Override
     protected void onEntityHit(EntityRayTraceResult result) {
-        Entity entity = result.getEntity();
-        if(entity instanceof LivingEntity){
-            Util.dealStandDamage(shootingStand, (LivingEntity) entity, 18, Vec3d.ZERO, false);
+        if(!world.isRemote()) {
+            Entity entity = result.getEntity();
+            if (entity instanceof LivingEntity) {
+                Util.dealStandDamage(shootingStand, (LivingEntity) entity, 18, Vector3d.ZERO, false);
+            }
+            entity.hurtResistantTime = 0;
         }
-        entity.hurtResistantTime = 0;
+    }
+
+    @Override
+    protected ItemStack getArrowStack() {
+        return null;
     }
 
     @Override
     protected void onBlockHit(BlockRayTraceResult result) {
-        BlockPos pos = result.getPos();
-        BlockState state = world.getBlockState(pos);
-        if (state.getBlockHardness(world, pos) != -1 && state.getBlockHardness(world, pos) < 3) {
-            world.removeBlock(pos, false);
-            if (world.rand.nextBoolean())
-                state.getBlock().harvestBlock(world, standMaster, pos, state, null, standMaster.getActiveItemStack());
+        if(!world.isRemote()) {
+            BlockPos pos = result.getPos();
+            BlockState state = world.getBlockState(pos);
+            if (state.getBlockHardness(world, pos) != -1 && state.getBlockHardness(world, pos) < 3) {
+                world.removeBlock(pos, false);
+                if (world.rand.nextBoolean())
+                    state.getBlock().harvestBlock(world, standMaster, pos, state, null, standMaster.getActiveItemStack());
+            }
         }
     }
 

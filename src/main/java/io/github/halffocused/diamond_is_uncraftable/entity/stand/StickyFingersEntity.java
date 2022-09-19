@@ -9,6 +9,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.*;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
@@ -18,13 +19,13 @@ public class StickyFingersEntity extends AbstractStandEntity {
     public LivingEntity disguiseEntity;
     int zipLineTicks = 0;
     boolean layingZipLine = false;
-    Vec3d zipLineStartPoint;
-    Vec3d zipLinePoint;
+    Vector3d zipLineStartPoint;
+    Vector3d zipLinePoint;
     ArrayList<ZipLinePoint> zipLinePoints = new ArrayList<>();
     ArrayList<ZippedBlock> zippedBlocks = new ArrayList<>();
     ArrayList<ZippedBlock> adjacentZippedBlocks = new ArrayList<>();
-    Vec3d initialLookVec;
-    Vec3d increment;
+    Vector3d initialLookVec;
+    Vector3d increment;
     static final double ZIP_INCREMENT = 0.3;
 
 
@@ -48,7 +49,7 @@ public class StickyFingersEntity extends AbstractStandEntity {
         if (getMaster() == null || world.isRemote()) return;
             //Raytracing but awesome
             //Just kidding, it's never awesome
-            Vec3d lookVector = master.getLookVec().normalize();
+            Vector3d lookVector = master.getLookVec().normalize();
             boolean hasTriggered = false;
             for(int i = 0; i < 40 && !hasTriggered; i++){
                 double distance = 0.2 * i;
@@ -115,7 +116,7 @@ public class StickyFingersEntity extends AbstractStandEntity {
     public void zipPunch() {
         if (getMaster() == null || world.isRemote || disguiseEntity != null) return;
 
-        if(!layingZipLine && master.onGround) {
+        if(!layingZipLine && master.isOnGround()) {
             zipLineStartPoint = master.getPositionVec();
             zipLinePoint = master.getPositionVec();
             initialLookVec = Util.rotationVectorIgnoreY(master).normalize();
@@ -145,7 +146,7 @@ public class StickyFingersEntity extends AbstractStandEntity {
                     layingZipLine = false;
                 }else{
 
-                    Vec3d nextPoint;
+                    Vector3d nextPoint;
                     boolean gotNextPoint = false;
                     int passes = 0;
                     zipLineTicks++;
@@ -158,14 +159,14 @@ public class StickyFingersEntity extends AbstractStandEntity {
                             if (Util.isPointAtVecSolid(world, nextPoint)) {
                                 zipLineDirection = ZipLineDirection.UP;
                                 nextPoint = zipLinePoint;
-                            } else if (!Util.isPointAtVecSolid(world, new Vec3d(nextPoint.getX(), nextPoint.getY() - ZIP_INCREMENT, nextPoint.getZ()))) {
+                            } else if (!Util.isPointAtVecSolid(world, new Vector3d(nextPoint.getX(), nextPoint.getY() - ZIP_INCREMENT, nextPoint.getZ()))) {
                                 zipLineDirection = ZipLineDirection.DOWN;
                             } else {
                                 nextPoint = zipLinePoint.add(increment);
                                 gotNextPoint = true;
                             }
                         } else if (zipLineDirection == ZipLineDirection.UP) {
-                            increment = new Vec3d(0, 0.2, 0);
+                            increment = new Vector3d(0, 0.2, 0);
                             nextPoint = zipLinePoint.add(increment);
                             if (Util.isPointAtVecSolid(world, nextPoint)) {
                                 zipLineDirection = ZipLineDirection.BACKWARD;
@@ -183,7 +184,7 @@ public class StickyFingersEntity extends AbstractStandEntity {
                             if (Util.isPointAtVecSolid(world, nextPoint)) {
                                 zipLineDirection = ZipLineDirection.DOWN;
                                 nextPoint = zipLinePoint;
-                            } else if (!Util.isPointAtVecSolid(world, nextPoint.add(new Vec3d(0, ZIP_INCREMENT, 0)))) {
+                            } else if (!Util.isPointAtVecSolid(world, nextPoint.add(new Vector3d(0, ZIP_INCREMENT, 0)))) {
                                 zipLineDirection = ZipLineDirection.UP;
                                 nextPoint = zipLinePoint.add(increment);
                             } else {
@@ -191,7 +192,7 @@ public class StickyFingersEntity extends AbstractStandEntity {
                                 gotNextPoint = true;
                             }
                         } else {
-                            increment = new Vec3d(0, -ZIP_INCREMENT, 0);
+                            increment = new Vector3d(0, -ZIP_INCREMENT, 0);
                             nextPoint = zipLinePoint.add(increment);
                             if (Util.isPointAtVecSolid(world, nextPoint)) {
                                 zipLineDirection = ZipLineDirection.FORWARD;

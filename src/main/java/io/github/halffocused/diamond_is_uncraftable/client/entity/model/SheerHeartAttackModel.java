@@ -2,7 +2,7 @@ package io.github.halffocused.diamond_is_uncraftable.client.entity.model;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
-import io.github.halffocused.diamond_is_uncraftable.entity.stand.SheerHeartAttackEntity;
+import io.github.halffocused.diamond_is_uncraftable.entity.stand.attack.SheerHeartAttackEntity;
 import net.minecraft.client.renderer.model.ModelRenderer;
 
 public class SheerHeartAttackModel extends AbstractStandAttackModel<SheerHeartAttackEntity> {

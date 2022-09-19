@@ -4,7 +4,6 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import io.github.halffocused.diamond_is_uncraftable.entity.stand.attack.EmeraldSplashEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.ItemRenderer;
-import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
@@ -13,26 +12,20 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.vector.Vector3f;
 
 public class EmeraldSplashRenderer extends EntityRenderer<EmeraldSplashEntity> {
     private final ItemRenderer itemRenderer;
     private final float scale;
-    private final boolean field_229126_f_;
 
     public EmeraldSplashRenderer(EntityRendererManager manager, ItemRenderer renderer, float scale, boolean b) {
         super(manager);
         this.itemRenderer = renderer;
         this.scale = scale;
-        this.field_229126_f_ = b;
     }
 
     public EmeraldSplashRenderer(EntityRendererManager manager, ItemRenderer renderer) {
         this(manager, renderer, 1, false);
-    }
-
-    @Override
-    protected int getBlockLight(EmeraldSplashEntity entity, float partialTicks) {
-        return this.field_229126_f_ ? 15 : super.getBlockLight(entity, partialTicks);
     }
 
     public void render(EmeraldSplashEntity entity, float p_225623_2_, float p_225623_3_, MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLightIn) {

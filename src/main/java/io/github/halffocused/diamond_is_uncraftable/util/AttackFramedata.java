@@ -14,7 +14,7 @@ import net.minecraft.item.Items;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 
@@ -36,28 +36,28 @@ public class AttackFramedata {
     private List<Object> frameList =new ArrayList<>();
     int ticker = 0;
 
-    public AttackFramedata addDamageFrame(int tickIn, float damageIn, Vec3d motionIn, double hitBoxRange, int pierce){
+    public AttackFramedata addDamageFrame(int tickIn, float damageIn, Vector3d motionIn, double hitBoxRange, int pierce){
         DamageFrame newFrame = new DamageFrame(tickIn, damageIn, motionIn, hitBoxRange, pierce, true);
         frameList.add(newFrame);
 
         return this;
     }
 
-    public AttackFramedata addDamageFrame(int tickIn, float damageIn, Vec3d motionIn, double hitBoxRange, int pierce, boolean blockable){
+    public AttackFramedata addDamageFrame(int tickIn, float damageIn, Vector3d motionIn, double hitBoxRange, int pierce, boolean blockable){
         DamageFrame newFrame = new DamageFrame(tickIn, damageIn, motionIn, hitBoxRange, pierce, blockable);
         frameList.add(newFrame);
 
         return this;
     }
 
-    public AttackFramedata addRadialDamageFrame(int tickIn, float damageIn, Vec3d motionIn, double range){
+    public AttackFramedata addRadialDamageFrame(int tickIn, float damageIn, Vector3d motionIn, double range){
         RadialDamageFrame newFrame = new RadialDamageFrame(tickIn, damageIn, motionIn, range, true);
         frameList.add(newFrame);
 
         return this;
     }
 
-    public AttackFramedata addRadialDamageFrame(int tickIn, float damageIn, Vec3d motionIn, double range, boolean blockable){
+    public AttackFramedata addRadialDamageFrame(int tickIn, float damageIn, Vector3d motionIn, double range, boolean blockable){
         RadialDamageFrame newFrame = new RadialDamageFrame(tickIn, damageIn, motionIn, range, blockable);
         frameList.add(newFrame);
 
@@ -145,27 +145,6 @@ public class AttackFramedata {
                 }
             }
 
-            if(frame instanceof GrabFrame){
-                if(((GrabFrame) frame).getTick() == ticker){
-                    if(standIn instanceof IWalkingStand){
-                        World world = standIn.getServer().getWorld(standIn.dimension);
-                        AxisAlignedBB hitbox = Util.getAttackHitbox(standIn, ((GrabFrame) frame).getHitboxRange());
-                        List<Entity> listOfEntities = world.getEntitiesWithinAABBExcludingEntity(standIn, hitbox);
-                        LivingEntity targetEntity = null;
-                        for (Entity entity : listOfEntities) {
-                            if(entity instanceof LivingEntity){
-                                if(entity != standIn.getMaster()){
-                                    targetEntity = (LivingEntity) entity;
-                                }
-                            }
-                        }
-                        if(targetEntity != null){
-                            ((IWalkingStand) standIn).getWalkingController().startCommandGrab(targetEntity);
-                        }
-                    }
-                }
-            }
-
             if(frame instanceof MenacingFrame){
                 if (((MenacingFrame) frame).getTick() == ticker){
 
@@ -191,7 +170,9 @@ public class AttackFramedata {
 
     private void dealAttack(DamageFrame damageFrame, AbstractStandEntity standEntityIn) {
 
-        World world = standEntityIn.getServer().getWorld(standEntityIn.dimension);
+        if(standEntityIn.getServer() == null) {return;}
+        World world = standEntityIn.getServer().getWorld(standEntityIn.world.getDimensionKey());
+        if(world == null) {return;}
 
         AxisAlignedBB hitbox = Util.getAttackHitbox(standEntityIn, damageFrame.getHitboxRange());
 
@@ -224,7 +205,14 @@ public class AttackFramedata {
 
     private void dealRadialAttack(RadialDamageFrame damageFrame, AbstractStandEntity standEntityIn) {
 
-        standEntityIn.getServer().getWorld(standEntityIn.dimension).getEntities()
+        if(standEntityIn.getServer() == null) {return;}
+        World world = standEntityIn.getServer().getWorld(standEntityIn.world.getDimensionKey());
+        if(world == null || standEntityIn.getServer().getWorld(standEntityIn.world.getDimensionKey()) == null) {return;}
+
+        standEntityIn.getServer().getWorld(standEntityIn.world.getDimensionKey()).getEntities();
+
+
+        standEntityIn.getServer().getWorld(standEntityIn.world.getDimensionKey()).getEntities()
                 .filter(entity -> !entity.equals(standEntityIn))
                 .filter(entity -> entity instanceof LivingEntity)
                 .filter(entity -> entity.getDistance(standEntityIn) < damageFrame.getHitboxRange())
@@ -236,7 +224,10 @@ public class AttackFramedata {
     }
 
     private void setBomb(SetBombFrame bombFrame, AbstractStandEntity standEntityIn){
-        World world = standEntityIn.getServer().getWorld(standEntityIn.dimension);
+
+        if(standEntityIn.getServer() == null) {return;}
+        World world = standEntityIn.getServer().getWorld(standEntityIn.world.getDimensionKey());
+        if(world == null || standEntityIn.getServer().getWorld(standEntityIn.world.getDimensionKey()) == null) {return;}
 
         AxisAlignedBB hitbox = Util.getAttackHitbox(standEntityIn, bombFrame.getHitboxRange(), 0.5);
 
@@ -284,7 +275,10 @@ public class AttackFramedata {
     }
 
     private void dealEffect(EffectFrame effectFrame, AbstractStandEntity standEntityIn) {
-        World world = standEntityIn.getServer().getWorld(standEntityIn.dimension);
+
+        if(standEntityIn.getServer() == null) {return;}
+        World world = standEntityIn.getServer().getWorld(standEntityIn.world.getDimensionKey());
+        if(world == null || standEntityIn.getServer().getWorld(standEntityIn.world.getDimensionKey()) == null) {return;}
 
         AxisAlignedBB hitbox = Util.getAttackHitbox(standEntityIn, effectFrame.getHitboxRange());
 
@@ -310,7 +304,7 @@ public class AttackFramedata {
         return this;
     }
 
-    public AttackFramedata generateInterval(int intervalStart, int intervalEnd, int intervalSpacing, float damage, Vec3d motionIn, double hitBoxRange, int pierce){
+    public AttackFramedata generateInterval(int intervalStart, int intervalEnd, int intervalSpacing, float damage, Vector3d motionIn, double hitBoxRange, int pierce){
 
         int intervalTicker = intervalStart;
         while (intervalTicker <= intervalEnd){
@@ -323,7 +317,7 @@ public class AttackFramedata {
         return this;
     }
 
-    public AttackFramedata generateRadialInterval(int intervalStart, int intervalEnd, int intervalSpacing, float damage, Vec3d motionIn, double hitBoxRange){
+    public AttackFramedata generateRadialInterval(int intervalStart, int intervalEnd, int intervalSpacing, float damage, Vector3d motionIn, double hitBoxRange){
 
         int intervalTicker = intervalStart;
         while (intervalTicker <= intervalEnd){
@@ -343,7 +337,9 @@ public class AttackFramedata {
         int entitiesHit = 0;
         Random random = entity.getRNG();
 
-        World world = standIn.getServer().getWorld(standIn.dimension);
+        if(standIn.getServer() == null) {return;}
+        World world = standIn.getServer().getWorld(standIn.world.getDimensionKey());
+        if(world == null || standIn.getServer().getWorld(standIn.world.getDimensionKey()) == null) {return;}
 
         if (entity != standIn) {
             if (!(entity.equals(standIn.getMaster())) || (entity.equals(standIn.getMaster()) && assignedMove.getCanDamageMaster())) {

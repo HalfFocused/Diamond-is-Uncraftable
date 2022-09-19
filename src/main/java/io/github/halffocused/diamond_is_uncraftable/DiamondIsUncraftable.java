@@ -3,28 +3,24 @@ package io.github.halffocused.diamond_is_uncraftable;
 import io.github.halffocused.diamond_is_uncraftable.capability.*;
 import io.github.halffocused.diamond_is_uncraftable.command.impl.StandCommand;
 import io.github.halffocused.diamond_is_uncraftable.config.DiamondIsUncraftableConfig;
+import io.github.halffocused.diamond_is_uncraftable.entity.stand.AbstractStandEntity;
 import io.github.halffocused.diamond_is_uncraftable.init.*;
 import io.github.halffocused.diamond_is_uncraftable.network.message.PacketHandler;
 import io.github.halffocused.diamond_is_uncraftable.particle.ParticleList;
 import io.github.halffocused.diamond_is_uncraftable.proxy.ClientProxy;
 import io.github.halffocused.diamond_is_uncraftable.proxy.IProxy;
 import io.github.halffocused.diamond_is_uncraftable.proxy.ServerProxy;
-import io.github.halffocused.diamond_is_uncraftable.world.gen.feature.structure.DesertStructure;
-import io.github.halffocused.diamond_is_uncraftable.world.gen.feature.structure.DesertStructurePieces;
 import mcp.MethodsReturnNonnullByDefault;
+import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
+import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.gen.GenerationStage;
 import net.minecraft.world.gen.feature.Feature;
-import net.minecraft.world.gen.feature.IFeatureConfig;
 import net.minecraft.world.gen.feature.NoFeatureConfig;
 import net.minecraft.world.gen.feature.structure.Structure;
-import net.minecraft.world.gen.placement.IPlacementConfig;
-import net.minecraft.world.gen.placement.Placement;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -67,14 +63,13 @@ public class DiamondIsUncraftable {
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
         IEventBus forgeBus = MinecraftForge.EVENT_BUS;
         modBus.addListener(this::setup);
-        forgeBus.addListener(this::onServerStarting); //FMLServerStartingEvent is fired on the Forge bus.
+        forgeBus.addListener(this::registerCommands); //FMLServerStartingEvent is fired on the Forge bus.
 
         EventInit.registerForgeBus(MinecraftForge.EVENT_BUS);
         ItemInit.ITEMS.register(modBus);
         EntityInit.ENTITY_TYPES.register(modBus);
         SoundInit.SOUNDS.register(modBus);
         ParticleList.PARTICLES.register(modBus);
-        DimensionInit.DIMENSIONS.register(modBus); //Deprecated in preparation for 1.16.
         EffectInit.EFFECTS.register(modBus);
         GeckoLib.initialize();
         DiamondIsUncraftableConfig.register(ModLoadingContext.get());
@@ -99,18 +94,26 @@ public class DiamondIsUncraftable {
         CombatCapability.register();
         WorldTimestopCapability.register();
 
-        /*
-        DeferredWorkQueue.runLater(() -> ForgeRegistries.BIOMES.forEach(biome -> { //This is deprecated for no reason at all.
+
+        DeferredWorkQueue.runLater(() -> { //This is deprecated for no reason at all.
+            /*
             if (biome.getCategory() != Biome.Category.DESERT) return;
             biome.addStructure(DESERT_STRUCTURE.withConfiguration(IFeatureConfig.NO_FEATURE_CONFIG));
             biome.addFeature(GenerationStage.Decoration.UNDERGROUND_STRUCTURES, DESERT_STRUCTURE.withConfiguration(IFeatureConfig.NO_FEATURE_CONFIG).withPlacement(Placement.NOPE.configure(IPlacementConfig.NO_PLACEMENT_CONFIG)));
-        }));
-         */
+            */
+
+            GlobalEntityTypeAttributes.put(EntityInit.KILLER_QUEEN.get(), AbstractStandEntity.setCustomAttributes().create());
+            GlobalEntityTypeAttributes.put(EntityInit.SILVER_CHARIOT.get(), AbstractStandEntity.setCustomAttributes().create());
+            GlobalEntityTypeAttributes.put(EntityInit.THE_WORLD.get(), AbstractStandEntity.setCustomAttributes().create());
+            GlobalEntityTypeAttributes.put(EntityInit.KING_CRIMSON.get(), AbstractStandEntity.setCustomAttributes().create());
+
+        });
+
+
     }
 
-    @Deprecated //Replace with RegisterCommandsEvent in 1.16, todo.
-    private void onServerStarting(FMLServerStartingEvent event) {
-        StandCommand.register(event.getCommandDispatcher());
+    private void registerCommands(RegisterCommandsEvent event){
+        StandCommand.register(event.getDispatcher());
     }
 
     @MethodsReturnNonnullByDefault

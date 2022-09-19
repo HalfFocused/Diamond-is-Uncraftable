@@ -13,7 +13,6 @@ public class PacketHandler {
     public static void register() {
         registerPacket(CStandSummonPacket.class, new CStandSummonPacket(), NetworkDirection.PLAY_TO_SERVER);
         registerPacket(CToggleAbilityPacket.class, new CToggleAbilityPacket(), NetworkDirection.PLAY_TO_SERVER);
-        registerPacket(CAerosmithMovePacket.class, new CAerosmithMovePacket(), NetworkDirection.PLAY_TO_SERVER);
         registerPacket(CSyncStandAbilitiesPacket.class, new CSyncStandAbilitiesPacket(), NetworkDirection.PLAY_TO_SERVER);
         registerPacket(SSyncStandCapabilityPacket.class, new SSyncStandCapabilityPacket(), NetworkDirection.PLAY_TO_CLIENT);
         registerPacket(SSyncTimestopCapabilityPacket.class, new SSyncTimestopCapabilityPacket(), NetworkDirection.PLAY_TO_CLIENT);
@@ -21,14 +20,11 @@ public class PacketHandler {
         registerPacket(SSyncCombatCapabilityCombat.class, new SSyncCombatCapabilityCombat(), NetworkDirection.PLAY_TO_CLIENT);
         registerPacket(SSyncStandMasterPacket.class, new SSyncStandMasterPacket(), NetworkDirection.PLAY_TO_CLIENT);
         registerPacket(SSyncSilverChariotArmorPacket.class, new SSyncSilverChariotArmorPacket(), NetworkDirection.PLAY_TO_CLIENT);
-        registerPacket(CHierophantGreenPossessionPacket.class, new CHierophantGreenPossessionPacket(), NetworkDirection.PLAY_TO_SERVER);
         registerPacket(SSyncStandEffectsCapabilityPacket.class, new SSyncStandEffectsCapabilityPacket(), NetworkDirection.PLAY_TO_CLIENT);
         registerPacket(CChargeAttackPacket.class, new CChargeAttackPacket(), NetworkDirection.PLAY_TO_SERVER);
         registerPacket(CSwitchStandActPacket.class, new CSwitchStandActPacket(), NetworkDirection.PLAY_TO_SERVER);
         registerPacket(SSyncStickyFingersDisguisePacket.class, new SSyncStickyFingersDisguisePacket(), NetworkDirection.PLAY_TO_CLIENT);
-        registerPacket(SAerosmithPacket.class, new SAerosmithPacket(), NetworkDirection.PLAY_TO_CLIENT);
         registerPacket(SSyncStandChunkEffectCapabilityPacket.class, new SSyncStandChunkEffectCapabilityPacket(), NetworkDirection.PLAY_TO_CLIENT);
-        registerPacket(SSyncHierophantGreenPacket.class, new SSyncHierophantGreenPacket(), NetworkDirection.PLAY_TO_CLIENT);
         registerPacket(CAerosmithRotationPacket.class, new CAerosmithRotationPacket(), NetworkDirection.PLAY_TO_SERVER);
 
         registerPacket(CRemoveEntityPacket.class, new CRemoveEntityPacket(), NetworkDirection.PLAY_TO_SERVER);

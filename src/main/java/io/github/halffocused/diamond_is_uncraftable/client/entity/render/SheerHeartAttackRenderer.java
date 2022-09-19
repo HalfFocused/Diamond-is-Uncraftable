@@ -4,7 +4,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import io.github.halffocused.diamond_is_uncraftable.capability.Stand;
 import io.github.halffocused.diamond_is_uncraftable.client.entity.model.SheerHeartAttackModel;
 import io.github.halffocused.diamond_is_uncraftable.entity.stand.AbstractStandEntity;
-import io.github.halffocused.diamond_is_uncraftable.entity.stand.SheerHeartAttackEntity;
+import io.github.halffocused.diamond_is_uncraftable.entity.stand.attack.SheerHeartAttackEntity;
 import io.github.halffocused.diamond_is_uncraftable.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;

@@ -6,12 +6,15 @@ import io.github.halffocused.diamond_is_uncraftable.capability.Stand;
 import io.github.halffocused.diamond_is_uncraftable.capability.StandEffects;
 import io.github.halffocused.diamond_is_uncraftable.entity.stand.attack.AbstractStandAttackEntity;
 import io.github.halffocused.diamond_is_uncraftable.event.custom.StandEvent;
+import io.github.halffocused.diamond_is_uncraftable.init.EntityInit;
 import io.github.halffocused.diamond_is_uncraftable.init.SoundInit;
 import io.github.halffocused.diamond_is_uncraftable.network.message.server.SSyncStandMasterPacket;
 import io.github.halffocused.diamond_is_uncraftable.util.Util;
 import io.github.halffocused.diamond_is_uncraftable.util.movesets.HoveringMoveHandler;
 import io.github.halffocused.diamond_is_uncraftable.util.movesets.MovementAnimationHolder;
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.attributes.AttributeModifierMap;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.item.FallingBlockEntity;
 import net.minecraft.entity.item.TNTEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -29,7 +32,7 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
@@ -57,6 +60,8 @@ public abstract class AbstractStandEntity extends MobEntity implements IEntityAd
     public int attackTick, attackTicker;
     protected PlayerEntity master;
 
+    EntityType<AbstractStandEntity> entityType;
+
     boolean attacking = false;
     boolean hasAttackTarget = false;
     int ticksSinceLastPunch;
@@ -77,6 +82,10 @@ public abstract class AbstractStandEntity extends MobEntity implements IEntityAd
 
     public AbstractStandEntity(EntityType<? extends MobEntity> type, World worldIn) {
         super(type, worldIn);
+    }
+
+    public static AttributeModifierMap.MutableAttribute setCustomAttributes() {
+        return MobEntity.func_233666_p_().createMutableAttribute(Attributes.MAX_HEALTH, 20.0D);
     }
 
     /**
@@ -132,7 +141,7 @@ public abstract class AbstractStandEntity extends MobEntity implements IEntityAd
         if (this.master == null) return;
 
             double standSpacing = -1.5;
-            Vec3d position = Util.rotationVectorIgnoreY(master).mul(standSpacing, standSpacing, -1.75).add(master.getPositionVec());
+            Vector3d position = Util.rotationVectorIgnoreY(master).mul(standSpacing, standSpacing, -1.75).add(master.getPositionVec());
             position = position.mul(1, 0, 1);
             setPosition(position.x, master.getPosY() + 0.45, position.z);
 
@@ -143,7 +152,7 @@ public abstract class AbstractStandEntity extends MobEntity implements IEntityAd
      */
     private void dodgeAttacks() {
         if (world.isRemote) return;
-        world.getServer().getWorld(dimension).getEntities()
+        world.getServer().getWorld(world.getDimensionKey()).getEntities()
                 .filter(entity -> entity instanceof TNTEntity || entity instanceof ArrowEntity || entity instanceof FallingBlockEntity || entity instanceof ProjectileItemEntity)
                 .filter(entity -> entity.getDistance(master) <= Math.PI * 8)
                 .forEach(entity -> {
@@ -256,7 +265,7 @@ public abstract class AbstractStandEntity extends MobEntity implements IEntityAd
         MinecraftForge.EVENT_BUS.post(new StandEvent.StandRemovedEvent(master, this));
         if (master != null)
             Stand.getLazyOptional(master).ifPresent(props -> props.setPlayerStand(0)); //Resets the Stand#getPlayerStand for easier null checks.
-            master.sendStatusMessage(new StringTextComponent(""), true); //Clear the action bar.
+        master.sendStatusMessage(new StringTextComponent(""), true); //Clear the action bar.
     }
 
     /**
@@ -367,7 +376,7 @@ public abstract class AbstractStandEntity extends MobEntity implements IEntityAd
     public void writeAdditional(CompoundNBT compoundNBT) {
         super.writeAdditional(compoundNBT);
         if (getMasterUUID() != null)
-            compoundNBT.putString("MasterUUID", getMasterUUID().toString());
+            compoundNBT.putUniqueId("MasterUUID", getMasterUUID());
     }
 
     /**
@@ -376,13 +385,14 @@ public abstract class AbstractStandEntity extends MobEntity implements IEntityAd
     @Override
     public void readAdditional(CompoundNBT compoundNBT) {
         super.readAdditional(compoundNBT);
-        String s;
-        if (compoundNBT.contains("MasterUUID", 8))
-            s = compoundNBT.getString("MasterUUID");
+        UUID id;
+        if (compoundNBT.contains("MasterUUID"))
+            id = compoundNBT.getUniqueId("MasterUUID");
         else
-            s = PreYggdrasilConverter.convertMobOwnerIfNeeded(getServer(), compoundNBT.getString("MasterUUID"));
-        if (!s.isEmpty())
-            setMasterUUID(UUID.fromString(s));
+            id = PreYggdrasilConverter.convertMobOwnerIfNeeded(getServer(), compoundNBT.getUniqueId("MasterUUID").toString());
+
+        if (id != null)
+            setMasterUUID(id);
     }
 
     /**
@@ -435,7 +445,7 @@ public abstract class AbstractStandEntity extends MobEntity implements IEntityAd
 
     public void goToAttackPosition(double distanceIn){
 
-        Vec3d position = master.getLookVec().mul(distanceIn, distanceIn, distanceIn).add(master.getPositionVec());
+        Vector3d position = master.getLookVec().mul(distanceIn, distanceIn, distanceIn).add(master.getPositionVec());
         for (double i = position.getY() - 0.5; world.getBlockState(new BlockPos(position.getX(), i, position.getZ())).isSolid(); i++)
             position = position.add(0, 0.5, 0);
         setPositionAndUpdate(position.getX(), position.getY() + 0.75, position.getZ());
@@ -455,7 +465,9 @@ public abstract class AbstractStandEntity extends MobEntity implements IEntityAd
         return new MovementAnimationHolder().create("idle", "forward", "left", "right", "backwards");
     }
 
-    public abstract HoveringMoveHandler getController();
+    public HoveringMoveHandler getController(){
+        return null;
+    }
 
     /**
      * This method can be called on frames of stand moves, useful to create custom frames for niche cases.

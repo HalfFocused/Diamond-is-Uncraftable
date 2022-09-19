@@ -1,41 +1,35 @@
 package io.github.halffocused.diamond_is_uncraftable.entity.stand;
 
 import io.github.halffocused.diamond_is_uncraftable.capability.*;
+import io.github.halffocused.diamond_is_uncraftable.entity.stand.attack.SheerHeartAttackEntity;
 import io.github.halffocused.diamond_is_uncraftable.init.SoundInit;
 import io.github.halffocused.diamond_is_uncraftable.util.*;
 import io.github.halffocused.diamond_is_uncraftable.util.movesets.ChargeAttackFormat;
 import io.github.halffocused.diamond_is_uncraftable.util.movesets.HoveringMoveHandler;
-import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.item.ItemFrameEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.*;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.server.ServerWorld;
 import software.bernie.geckolib3.core.IAnimatable;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @SuppressWarnings("ConstantConditions")
 public class KillerQueenEntity extends AbstractStandEntity implements IAnimatable, IOnMasterAttacked {
     public LivingEntity bombEntity;
-    protected int shaCount;
+    public int shaCount;
     BlockPos setBlockBombPosition = null;
 
     /*
@@ -47,15 +41,15 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
     public static final double explosionRange = 7;
 
     AttackFramedata leftPunchData = new AttackFramedata()
-            .addDamageFrame(13, 8, Vec3d.ZERO, 2.3, 2)
+            .addDamageFrame(13, 8, Vector3d.ZERO, 2.3, 2)
             .setAttackDuration(20);
 
     AttackFramedata rightPunchData = new AttackFramedata()
-            .addDamageFrame(13, 8, Vec3d.ZERO, 2.3, 2)
+            .addDamageFrame(13, 8, Vector3d.ZERO, 2.3, 2)
             .setAttackDuration(20);
 
     AttackFramedata barrageData = new AttackFramedata()
-            .generateInterval(6, 30, 3, 2, Vec3d.ZERO, 2.4, 4)
+            .generateInterval(6, 30, 3, 2, Vector3d.ZERO, 2.4, 4)
             .setAttackDuration(32);
 
     AttackFramedata bombData = new AttackFramedata()
@@ -155,7 +149,7 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
                     if(!bombEntity.isAlive()){
                         bombEntity = null;
                     }else{
-                        Vec3d executeVec = getPositionVec().add(getLookVec().normalize().scale(1.3));
+                        Vector3d executeVec = getPositionVec().add(getLookVec().normalize().scale(1.3));
                         bombEntity.setPositionAndUpdate(executeVec.x, this.getPosY(), executeVec.z);
                         if(bombEntity instanceof PlayerEntity){
                             Util.applyUnactionableTicks((PlayerEntity) bombEntity, 1);
@@ -170,421 +164,6 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
         }
 
     }
-
-
-
-    private void beginBitesTheDust(){
-        Stand stand = Stand.getCapabilityFromPlayer(master);
-
-        if (master.isCrouching() && stand.getGameTime() == -1) {
-            stand.setGameTime(world.getGameTime());
-            stand.setDayTime(world.getDayTime());
-            world.loadedTileEntityList
-                    .forEach(tileEntity -> StandTileEntityEffects.getLazyOptional(tileEntity).ifPresent(standTileEntityEffects -> {
-                        if (tileEntity instanceof ChestTileEntity)
-                            for (int i = 0; i < ((ChestTileEntity) tileEntity).getSizeInventory(); i++) {
-                                ItemStack stack = ((ChestTileEntity) tileEntity).getStackInSlot(i);
-                                if (!stack.isEmpty())
-                                    standTileEntityEffects.getChestInventory().set(i, stack.copy());
-                            }
-                        else if (tileEntity instanceof AbstractFurnaceTileEntity)
-                            for (int i = 0; i < ((AbstractFurnaceTileEntity) tileEntity).getSizeInventory(); i++) {
-                                ItemStack stack = ((AbstractFurnaceTileEntity) tileEntity).getStackInSlot(i);
-                                if (!stack.isEmpty())
-                                    standTileEntityEffects.getFurnaceInventory().set(i, stack.copy());
-                            }
-                        else if (tileEntity instanceof BrewingStandTileEntity)
-                            for (int i = 0; i < ((BrewingStandTileEntity) tileEntity).getSizeInventory(); i++) {
-                                ItemStack stack = ((BrewingStandTileEntity) tileEntity).getStackInSlot(i);
-                                if (!stack.isEmpty())
-                                    standTileEntityEffects.getBrewingInventory().set(i, stack.copy());
-                            }
-                        else if (tileEntity instanceof BarrelTileEntity)
-                            for (int i = 0; i < ((BarrelTileEntity) tileEntity).getSizeInventory(); i++) {
-                                ItemStack stack = ((BarrelTileEntity) tileEntity).getStackInSlot(i);
-                                if (!stack.isEmpty())
-                                    standTileEntityEffects.getBarrelInventory().set(i, stack.copy());
-                            }
-                        else if (tileEntity instanceof DispenserTileEntity)
-                            for (int i = 0; i < ((DispenserTileEntity) tileEntity).getSizeInventory(); i++) {
-                                ItemStack stack = ((DispenserTileEntity) tileEntity).getStackInSlot(i);
-                                if (!stack.isEmpty())
-                                    standTileEntityEffects.getDispenserInventory().set(i, stack.copy());
-                            }
-                        else if (tileEntity instanceof HopperTileEntity)
-                            for (int i = 0; i < ((HopperTileEntity) tileEntity).getSizeInventory(); i++) {
-                                ItemStack stack = ((HopperTileEntity) tileEntity).getStackInSlot(i);
-                                if (!stack.isEmpty())
-                                    standTileEntityEffects.getHopperInventory().set(i, stack.copy());
-                            }
-                        else if (tileEntity instanceof ShulkerBoxTileEntity)
-                            for (int i = 0; i < ((ShulkerBoxTileEntity) tileEntity).getSizeInventory(); i++) {
-                                ItemStack stack = ((ShulkerBoxTileEntity) tileEntity).getStackInSlot(i);
-                                if (!stack.isEmpty())
-                                    standTileEntityEffects.getShulkerBoxInventory().set(i, stack.copy());
-                            }
-                    }));
-            getServer().getWorld(dimension).getEntities().forEach(entity -> {
-                if (entity instanceof PlayerEntity)
-                    StandPlayerEffects.getLazyOptional((PlayerEntity) entity).ifPresent(standPlayerEffects -> {
-                        for (int i = 0; i < ((PlayerEntity) entity).inventory.mainInventory.size(); i++) {
-                            ItemStack stack = ((PlayerEntity) entity).inventory.mainInventory.get(i);
-                            if (!stack.isEmpty())
-                                standPlayerEffects.getMainInventory().set(i, stack.copy());
-                        }
-                        for (int i = 0; i < ((PlayerEntity) entity).inventory.armorInventory.size(); i++) {
-                            ItemStack stack = ((PlayerEntity) entity).inventory.armorInventory.get(i);
-                            if (!stack.isEmpty())
-                                standPlayerEffects.getArmorInventory().set(i, stack.copy());
-                        }
-                        for (int i = 0; i < ((PlayerEntity) entity).inventory.offHandInventory.size(); i++) {
-                            ItemStack stack = ((PlayerEntity) entity).inventory.offHandInventory.get(i);
-                            if (!stack.isEmpty())
-                                standPlayerEffects.getOffHandInventory().set(i, stack.copy());
-                        }
-                        for (int i = 0; i < ((PlayerEntity) entity).getInventoryEnderChest().getSizeInventory(); i++) {
-                            ItemStack stack = ((PlayerEntity) entity).getInventoryEnderChest().getStackInSlot(i);
-                            if (!stack.isEmpty())
-                                standPlayerEffects.getEnderChestInventory().set(i, stack.copy());
-                        }
-                    });
-                StandEffects.getLazyOptional(entity).ifPresent(standEffects -> {
-                    standEffects.setBitesTheDustPos(entity.getPosition());
-                    standEffects.setStandUser(master.getUniqueID());
-                });
-            });
-            master.sendStatusMessage(new StringTextComponent("Set checkpoint for\u00A7e Bites the Dust\u00A7f!"), true);
-        } else if (stand.getGameTime() != -1) {
-            world.setGameTime(stand.getGameTime());
-            world.setDayTime(stand.getDayTime());
-            stand.setGameTime(-1);
-            stand.setDayTime(-1);
-            master.setHealth(master.getMaxHealth());
-            world.loadedTileEntityList.stream()
-                    .filter(tileEntity -> tileEntity instanceof LockableTileEntity && !tileEntity.getWorld().isRemote)
-                    .forEach(tileEntity -> StandTileEntityEffects.getLazyOptional(tileEntity).ifPresent(standTileEntityEffects -> {
-                        ((LockableTileEntity) tileEntity).clear();
-                        if (tileEntity instanceof ChestTileEntity)
-                            for (int i = 0; i < standTileEntityEffects.getChestInventory().size(); i++) {
-                                ItemStack stack = standTileEntityEffects.getChestInventory().get(i);
-                                ((ChestTileEntity) tileEntity).setInventorySlotContents(i, stack);
-                                standTileEntityEffects.getChestInventory().set(i, ItemStack.EMPTY);
-                            }
-                        else if (tileEntity instanceof AbstractFurnaceTileEntity)
-                            for (int i = 0; i < standTileEntityEffects.getFurnaceInventory().size(); i++) {
-                                ItemStack stack = standTileEntityEffects.getFurnaceInventory().get(i);
-                                ((AbstractFurnaceTileEntity) tileEntity).setInventorySlotContents(i, stack);
-                                standTileEntityEffects.getFurnaceInventory().set(i, ItemStack.EMPTY);
-                            }
-                        else if (tileEntity instanceof BrewingStandTileEntity)
-                            for (int i = 0; i < standTileEntityEffects.getBrewingInventory().size(); i++) {
-                                ItemStack stack = standTileEntityEffects.getBrewingInventory().get(i);
-                                ((BrewingStandTileEntity) tileEntity).setInventorySlotContents(i, stack);
-                                standTileEntityEffects.getBrewingInventory().set(i, ItemStack.EMPTY);
-                            }
-                        else if (tileEntity instanceof BarrelTileEntity)
-                            for (int i = 0; i < standTileEntityEffects.getBarrelInventory().size(); i++) {
-                                ItemStack stack = standTileEntityEffects.getBarrelInventory().get(i);
-                                ((BarrelTileEntity) tileEntity).setInventorySlotContents(i, stack);
-                                standTileEntityEffects.getBarrelInventory().set(i, ItemStack.EMPTY);
-                            }
-                        else if (tileEntity instanceof DispenserTileEntity)
-                            for (int i = 0; i < standTileEntityEffects.getDispenserInventory().size(); i++) {
-                                ItemStack stack = standTileEntityEffects.getDispenserInventory().get(i);
-                                ((DispenserTileEntity) tileEntity).setInventorySlotContents(i, stack);
-                                standTileEntityEffects.getDispenserInventory().set(i, ItemStack.EMPTY);
-                            }
-                        else if (tileEntity instanceof HopperTileEntity)
-                            for (int i = 0; i < standTileEntityEffects.getHopperInventory().size(); i++) {
-                                ItemStack stack = standTileEntityEffects.getHopperInventory().get(i);
-                                ((HopperTileEntity) tileEntity).setInventorySlotContents(i, stack);
-                                standTileEntityEffects.getHopperInventory().set(i, ItemStack.EMPTY);
-                            }
-                        else if (tileEntity instanceof ShulkerBoxTileEntity)
-                            for (int i = 0; i < standTileEntityEffects.getShulkerBoxInventory().size(); i++) {
-                                ItemStack stack = standTileEntityEffects.getShulkerBoxInventory().get(i);
-                                ((ShulkerBoxTileEntity) tileEntity).setInventorySlotContents(i, stack);
-                                standTileEntityEffects.getShulkerBoxInventory().set(i, ItemStack.EMPTY);
-                            }
-                        tileEntity.markDirty();
-                    }));
-            getServer().getWorld(dimension).getEntities().forEach(entity -> {
-                if (entity instanceof PlayerEntity && !entity.world.isRemote)
-                    StandPlayerEffects.getLazyOptional((PlayerEntity) entity).ifPresent(standPlayerEffects -> {
-                        ((PlayerEntity) entity).inventory.clear();
-                        for (int i = 0; i < standPlayerEffects.getMainInventory().size(); i++) {
-                            ItemStack stack = standPlayerEffects.getMainInventory().get(i);
-                            ((PlayerEntity) entity).inventory.setInventorySlotContents(i, stack);
-                            standPlayerEffects.getMainInventory().set(i, ItemStack.EMPTY);
-                        }
-                        for (int i = 0; i < standPlayerEffects.getArmorInventory().size(); i++) {
-                            ItemStack stack = standPlayerEffects.getArmorInventory().get(i);
-                            ((PlayerEntity) entity).inventory.setInventorySlotContents(i + 36, stack);
-                            standPlayerEffects.getArmorInventory().set(i, ItemStack.EMPTY);
-                        }
-                        for (int i = 0; i < standPlayerEffects.getOffHandInventory().size(); i++) {
-                            ItemStack stack = standPlayerEffects.getOffHandInventory().get(i);
-                            ((PlayerEntity) entity).inventory.setInventorySlotContents(i + 40, stack);
-                            standPlayerEffects.getOffHandInventory().set(i, ItemStack.EMPTY);
-                        }
-                        for (int i = 0; i < standPlayerEffects.getEnderChestInventory().size(); i++) {
-                            ItemStack stack = standPlayerEffects.getEnderChestInventory().get(i);
-                            ((PlayerEntity) entity).getInventoryEnderChest().setInventorySlotContents(i, stack);
-                            standPlayerEffects.getEnderChestInventory().set(i, ItemStack.EMPTY);
-                        }
-                    });
-                StandEffects.getLazyOptional(entity).ifPresent(standEffects -> {
-                    if (!standEffects.getAlteredTileEntities().isEmpty())
-                        standEffects.getAlteredTileEntities().forEach((pos, blockPosList) ->
-                                blockPosList.forEach(blockPos -> {
-                                    if (world.getChunkProvider().isChunkLoaded(pos))
-                                        world.getChunkProvider().forceChunk(pos, true);
-                                    TileEntity tileEntity = world.getTileEntity(blockPos);
-                                    if (!(tileEntity instanceof LockableTileEntity)) return;
-                                    StandTileEntityEffects.getLazyOptional(tileEntity).ifPresent(standTileEntityEffects -> {
-                                        ((LockableTileEntity) tileEntity).clear();
-                                        if (tileEntity instanceof ChestTileEntity)
-                                            for (int i = 0; i < standTileEntityEffects.getChestInventory().size(); i++) {
-                                                ItemStack stack = standTileEntityEffects.getChestInventory().get(i);
-                                                ((ChestTileEntity) tileEntity).setInventorySlotContents(i, stack);
-                                                standTileEntityEffects.getChestInventory().set(i, ItemStack.EMPTY);
-                                            }
-                                        else if (tileEntity instanceof AbstractFurnaceTileEntity)
-                                            for (int i = 0; i < standTileEntityEffects.getFurnaceInventory().size(); i++) {
-                                                ItemStack stack = standTileEntityEffects.getFurnaceInventory().get(i);
-                                                ((AbstractFurnaceTileEntity) tileEntity).setInventorySlotContents(i, stack);
-                                                standTileEntityEffects.getFurnaceInventory().set(i, ItemStack.EMPTY);
-                                            }
-                                        else if (tileEntity instanceof BrewingStandTileEntity)
-                                            for (int i = 0; i < standTileEntityEffects.getBrewingInventory().size(); i++) {
-                                                ItemStack stack = standTileEntityEffects.getBrewingInventory().get(i);
-                                                ((BrewingStandTileEntity) tileEntity).setInventorySlotContents(i, stack);
-                                                standTileEntityEffects.getBrewingInventory().set(i, ItemStack.EMPTY);
-                                            }
-                                        else if (tileEntity instanceof BarrelTileEntity)
-                                            for (int i = 0; i < standTileEntityEffects.getBarrelInventory().size(); i++) {
-                                                ItemStack stack = standTileEntityEffects.getBarrelInventory().get(i);
-                                                ((BarrelTileEntity) tileEntity).setInventorySlotContents(i, stack);
-                                                standTileEntityEffects.getBarrelInventory().set(i, ItemStack.EMPTY);
-                                            }
-                                        else if (tileEntity instanceof DispenserTileEntity)
-                                            for (int i = 0; i < standTileEntityEffects.getDispenserInventory().size(); i++) {
-                                                ItemStack stack = standTileEntityEffects.getDispenserInventory().get(i);
-                                                ((DispenserTileEntity) tileEntity).setInventorySlotContents(i, stack);
-                                                standTileEntityEffects.getDispenserInventory().set(i, ItemStack.EMPTY);
-                                            }
-                                        else if (tileEntity instanceof HopperTileEntity)
-                                            for (int i = 0; i < standTileEntityEffects.getHopperInventory().size(); i++) {
-                                                ItemStack stack = standTileEntityEffects.getHopperInventory().get(i);
-                                                ((HopperTileEntity) tileEntity).setInventorySlotContents(i, stack);
-                                                standTileEntityEffects.getHopperInventory().set(i, ItemStack.EMPTY);
-                                            }
-                                        else if (tileEntity instanceof ShulkerBoxTileEntity)
-                                            for (int i = 0; i < standTileEntityEffects.getShulkerBoxInventory().size(); i++) {
-                                                ItemStack stack = standTileEntityEffects.getShulkerBoxInventory().get(i);
-                                                ((ShulkerBoxTileEntity) tileEntity).setInventorySlotContents(i, stack);
-                                                standTileEntityEffects.getShulkerBoxInventory().set(i, ItemStack.EMPTY);
-                                            }
-                                        tileEntity.markDirty();
-                                    });
-                                }));
-                    if (standEffects.isShouldBeRemoved())
-                        entity.remove();
-                    if (entity instanceof ItemEntity && standEffects.getBitesTheDustPos() == BlockPos.ZERO)
-                        entity.remove();
-                    if (!standEffects.getDestroyedBlocks().isEmpty()) {
-                        Map<BlockPos, BlockState> removalMap = new ConcurrentHashMap<>();
-                        standEffects.getDestroyedBlocks().forEach((pos, list) -> {
-                            list.forEach((blockPos, blockState) -> {
-                                if (world.getChunkProvider().isChunkLoaded(pos))
-                                    world.getChunkProvider().forceChunk(pos, true);
-                                world.setBlockState(blockPos, blockState);
-                                removalMap.put(blockPos, blockState);
-                            });
-                            if (!removalMap.isEmpty())
-                                removalMap.forEach(list::remove);
-                        });
-                    }
-                    if (standEffects.getBitesTheDustPos() != BlockPos.ZERO) {
-                        entity.setPositionAndUpdate(standEffects.getBitesTheDustPos().getX(), standEffects.getBitesTheDustPos().getY(), standEffects.getBitesTheDustPos().getZ());
-                        standEffects.setBitesTheDustPos(BlockPos.ZERO);
-                    }
-                });
-            });
-            stand.setCooldown(36000);
-        }
-    }
-
-    private void detonateBTDMob(){
-
-        Stand stand = Stand.getCapabilityFromPlayer(master);
-
-
-        Explosion explosion = new Explosion(bombEntity.world, master, bombEntity.getPosX(), bombEntity.getPosY(), bombEntity.getPosZ(), 4, true, Explosion.Mode.NONE);
-        ((MobEntity) bombEntity).spawnExplosionParticle();
-        explosion.doExplosionB(true);
-        world.playSound(null, master.getPosition(), SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 1, 1);
-
-        StandEffects.getLazyOptional(bombEntity).ifPresent(standEffects -> standEffects.setTimeOfDeath(world.getGameTime()));
-        world.setGameTime(stand.getGameTime());
-        world.setDayTime(stand.getDayTime());
-        stand.setGameTime(-1);
-        stand.setDayTime(-1);
-        master.setHealth(master.getMaxHealth());
-        world.loadedTileEntityList.stream()
-                .filter(tileEntity -> tileEntity instanceof LockableTileEntity && !tileEntity.getWorld().isRemote)
-                .forEach(tileEntity -> StandTileEntityEffects.getLazyOptional(tileEntity).ifPresent(standTileEntityEffects -> {
-                    ((LockableTileEntity) tileEntity).clear();
-                    if (tileEntity instanceof ChestTileEntity)
-                        for (int i = 0; i < standTileEntityEffects.getChestInventory().size(); i++) {
-                            ItemStack stack = standTileEntityEffects.getChestInventory().get(i);
-                            ((ChestTileEntity) tileEntity).setInventorySlotContents(i, stack);
-                            standTileEntityEffects.getChestInventory().set(i, ItemStack.EMPTY);
-                        }
-                    else if (tileEntity instanceof AbstractFurnaceTileEntity)
-                        for (int i = 0; i < standTileEntityEffects.getFurnaceInventory().size(); i++) {
-                            ItemStack stack = standTileEntityEffects.getFurnaceInventory().get(i);
-                            ((AbstractFurnaceTileEntity) tileEntity).setInventorySlotContents(i, stack);
-                            standTileEntityEffects.getFurnaceInventory().set(i, ItemStack.EMPTY);
-                        }
-                    else if (tileEntity instanceof BrewingStandTileEntity)
-                        for (int i = 0; i < standTileEntityEffects.getBrewingInventory().size(); i++) {
-                            ItemStack stack = standTileEntityEffects.getBrewingInventory().get(i);
-                            ((BrewingStandTileEntity) tileEntity).setInventorySlotContents(i, stack);
-                            standTileEntityEffects.getBrewingInventory().set(i, ItemStack.EMPTY);
-                        }
-                    else if (tileEntity instanceof BarrelTileEntity)
-                        for (int i = 0; i < standTileEntityEffects.getBarrelInventory().size(); i++) {
-                            ItemStack stack = standTileEntityEffects.getBarrelInventory().get(i);
-                            ((BarrelTileEntity) tileEntity).setInventorySlotContents(i, stack);
-                            standTileEntityEffects.getBarrelInventory().set(i, ItemStack.EMPTY);
-                        }
-                    else if (tileEntity instanceof DispenserTileEntity)
-                        for (int i = 0; i < standTileEntityEffects.getDispenserInventory().size(); i++) {
-                            ItemStack stack = standTileEntityEffects.getDispenserInventory().get(i);
-                            ((DispenserTileEntity) tileEntity).setInventorySlotContents(i, stack);
-                            standTileEntityEffects.getDispenserInventory().set(i, ItemStack.EMPTY);
-                        }
-                    else if (tileEntity instanceof HopperTileEntity)
-                        for (int i = 0; i < standTileEntityEffects.getHopperInventory().size(); i++) {
-                            ItemStack stack = standTileEntityEffects.getHopperInventory().get(i);
-                            ((HopperTileEntity) tileEntity).setInventorySlotContents(i, stack);
-                            standTileEntityEffects.getHopperInventory().set(i, ItemStack.EMPTY);
-                        }
-                    else if (tileEntity instanceof ShulkerBoxTileEntity)
-                        for (int i = 0; i < standTileEntityEffects.getShulkerBoxInventory().size(); i++) {
-                            ItemStack stack = standTileEntityEffects.getShulkerBoxInventory().get(i);
-                            ((ShulkerBoxTileEntity) tileEntity).setInventorySlotContents(i, stack);
-                            standTileEntityEffects.getShulkerBoxInventory().set(i, ItemStack.EMPTY);
-                        }
-                    tileEntity.markDirty();
-                }));
-        getServer().getWorld(dimension).getEntities().forEach(entity -> {
-            if (entity instanceof PlayerEntity && !entity.world.isRemote)
-                StandPlayerEffects.getLazyOptional((PlayerEntity) entity).ifPresent(standPlayerEffects -> {
-                    ((PlayerEntity) entity).inventory.clear();
-                    for (int i = 0; i < standPlayerEffects.getMainInventory().size(); i++) {
-                        ItemStack stack = standPlayerEffects.getMainInventory().get(i);
-                        ((PlayerEntity) entity).inventory.setInventorySlotContents(i, stack);
-                        standPlayerEffects.getMainInventory().set(i, ItemStack.EMPTY);
-                    }
-                    for (int i = 0; i < standPlayerEffects.getArmorInventory().size(); i++) {
-                        ItemStack stack = standPlayerEffects.getArmorInventory().get(i);
-                        ((PlayerEntity) entity).inventory.setInventorySlotContents(i + 36, stack);
-                        standPlayerEffects.getArmorInventory().set(i, ItemStack.EMPTY);
-                    }
-                    for (int i = 0; i < standPlayerEffects.getOffHandInventory().size(); i++) {
-                        ItemStack stack = standPlayerEffects.getOffHandInventory().get(i);
-                        ((PlayerEntity) entity).inventory.setInventorySlotContents(i + 40, stack);
-                        standPlayerEffects.getOffHandInventory().set(i, ItemStack.EMPTY);
-                    }
-                    for (int i = 0; i < standPlayerEffects.getEnderChestInventory().size(); i++) {
-                        ItemStack stack = standPlayerEffects.getEnderChestInventory().get(i);
-                        ((PlayerEntity) entity).getInventoryEnderChest().setInventorySlotContents(i, stack);
-                        standPlayerEffects.getEnderChestInventory().set(i, ItemStack.EMPTY);
-                    }
-                });
-            StandEffects.getLazyOptional(entity).ifPresent(standEffects -> {
-                if (!standEffects.getAlteredTileEntities().isEmpty())
-                    standEffects.getAlteredTileEntities().forEach((pos, blockPosList) ->
-                            blockPosList.forEach(blockPos -> {
-                                if (world.getChunkProvider().isChunkLoaded(pos))
-                                    world.getChunkProvider().forceChunk(pos, true);
-                                TileEntity tileEntity = world.getTileEntity(blockPos);
-                                if (!(tileEntity instanceof LockableTileEntity)) return;
-                                StandTileEntityEffects.getLazyOptional(tileEntity).ifPresent(standTileEntityEffects -> {
-                                    ((LockableTileEntity) tileEntity).clear();
-                                    if (tileEntity instanceof ChestTileEntity)
-                                        for (int i = 0; i < standTileEntityEffects.getChestInventory().size(); i++) {
-                                            ItemStack stack = standTileEntityEffects.getChestInventory().get(i);
-                                            ((ChestTileEntity) tileEntity).setInventorySlotContents(i, stack);
-                                            standTileEntityEffects.getChestInventory().set(i, ItemStack.EMPTY);
-                                        }
-                                    else if (tileEntity instanceof AbstractFurnaceTileEntity)
-                                        for (int i = 0; i < standTileEntityEffects.getFurnaceInventory().size(); i++) {
-                                            ItemStack stack = standTileEntityEffects.getFurnaceInventory().get(i);
-                                            ((AbstractFurnaceTileEntity) tileEntity).setInventorySlotContents(i, stack);
-                                            standTileEntityEffects.getFurnaceInventory().set(i, ItemStack.EMPTY);
-                                        }
-                                    else if (tileEntity instanceof BrewingStandTileEntity)
-                                        for (int i = 0; i < standTileEntityEffects.getBrewingInventory().size(); i++) {
-                                            ItemStack stack = standTileEntityEffects.getBrewingInventory().get(i);
-                                            ((BrewingStandTileEntity) tileEntity).setInventorySlotContents(i, stack);
-                                            standTileEntityEffects.getBrewingInventory().set(i, ItemStack.EMPTY);
-                                        }
-                                    else if (tileEntity instanceof BarrelTileEntity)
-                                        for (int i = 0; i < standTileEntityEffects.getBarrelInventory().size(); i++) {
-                                            ItemStack stack = standTileEntityEffects.getBarrelInventory().get(i);
-                                            ((BarrelTileEntity) tileEntity).setInventorySlotContents(i, stack);
-                                            standTileEntityEffects.getBarrelInventory().set(i, ItemStack.EMPTY);
-                                        }
-                                    else if (tileEntity instanceof DispenserTileEntity)
-                                        for (int i = 0; i < standTileEntityEffects.getDispenserInventory().size(); i++) {
-                                            ItemStack stack = standTileEntityEffects.getDispenserInventory().get(i);
-                                            ((DispenserTileEntity) tileEntity).setInventorySlotContents(i, stack);
-                                            standTileEntityEffects.getDispenserInventory().set(i, ItemStack.EMPTY);
-                                        }
-                                    else if (tileEntity instanceof HopperTileEntity)
-                                        for (int i = 0; i < standTileEntityEffects.getHopperInventory().size(); i++) {
-                                            ItemStack stack = standTileEntityEffects.getHopperInventory().get(i);
-                                            ((HopperTileEntity) tileEntity).setInventorySlotContents(i, stack);
-                                            standTileEntityEffects.getHopperInventory().set(i, ItemStack.EMPTY);
-                                        }
-                                    else if (tileEntity instanceof ShulkerBoxTileEntity)
-                                        for (int i = 0; i < standTileEntityEffects.getShulkerBoxInventory().size(); i++) {
-                                            ItemStack stack = standTileEntityEffects.getShulkerBoxInventory().get(i);
-                                            ((ShulkerBoxTileEntity) tileEntity).setInventorySlotContents(i, stack);
-                                            standTileEntityEffects.getShulkerBoxInventory().set(i, ItemStack.EMPTY);
-                                        }
-                                    tileEntity.markDirty();
-                                });
-                            }));
-                if (standEffects.isShouldBeRemoved())
-                    entity.remove();
-                if (entity instanceof ItemEntity && standEffects.getBitesTheDustPos() == BlockPos.ZERO)
-                    entity.remove();
-                if (!standEffects.getDestroyedBlocks().isEmpty()) {
-                    Map<BlockPos, BlockState> removalMap = new ConcurrentHashMap<>();
-                    standEffects.getDestroyedBlocks().forEach((pos, list) -> {
-                        list.forEach((blockPos, blockState) -> {
-                            if (world.getChunkProvider().isChunkLoaded(pos))
-                                world.getChunkProvider().forceChunk(pos, true);
-                            world.setBlockState(blockPos, blockState);
-                            removalMap.put(blockPos, blockState);
-                        });
-                        if (!removalMap.isEmpty())
-                            removalMap.forEach(list::remove);
-                    });
-                }
-                if (standEffects.getBitesTheDustPos() != BlockPos.ZERO) {
-                    entity.setPositionAndUpdate(standEffects.getBitesTheDustPos().getX(), standEffects.getBitesTheDustPos().getY(), standEffects.getBitesTheDustPos().getZ());
-                    standEffects.setBitesTheDustPos(BlockPos.ZERO);
-                }
-            });
-        });
-        stand.setCooldown(36000);
-    }
-
 
     @Override
     public int getJabMoveId(){
@@ -603,10 +182,6 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
 
         if (message1 == 1) {
             Stand stand = Stand.getCapabilityFromPlayer(master);
-            if (stand.getCooldown() == 0 && master.isCrouching() && !world.isRemote && stand.getAbilitiesUnlocked() > 1 && master.dimension == DimensionType.OVERWORLD) {
-                beginBitesTheDust();
-                return;
-            }
             Stand.getLazyOptional(master).ifPresent(props -> { //Remove bomb block if it was mined.
                 if (world.getBlockState(stand.getBlockPos()).isAir(world, stand.getBlockPos())) {
                     stand.setBlockPos(BlockPos.ZERO);
@@ -615,22 +190,21 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
                     for(ServerWorld currentWorld : getServer().getWorlds()){
 
                         currentWorld.getEntities()
-                                .filter(entity -> entity instanceof ItemEntity)
-                                .forEach(entity -> {
-                                    ItemEntity itemEntity = ((ItemEntity) entity);
-                                    CompoundNBT nbt = itemEntity.getItem().getOrCreateTag();
-                                    if (nbt.getBoolean("bomb") && nbt.getUniqueId("ownerUUID").equals(master.getUniqueID())) {
-                                        Util.standExplosion(master, this.world, entity.getPositionVec(), explosionRange, 3, maxExplosionDamage, minExplosionDamage);
+                            .filter(entity -> entity instanceof ItemEntity)
+                            .forEach(entity -> {
+                                ItemEntity itemEntity = ((ItemEntity) entity);
+                                CompoundNBT nbt = itemEntity.getItem().getOrCreateTag();
+                                if (nbt.getBoolean("bomb") && nbt.getUniqueId("ownerUUID").equals(master.getUniqueID())) {
+                                    Util.standExplosion(master, this.world, entity.getPositionVec(), explosionRange, 3, maxExplosionDamage, minExplosionDamage);
 
-                                        entity.remove();
-                                    }
+                                    entity.remove();
                                 }
-                                );
+                            });
                     }
                     if (stand.getBlockPos() != BlockPos.ZERO) {
                         if (!world.getChunkProvider().isChunkLoaded(world.getChunkAt(stand.getBlockPos()).getPos()))
                             return;
-                        Util.standExplosion(master, this.world, new Vec3d(stand.getBlockPos().getX(), stand.getBlockPos().getY(), stand.getBlockPos().getZ()), explosionRange, 3, maxExplosionDamage, minExplosionDamage);
+                        Util.standExplosion(master, this.world, new Vector3d(stand.getBlockPos().getX(), stand.getBlockPos().getY(), stand.getBlockPos().getZ()), explosionRange, 3, maxExplosionDamage, minExplosionDamage);
                         StandChunkEffects.getLazyOptional(world.getChunkAt(master.getPosition())).ifPresent(standChunkEffects -> standChunkEffects.removeBombPos(master));
                         removeFirstBombFromAll();
                     }
@@ -642,25 +216,16 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
                                     Util.standExplosionFX(master, this.world, bombEntity.getPositionVec());
                                     bombEntity.remove();
                                     removeFirstBombFromAll();
-                                } else {
-                                    detonateBTDMob();
                                 }
                             } else if (bombEntity instanceof PlayerEntity) {
                                 Stand.getLazyOptional((PlayerEntity) bombEntity).ifPresent(bombProps -> {
-                                    if (bombProps.getStandID() != Util.StandID.GER) {
-                                        Explosion explosion = new Explosion(bombEntity.world, master, bombEntity.getPosX(), bombEntity.getPosY(), bombEntity.getPosZ(), 4, true, Explosion.Mode.NONE);
-                                        ((PlayerEntity) bombEntity).spawnSweepParticles();
-                                        explosion.doExplosionB(true);
-                                        Util.spawnParticle(this, 5, bombEntity.getPosX(), bombEntity.getPosY(), bombEntity.getPosZ(), 1, 1, 1, 1);
-                                        Util.spawnParticle(this, 14, bombEntity.getPosX(), bombEntity.getPosY() + 1, bombEntity.getPosZ(), 1, 1, 1, 20);
-                                        Util.dealStandDamage(this, bombEntity, 15, Vec3d.ZERO, false);
-                                        removeFirstBombFromAll();
-                                    } else {
-                                        Explosion explosion = new Explosion(master.world, master, master.getPosX(), master.getPosY(), master.getPosZ(), 4, true, Explosion.Mode.NONE);
-                                        master.world.setEntityState(master, (byte) 20);
-                                        explosion.doExplosionB(true);
-                                        master.setHealth(0);
-                                    }
+                                    Explosion explosion = new Explosion(bombEntity.world, master, bombEntity.getPosX(), bombEntity.getPosY(), bombEntity.getPosZ(), 4, true, Explosion.Mode.NONE);
+                                    ((PlayerEntity) bombEntity).spawnSweepParticles();
+                                    explosion.doExplosionB(true);
+                                    Util.spawnParticle(this, 5, bombEntity.getPosX(), bombEntity.getPosY(), bombEntity.getPosZ(), 1, 1, 1, 1);
+                                    Util.spawnParticle(this, 14, bombEntity.getPosX(), bombEntity.getPosY() + 1, bombEntity.getPosZ(), 1, 1, 1, 20);
+                                    Util.dealStandDamage(this, bombEntity, 15, Vector3d.ZERO, false);
+                                    removeFirstBombFromAll();
                                 });
                             }
                             if (!master.isCreative() && !master.isSpectator())

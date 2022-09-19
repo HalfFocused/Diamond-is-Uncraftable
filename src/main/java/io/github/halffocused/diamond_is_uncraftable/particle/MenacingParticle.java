@@ -5,17 +5,20 @@ import net.minecraft.client.particle.IParticleFactory;
 import net.minecraft.client.particle.IParticleRenderType;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.SpriteTexturedParticle;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.particles.BasicParticleType;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+
+import javax.annotation.Nullable;
 
 @OnlyIn(Dist.CLIENT)
 public class MenacingParticle extends SpriteTexturedParticle {
 
 
     protected MenacingParticle(World worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn) {
-        super(worldIn, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, zSpeedIn);
+        super((ClientWorld) worldIn, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, zSpeedIn);
 
 
         this.setSize(0.04f, 0.04f);
@@ -79,13 +82,12 @@ public class MenacingParticle extends SpriteTexturedParticle {
 
 
         @Override
-        public Particle makeParticle(BasicParticleType typeIn, World worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
+        public Particle makeParticle(BasicParticleType typeIn, ClientWorld worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
             MenacingParticle menacingParticle = new MenacingParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed);
             menacingParticle.setColor(1.0f, 1.0f, 1.0f);
             menacingParticle.selectSpriteRandomly(this.spriteSet);
             return menacingParticle;
         }
-
     }
 
 

@@ -1,11 +1,7 @@
 package io.github.halffocused.diamond_is_uncraftable.entity.stand;
 
 import io.github.halffocused.diamond_is_uncraftable.DiamondIsUncraftable;
-import io.github.halffocused.diamond_is_uncraftable.capability.ITimestop;
 import io.github.halffocused.diamond_is_uncraftable.capability.Stand;
-import io.github.halffocused.diamond_is_uncraftable.capability.Timestop;
-import io.github.halffocused.diamond_is_uncraftable.config.DiamondIsUncraftableConfig;
-import io.github.halffocused.diamond_is_uncraftable.entity.stand.attack.NailBulletEntity;
 import io.github.halffocused.diamond_is_uncraftable.init.SoundInit;
 import io.github.halffocused.diamond_is_uncraftable.util.*;
 import io.github.halffocused.diamond_is_uncraftable.util.movesets.ChargeAttackFormat;
@@ -13,32 +9,19 @@ import io.github.halffocused.diamond_is_uncraftable.util.movesets.HoveringMoveHa
 import io.github.halffocused.diamond_is_uncraftable.util.movesets.MovementAnimationHolder;
 import io.github.halffocused.diamond_is_uncraftable.util.timestop.TimestopHelper;
 import net.minecraft.entity.*;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.item.TNTEntity;
-import net.minecraft.entity.item.minecart.TNTMinecartEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.*;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.living.EnderTeleportEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.world.BlockEvent;
-import net.minecraftforge.event.world.PistonEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import org.lwjgl.system.CallbackI;
 
-import java.sql.Time;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -73,8 +56,8 @@ public class TheWorldEntity extends AbstractStandEntity implements IMomentum, IO
             .addChargeNode(11, 3, true);
 
     AttackFramedata punchData = new AttackFramedata()
-            .addDamageFrame(7, 3, Vec3d.ZERO, 2.1, 2)
-            .addDamageFrame(9, 4, Vec3d.ZERO, 2.2, 2)
+            .addDamageFrame(7, 3, Vector3d.ZERO, 2.1, 2)
+            .addDamageFrame(9, 4, Vector3d.ZERO, 2.2, 2)
             .setAttackDuration(19);
 
     AttackFramedata tauntTp = new AttackFramedata()
@@ -82,7 +65,7 @@ public class TheWorldEntity extends AbstractStandEntity implements IMomentum, IO
             .setAttackDuration(1);
 
     AttackFramedata barrageData = new AttackFramedata()
-                        .generateInterval(10, 125, 2, 2, Vec3d.ZERO, 1.7, 6)
+                        .generateInterval(10, 125, 2, 2, Vector3d.ZERO, 1.7, 6)
                         .setAttackDuration(125);
 
     AttackFramedata timestop = new AttackFramedata()
@@ -168,7 +151,7 @@ public class TheWorldEntity extends AbstractStandEntity implements IMomentum, IO
                     if (controller.getActiveMove().getId() == 2 && controller.getActiveMove().getFramedata().getTicker() > 10) {
 
                         if(props2.getMomentum() == 0){
-                            Style warningStyle = new Style().setColor(TextFormatting.RED);
+                            Style warningStyle = Style.EMPTY.setFormatting(TextFormatting.RED);
                             StringTextComponent warning = new StringTextComponent("The World needs momentum to perform it's barrage!");
                             warning.setStyle(warningStyle);
                             master.sendStatusMessage(warning, false);
@@ -247,8 +230,8 @@ public class TheWorldEntity extends AbstractStandEntity implements IMomentum, IO
 
     private void sendToTauntPosition(LivingEntity entityIn, float tauntChargeTicks){
         double tauntDistance = getTauntDistance((int) tauntChargeTicks);
-        Vec3d modifiedPositionVec = new Vec3d(master.getPosX(), entityIn.getPosY(), master.getPosZ());
-        Vec3d vec = entityIn.getPositionVec().subtract(modifiedPositionVec).normalize();
+        Vector3d modifiedPositionVec = new Vector3d(master.getPosX(), entityIn.getPosY(), master.getPosZ());
+        Vector3d vec = entityIn.getPositionVec().subtract(modifiedPositionVec).normalize();
         Util.teleportUntilWall(entityIn, vec, tauntDistance);
 
         entityIn.addPotionEffect(new EffectInstance(Effects.BLINDNESS, 5, 1));
@@ -274,7 +257,7 @@ public class TheWorldEntity extends AbstractStandEntity implements IMomentum, IO
                     effect.setInstantTimeStopFrame(QUICK_STOP_DURATION);
                 });
 
-                getServer().getWorld(dimension).getEntities()
+                getServer().getWorld(world.getDimensionKey()).getEntities()
                         .filter(entity -> !entity.equals(master) && !entity.equals(this))
                         .filter(entity -> entity instanceof LivingEntity)
                         .filter(entity -> entity.getDistance(master) <= 7)
@@ -292,7 +275,7 @@ public class TheWorldEntity extends AbstractStandEntity implements IMomentum, IO
             controller.forceChargeAttackRelease();
         }
 
-        Style distanceStyle = new Style().setColor(TextFormatting.GRAY).setBold(true);
+        Style distanceStyle = Style.EMPTY.setFormatting(TextFormatting.GRAY).setBold(true);
 
         DecimalFormat format = new DecimalFormat("0.0");
 

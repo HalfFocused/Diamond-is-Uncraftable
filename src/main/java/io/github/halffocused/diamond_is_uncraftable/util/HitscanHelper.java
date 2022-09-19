@@ -5,6 +5,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.*;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 
 import javax.annotation.CheckForNull;
@@ -23,10 +24,10 @@ public class HitscanHelper {
     public static EntityRayTraceResult getEntityFromRaytrace(LivingEntity startEntity, double range, float ticks) {
         World world = startEntity.getEntityWorld();
 
-        Vec3d look = startEntity.getLookVec();
-        Vec3d start = startEntity.getEyePosition(ticks);
+        Vector3d look = startEntity.getLookVec();
+        Vector3d start = startEntity.getEyePosition(ticks);
 
-        Vec3d end = new Vec3d(startEntity.getPosX() + look.x * range, startEntity.getPosYEye() + look.y * range, startEntity.getPosZ() + look.z * range);
+        Vector3d end = new Vector3d(startEntity.getPosX() + look.x * range, startEntity.getPosYEye() + look.y * range, startEntity.getPosZ() + look.z * range);
         RayTraceContext context = new RayTraceContext(start, end, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, startEntity);
 
         RayTraceResult rayTraceResult = world.rayTraceBlocks(context);
@@ -37,9 +38,9 @@ public class HitscanHelper {
         Predicate<Entity> filter = entity -> !entity.isSpectator() && entity.canBeCollidedWith() && entity instanceof LivingEntity;
         for (Entity possible : world.getEntitiesInAABBexcluding(startEntity, playerBox, filter)) {
             AxisAlignedBB entityBox = possible.getBoundingBox().grow(0.3D);
-            Optional<Vec3d> optional = entityBox.rayTrace(start, end);
+            Optional<Vector3d> optional = entityBox.rayTrace(start, end);
             if (optional.isPresent()) {
-                Vec3d position = optional.get();
+                Vector3d position = optional.get();
                 double distance = start.squareDistanceTo(position);
 
                 if (distance < traceDistance) {
@@ -58,27 +59,23 @@ public class HitscanHelper {
     }
 
     @CheckForNull
-    public static EntityRayTraceResult getEntityFromRaytracePos(Vec3d positionIn, Vec3d vectorIn, AxisAlignedBB boundingBoxIn, LivingEntity ignoreEntity, World worldIn, double range, float ticks) {
-        World world = worldIn;
+    public static EntityRayTraceResult getEntityFromRaytracePos(Vector3d positionIn, Vector3d vectorIn, AxisAlignedBB boundingBoxIn, LivingEntity ignoreEntity, World worldIn, double range, float ticks) {
 
-        Vec3d look = vectorIn;
-        Vec3d start = positionIn;
+        Vector3d end = new Vector3d(positionIn.x + vectorIn.x * range, positionIn.y + vectorIn.y * range, positionIn.z + vectorIn.z * range);
+        RayTraceContext context = new RayTraceContext(positionIn, end, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, null);
 
-        Vec3d end = new Vec3d(start.x + look.x * range, start.y + look.y * range, start.z + look.z * range);
-        RayTraceContext context = new RayTraceContext(start, end, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, null);
+        RayTraceResult rayTraceResult = worldIn.rayTraceBlocks(context);
+        double traceDistance = rayTraceResult.getHitVec().squareDistanceTo(positionIn);
 
-        RayTraceResult rayTraceResult = world.rayTraceBlocks(context);
-        double traceDistance = rayTraceResult.getHitVec().squareDistanceTo(start);
-
-        AxisAlignedBB playerBox = boundingBoxIn.expand(look.scale(traceDistance)).expand(1.0D, 1.0D, 1.0D);
+        AxisAlignedBB playerBox = boundingBoxIn.expand(vectorIn.scale(traceDistance)).expand(1.0D, 1.0D, 1.0D);
 
         Predicate<Entity> filter = entity -> !entity.isSpectator() && entity.canBeCollidedWith() && entity instanceof LivingEntity;
-        for (Entity possible : world.getEntitiesInAABBexcluding(ignoreEntity, playerBox, filter)) {
+        for (Entity possible : worldIn.getEntitiesInAABBexcluding(ignoreEntity, playerBox, filter)) {
             AxisAlignedBB entityBox = possible.getBoundingBox().grow(0.3D);
-            Optional<Vec3d> optional = entityBox.rayTrace(start, end);
+            Optional<Vector3d> optional = entityBox.rayTrace(positionIn, end);
             if (optional.isPresent()) {
-                Vec3d position = optional.get();
-                double distance = start.squareDistanceTo(position);
+                Vector3d position = optional.get();
+                double distance = positionIn.squareDistanceTo(position);
 
                 if (distance < traceDistance) {
                     return new EntityRayTraceResult(possible, position);
@@ -97,11 +94,11 @@ public class HitscanHelper {
 
     @CheckForNull
     public static EntityRayTraceResult traceToEntity(PlayerEntity player, Entity target, float ticks) {
-        Vec3d start = player.getEyePosition(ticks);
-        Vec3d end = target.getPositionVec();
+        Vector3d start = player.getEyePosition(ticks);
+        Vector3d end = target.getPositionVec();
 
         AxisAlignedBB targetBox = target.getBoundingBox().grow(0.3D);
-        Optional<Vec3d> optional = targetBox.rayTrace(start, end);
+        Optional<Vector3d> optional = targetBox.rayTrace(start, end);
 
         return optional.map(vector3d -> new EntityRayTraceResult(target, vector3d)).orElse(null);
     }

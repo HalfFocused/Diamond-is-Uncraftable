@@ -21,7 +21,7 @@ import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.*;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import software.bernie.geckolib3.core.IAnimatable;
 
@@ -43,31 +43,31 @@ public class KingCrimsonEntity extends AbstractStandEntity implements IAnimatabl
     LivingEntity executionTarget = null;
 
     AttackFramedata mainPunchData = new AttackFramedata()
-            .addDamageFrame(12, 10, Vec3d.ZERO, 2, 1)
+            .addDamageFrame(12, 10, Vector3d.ZERO, 2, 1)
             .addMessageFrame(15, 1, 9, null)
             .setAttackDuration(25);
 
     AttackFramedata barrageData = new AttackFramedata()
-            .generateInterval(8, 45, 3, 2, Vec3d.ZERO, 2.7, 4)
+            .generateInterval(8, 45, 3, 2, Vector3d.ZERO, 2.7, 4)
             .addMessageFrame(43, 1, 9, null)
             .setAttackDuration(53);
 
     AttackFramedata lightChargeAttack = new AttackFramedata()
-            .addDamageFrame(8, 16, Vec3d.ZERO, 2.0, 1)
+            .addDamageFrame(8, 16, Vector3d.ZERO, 2.0, 1)
             .addMessageFrame(12, 1, 9, null)
             .setAttackDuration(22);
 
     AttackFramedata mediumChargeAttack = new AttackFramedata()
-            .addDamageFrame(10, 21, Vec3d.ZERO, 2.0, 1)
+            .addDamageFrame(10, 21, Vector3d.ZERO, 2.0, 1)
             .addMessageFrame(14, 1, 9, null)
             .setAttackDuration(24);
 
     AttackFramedata chopAttack = new AttackFramedata()
-            .addDamageFrame(11, 4, Vec3d.ZERO, 2.0, 3, false)
+            .addDamageFrame(11, 4, Vector3d.ZERO, 2.0, 3, false)
             .setAttackDuration(25);
 
     AttackFramedata epitaphChopAttack = new AttackFramedata()
-            .addDamageFrame(11, 17, Vec3d.ZERO, 2.0, 3)
+            .addDamageFrame(11, 17, Vector3d.ZERO, 2.0, 3)
             .setAttackDuration(30);
 
     AttackFramedata timeErase = new AttackFramedata()
@@ -75,7 +75,7 @@ public class KingCrimsonEntity extends AbstractStandEntity implements IAnimatabl
             .setAttackDuration(32);
 
     AttackFramedata execution = new AttackFramedata()
-            .addDamageFrame(10, 1, Vec3d.ZERO, 4, 1)
+            .addDamageFrame(10, 1, Vector3d.ZERO, 4, 1)
             .addMessageFrame(14, 2, null, null)
             .addMenacingFrame(15)
             .addMessageFrame(88, 3, null, null)
@@ -179,7 +179,7 @@ public class KingCrimsonEntity extends AbstractStandEntity implements IAnimatabl
 
         if (controller.isMoveActive()) {
             if (controller.getActiveMove().getId() == 5 && getMostRecentlyDamagedEntity() != null) {
-                Vec3d position = getMostRecentlyDamagedEntity().getPositionVec().add(getMostRecentlyDamagedEntity().getLookVec().normalize().inverse().mul(1.5, 1.5, 1.5));
+                Vector3d position = getMostRecentlyDamagedEntity().getPositionVec().add(getMostRecentlyDamagedEntity().getLookVec().normalize().inverse().mul(1.5, 1.5, 1.5));
                 setPosition(position.x, position.y, position.z);
                 faceEntity(getMostRecentlyDamagedEntity(), Float.MAX_VALUE, Float.MAX_VALUE);
                 getMostRecentlyDamagedEntity().addPotionEffect(new EffectInstance(Effects.BLINDNESS, 10, 1));
@@ -188,7 +188,7 @@ public class KingCrimsonEntity extends AbstractStandEntity implements IAnimatabl
             if (executionTarget != null) {
                 if (controller.getActiveMove().getId() == 6) {
                     if (clipToPosition) {
-                        Vec3d position = this.getPositionVec().add(this.getLookVec().normalize().mul(3.2, 3.2, 3.2));
+                        Vector3d position = this.getPositionVec().add(this.getLookVec().normalize().mul(3.2, 3.2, 3.2));
                         executionTarget.setPositionAndUpdate(position.x, position.y + controller.getActiveMove().getFramedata().getTicker() / 80.0, position.z);
                         if(executionTarget instanceof PlayerEntity){
                             Util.applyUnactionableTicks((PlayerEntity) executionTarget, 1);
@@ -261,7 +261,7 @@ public class KingCrimsonEntity extends AbstractStandEntity implements IAnimatabl
 
         for(int i = 0; i < 16; ++i) {
             double d3 = entityLiving.getPosX() + (entityLiving.getRNG().nextDouble() - 0.5D) * 4.0D;
-            double d4 = MathHelper.clamp(entityLiving.getPosY() + (double)(entityLiving.getRNG().nextInt(2) - 1), 0.0D, (double)(entityLiving.world.getActualHeight() - 1));
+            double d4 = MathHelper.clamp(entityLiving.getPosY() + (double)(entityLiving.getRNG().nextInt(2) - 1), 0.0D, (entityLiving.world.getHeight() - 1));
             double d5 = entityLiving.getPosZ() + (entityLiving.getRNG().nextDouble() - 0.5D) * 4.0D;
             if (entityLiving.isPassenger()) {
                 entityLiving.stopRiding();
@@ -295,7 +295,7 @@ public class KingCrimsonEntity extends AbstractStandEntity implements IAnimatabl
 
         if(message1 == 3){
             if(executionTarget != null){
-                Util.dealStandDamage(this, executionTarget, 50f, Vec3d.ZERO, false);
+                Util.dealStandDamage(this, executionTarget, 50f, Vector3d.ZERO, false);
                 clipToPosition = false;
             }
         }
@@ -324,7 +324,7 @@ public class KingCrimsonEntity extends AbstractStandEntity implements IAnimatabl
 
         timeEraseActive = true;
         activeTimeErase = true;
-        getServer().getWorld(dimension).getEntities()
+        getServer().getWorld(this.world.getDimensionKey()).getEntities()
                 .filter(entity -> !entity.equals(master) && !entity.equals(this))
                 .filter(entity -> entity instanceof LivingEntity)
                 .filter(entity -> verify((LivingEntity) entity))
@@ -381,8 +381,8 @@ public class KingCrimsonEntity extends AbstractStandEntity implements IAnimatabl
 
         if(entityIn instanceof PlayerEntity){
             predictionEntity = new VillagerEntity(EntityType.VILLAGER, entityIn.world);
-        }else if(entityIn instanceof ZombiePigmanEntity){
-            predictionEntity = new ZombiePigmanEntity(EntityType.ZOMBIE_PIGMAN, entityIn.world);
+        }else if(entityIn instanceof ZombifiedPiglinEntity){
+            predictionEntity = new ZombifiedPiglinEntity(EntityType.ZOMBIFIED_PIGLIN, entityIn.world);
             predictionEntity.setHeldItem(Hand.MAIN_HAND, new ItemStack(Items.GOLDEN_SWORD));
         }else if(entityIn instanceof BlazeEntity){
             predictionEntity = new BlazeEntity(EntityType.BLAZE, entityIn.world);
