@@ -1,5 +1,7 @@
-package io.github.halffocused.diamond_is_uncraftable.entity.stand;
+package io.github.halffocused.diamond_is_uncraftable.entity.stand.attack;
 
+import io.github.halffocused.diamond_is_uncraftable.entity.stand.AbstractStandEntity;
+import io.github.halffocused.diamond_is_uncraftable.entity.stand.KillerQueenEntity;
 import io.github.halffocused.diamond_is_uncraftable.entity.stand.attack.AbstractStandAttackEntity;
 import io.github.halffocused.diamond_is_uncraftable.init.EntityInit;
 import io.github.halffocused.diamond_is_uncraftable.util.Util;
@@ -7,8 +9,10 @@ import io.github.halffocused.diamond_is_uncraftable.util.timestop.TimestopHelper
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
 import net.minecraft.util.math.*;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 
 @SuppressWarnings("ConstantConditions")
@@ -46,6 +50,11 @@ public class SheerHeartAttackEntity extends AbstractStandAttackEntity {
         }else{
             remove();
         }
+    }
+
+    @Override
+    protected ItemStack getArrowStack() {
+        return null;
     }
 
     @Override
@@ -94,7 +103,7 @@ public class SheerHeartAttackEntity extends AbstractStandAttackEntity {
                     }
                 }
                 if(target == null) {
-                    getServer().getWorld(dimension).getEntities()
+                    getServer().getWorld(world.getDimensionKey()).getEntities()
                             .filter(entity -> !entity.equals(standMaster))
                             .filter(entity -> entity instanceof LivingEntity)
                             .filter(entity -> !(entity instanceof AbstractStandEntity))
@@ -113,7 +122,7 @@ public class SheerHeartAttackEntity extends AbstractStandAttackEntity {
                     double x = (target.getBoundingBox().minX + (target.getBoundingBox().maxX - target.getBoundingBox().minX) / 2) - getPosX();
                     double y = (target.getBoundingBox().minY + (target.getBoundingBox().maxY - target.getBoundingBox().minY) / 2) - getPosY();
                     double z = (target.getBoundingBox().minZ + (target.getBoundingBox().maxZ - target.getBoundingBox().minZ) / 2) - getPosZ();
-                    Vec3d vec3d = (new Vec3d(x, y, z)).normalize().add(rand.nextGaussian() * (double) 0.0075f * (double) 0, rand.nextGaussian() * (double) 0.0075f * 0, rand.nextGaussian() * (double) 0.0075F * 0).scale(1);
+                    Vector3d vec3d = (new Vector3d(x, y, z)).normalize().add(rand.nextGaussian() * (double) 0.0075f * (double) 0, rand.nextGaussian() * (double) 0.0075f * 0, rand.nextGaussian() * (double) 0.0075F * 0).scale(1);
                     setMotion(vec3d.scale(0.6));
                     float f = MathHelper.sqrt(horizontalMag(vec3d));
                     rotationYaw = (float) (MathHelper.atan2(vec3d.x, vec3d.z) * (double) (180 / (float) Math.PI));

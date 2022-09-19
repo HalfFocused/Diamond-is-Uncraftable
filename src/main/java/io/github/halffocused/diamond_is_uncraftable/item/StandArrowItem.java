@@ -6,8 +6,6 @@ import io.github.halffocused.diamond_is_uncraftable.capability.StandPerWorldCapa
 import io.github.halffocused.diamond_is_uncraftable.config.DiamondIsUncraftableConfig;
 import io.github.halffocused.diamond_is_uncraftable.entity.StandArrowEntity;
 import io.github.halffocused.diamond_is_uncraftable.entity.stand.AbstractStandEntity;
-import io.github.halffocused.diamond_is_uncraftable.entity.stand.GoldExperienceEntity;
-import io.github.halffocused.diamond_is_uncraftable.entity.stand.GoldExperienceRequiemEntity;
 import io.github.halffocused.diamond_is_uncraftable.init.EntityInit;
 import io.github.halffocused.diamond_is_uncraftable.init.ItemInit;
 import io.github.halffocused.diamond_is_uncraftable.util.Util;
@@ -24,8 +22,9 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.world.Dimension;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.DimensionType;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -64,7 +63,7 @@ public class StandArrowItem extends ArrowItem {
             PlayerEntity player = (PlayerEntity) entity;
             Stand.getLazyOptional(player).ifPresent(stand -> {
                 int random;
-                StandPerWorldCapability standPerWorld = StandPerWorldCapability.getCapabilityFromWorld(world.getServer().getWorld(DimensionType.OVERWORLD));
+                StandPerWorldCapability standPerWorld = StandPerWorldCapability.getCapabilityFromWorld(world.getServer().getWorld(entity.world.getDimensionKey()));
                 int newStandID;
                 if(DiamondIsUncraftableConfig.COMMON.uniqueStandMode.get()) {
 
@@ -101,24 +100,6 @@ public class StandArrowItem extends ArrowItem {
                         standEntity.setMaster(player);
                         world.addEntity(standEntity);
                     }
-                } else if (stand.getStandID() == Util.StandID.GOLD_EXPERIENCE && stand.getAbilitiesUnlocked() == 1 && this.standID == 0) {
-                    stand.removeStand(true);
-                    if (!world.isRemote) {
-                        Objects.requireNonNull(world.getServer()).getWorld(player.dimension).getEntities()
-                                .filter(entity1 -> entity1 instanceof GoldExperienceEntity)
-                                .filter(entity1 -> ((GoldExperienceEntity) entity1).getMaster() == player)
-                                .forEach(Entity::remove);
-                    }
-                    stand.setStandID(Util.StandID.GER);
-                    stand.setStandOn(true);
-                    GoldExperienceRequiemEntity goldExperienceRequiem = new GoldExperienceRequiemEntity(EntityInit.GOLD_EXPERIENCE_REQUIEM.get(), world);
-                    goldExperienceRequiem.setLocationAndAngles(player.getPosX() + 0.1, player.getPosY(), player.getPosZ(), player.rotationYaw, player.rotationPitch);
-                    goldExperienceRequiem.setMasterUUID(player.getUniqueID());
-                    goldExperienceRequiem.setMaster(player);
-                    world.addEntity(goldExperienceRequiem);
-                } else if (stand.getStandID() == Util.StandID.KILLER_QUEEN && stand.getAbilitiesUnlocked() == 1 && this.standID == 0) {
-                    stand.addAbilityUnlocked(1);
-                    player.sendStatusMessage(new StringTextComponent("Your\u00A7e Killer Queen\u00A7f has obtained\u00A7e Bites the Dust!"), true);
                 }
             });
         }
@@ -129,11 +110,11 @@ public class StandArrowItem extends ArrowItem {
         ItemStack stack = playerIn.getHeldItem(handIn);
         Stand stand = Stand.getCapabilityFromPlayer(playerIn);
         if (!Stand.getLazyOptional(playerIn).isPresent()) return ActionResult.resultFail(stack);
-        if (stand.getStandID() == 0 || ((stand.getStandID() == Util.StandID.GOLD_EXPERIENCE || stand.getStandID() == Util.StandID.KILLER_QUEEN) && stand.getAbilitiesUnlocked() == 1)) {
+        if (stand.getStandID() == 0) {
             playerIn.setActiveHand(handIn);
             return ActionResult.resultSuccess(stack);
-        } else if (stand.getStandID() != 0 && ((stand.getStandID() != Util.StandID.GOLD_EXPERIENCE || stand.getStandID() != Util.StandID.KILLER_QUEEN) && stand.getAbilitiesUnlocked() != 1)) {
-            playerIn.sendMessage(new StringTextComponent("You already have a Stand!"));
+        } else if (stand.getStandID() != 0) {
+            playerIn.sendStatusMessage(new StringTextComponent("You already have a Stand!"), true);
             return ActionResult.resultFail(stack);
         }
         return ActionResult.resultPass(stack);

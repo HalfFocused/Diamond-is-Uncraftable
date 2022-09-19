@@ -14,7 +14,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
@@ -105,7 +105,7 @@ public class WalkingMoveHandler {
             if (commandGrabEntity != null) {
                 if (commandGrabEntity.isAlive()) {
                     double distance = ((ICommandGrab) stand).commandGrabDistance();
-                    Vec3d positionVector = this.stand.getPositionVec().add(this.stand.getLookVec().normalize().mul(distance, distance, distance));
+                    Vector3d positionVector = this.stand.getPositionVec().add(this.stand.getLookVec().normalize().mul(distance, distance, distance));
                     commandGrabEntity.setPosition(positionVector.x,positionVector.y,positionVector.z);
                 }
             }
@@ -165,7 +165,7 @@ public class WalkingMoveHandler {
             if (outOfRange) {
                 if (stand.canEntityBeSeen(stand.getMaster())) {
                     walkingOrIdle = true;
-                    Vec3d movementVector = stand.getMaster().getPositionVector().subtract(stand.getPositionVec()).normalize().mul(getActiveStance().getMovementSpeed(), 0, getActiveStance().getMovementSpeed());
+                    Vector3d movementVector = stand.getMaster().getPositionVec().subtract(stand.getPositionVec()).normalize().mul(getActiveStance().getMovementSpeed(), 0, getActiveStance().getMovementSpeed());
                     movementVector = tooClose ? movementVector.inverse() : movementVector;
 
 
@@ -202,7 +202,7 @@ public class WalkingMoveHandler {
             if (outOfRange) {
                 if (stand.canEntityBeSeen(currentTarget) && !isMoveActive()) {
                     walkingOrIdle = true;
-                    Vec3d movementVector = currentTarget.getPositionVector().subtract(stand.getPositionVec()).normalize().mul(getActiveStance().getMovementSpeed(), 0, getActiveStance().getMovementSpeed());
+                    Vector3d movementVector = currentTarget.getPositionVec().subtract(stand.getPositionVec()).normalize().mul(getActiveStance().getMovementSpeed(), 0, getActiveStance().getMovementSpeed());
                     stand.setMotion(movementVector.x, stand.getMotion().y, movementVector.z);
 
                     handleJump(new AxisAlignedBB(stand.getPosX() - 1.2, stand.getPosY(), stand.getPosZ() - 1.2, stand.getPosX() + 1.2, stand.getPosY() + 0.35, stand.getPosZ() + 1.2));
@@ -292,7 +292,7 @@ public class WalkingMoveHandler {
         if((currentTargeting != Targeting.WITH_MASTER || getActiveStance().getAttackMaster()) && !stand.world.isRemote()){
             if(currentTarget == null) {
                 if(currentTargeting == Targeting.ALL || getActiveStance().getAttackMaster()) {
-                    stand.getServer().getWorld(stand.dimension).getEntities()
+                    stand.getServer().getWorld(stand.world.getDimensionKey()).getEntities()
                             .filter(entity -> !entity.equals(stand))
                             .filter(stand::canEntityBeSeen)
                             .filter(entity -> entity instanceof LivingEntity)
@@ -300,14 +300,14 @@ public class WalkingMoveHandler {
                             .filter(entity -> !(entity instanceof PlayerEntity) || !((PlayerEntity) entity).isCreative() || entity.isSpectator())
                             .forEach(entity -> possibleTargets.add((LivingEntity) entity));
                 }else if(currentTargeting == Targeting.HOSTILE_ONLY){
-                    stand.getServer().getWorld(stand.dimension).getEntities()
+                    stand.getServer().getWorld(stand.world.getDimensionKey()).getEntities()
                             .filter(entity -> !entity.equals(stand))
                             .filter(stand::canEntityBeSeen)
                             .filter(entity -> entity instanceof MobEntity)
                             .filter(entity -> isEntityWithinAttackRange(getActiveStance(), (LivingEntity) entity))
                             .forEach(entity -> possibleTargets.add((LivingEntity) entity));
                 }else if(currentTargeting == Targeting.PLAYERS_ONLY){
-                    stand.getServer().getWorld(stand.dimension).getEntities()
+                    stand.getServer().getWorld(stand.world.getDimensionKey()).getEntities()
                             .filter(entity -> !entity.equals(stand))
                             .filter(stand::canEntityBeSeen)
                             .filter(entity -> entity instanceof PlayerEntity)
@@ -332,7 +332,7 @@ public class WalkingMoveHandler {
 
 
     public void changeTargetting(){
-        Style actionBarStyle = new Style().setColor(TextFormatting.LIGHT_PURPLE);
+        Style actionBarStyle = Style.EMPTY.setFormatting(TextFormatting.LIGHT_PURPLE);
 
         switch (currentTargeting){
             case WITH_MASTER:

@@ -11,7 +11,6 @@ import io.github.halffocused.diamond_is_uncraftable.entity.stand.attack.Abstract
 import io.github.halffocused.diamond_is_uncraftable.init.*;
 import io.github.halffocused.diamond_is_uncraftable.item.StandArrowItem;
 import io.github.halffocused.diamond_is_uncraftable.network.message.server.SParticlePacket;
-import io.github.halffocused.diamond_is_uncraftable.network.message.client.CRemoveEntityPacket;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.block.BlockState;
@@ -38,11 +37,13 @@ import net.minecraft.potion.Effects;
 import net.minecraft.util.*;
 import net.minecraft.util.math.*;
 import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ChatType;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.world.Dimension;
+import net.minecraft.world.DimensionType;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.fml.network.PacketDistributor;
 import org.lwjgl.glfw.GLFW;
@@ -69,20 +70,20 @@ public class Util {
     public static final double ENTITY_DEFAULT_Y_MOTION = -0.0784000015258789;
 
     public static int getHighestBlockInXZ(World world, BlockPos pos) {
-        for (int height = world.getActualHeight(); height > 0; height--)
+        for (int height = world.getHeight(); height > 0; height--)
             if (world.getBlockState(new BlockPos(pos.getX(), height, pos.getZ())).getMaterial() != Material.AIR)
                 return height;
         return -1;
     }
 
-    public static Vec3d rotationVectorIgnoreY(LivingEntity entity) {
+    public static Vector3d rotationVectorIgnoreY(LivingEntity entity) {
         float f = entity.rotationPitch * ((float)Math.PI / 180F);
         float f1 = -entity.rotationYaw * ((float)Math.PI / 180F);
         float f2 = MathHelper.cos(f1);
         float f3 = MathHelper.sin(f1);
         float f4 = MathHelper.cos(f);
         float f5 = MathHelper.sin(f);
-        return new Vec3d((double)(f3), 0, (double)(f2));
+        return new Vector3d((double)(f3), 0, (double)(f2));
     }
 
     /**
@@ -92,7 +93,7 @@ public class Util {
      * @param pos The position vector being checked.
      * @return if the pos exists in any block's collision.
      */
-    public static boolean isPointAtVecSolid(World world, Vec3d pos){
+    public static boolean isPointAtVecSolid(World world, Vector3d pos){
         VoxelShape collision = world.getBlockState(new BlockPos(pos)).getCollisionShape(world, new BlockPos(pos));
         for(AxisAlignedBB box : collision.toBoundingBoxList()){
             if(box.offset(new BlockPos(pos)).contains(pos)){
@@ -102,14 +103,14 @@ public class Util {
         return false;
     }
 
-    public static void teleportUntilWall(LivingEntity entity, Vec3d vec, double maxDistance){
+    public static void teleportUntilWall(LivingEntity entity, Vector3d vec, double maxDistance){
 
         double incrementSize = 0.01;
-
-        Vec3d currentPosition = new Vec3d(entity.getPosX(), entity.getPosY() + entity.getEyeHeight(), entity.getPosZ());
-        Vec3d increment = vec.normalize().scale(incrementSize);
+        
+        Vector3d currentPosition = new Vector3d(entity.getPosX(), entity.getPosY() + entity.getEyeHeight(), entity.getPosZ());
+        Vector3d increment = vec.normalize().scale(incrementSize);
         boolean hitWall = false;
-        Vec3d futurePosition = currentPosition.add(increment.scale(1 / incrementSize));
+        Vector3d futurePosition = currentPosition.add(increment.scale(1 / incrementSize));
 
         for(int i = 0; i < maxDistance * (1 / incrementSize) && !hitWall; i++){
 
@@ -125,16 +126,16 @@ public class Util {
          entity.setPositionAndUpdate(currentPosition.getX(), currentPosition.getY(), currentPosition.getZ());
     }
 
-    public static double heightAboveGround(World world, Vec3d pos){
+    public static double heightAboveGround(World world, Vector3d pos){
         double distanceUntilGround = 0;
-        while(!Util.isPointAtVecSolid(world, pos.add(new Vec3d(0, -distanceUntilGround, 0))) && pos.add(new Vec3d(0, -distanceUntilGround, 0)).y - distanceUntilGround >= 0.01){
+        while(!Util.isPointAtVecSolid(world, pos.add(new Vector3d(0, -distanceUntilGround, 0))) && pos.add(new Vector3d(0, -distanceUntilGround, 0)).y - distanceUntilGround >= 0.01){
             distanceUntilGround = distanceUntilGround + 0.01;
         }
         return distanceUntilGround;
     }
 
     public static BlockPos getNearestBlockEnd(World world, BlockPos pos) {
-        for (int height = world.getActualHeight(); height > 0; height--) {
+        for (int height = world.getHeight(); height > 0; height--) {
             if (pos.getX() > 0) {
                 for (int x = pos.getX(); x > 0; x--)
                     if (world.getBlockState(new BlockPos(x, height, pos.getZ())).getMaterial() != Material.AIR)
@@ -173,7 +174,7 @@ public class Util {
     }
 
     public static boolean canStandMoveInStoppedTime(int standId){
-        return standId == StandID.THE_WORLD || standId == StandID.STAR_PLATINUM || standId == StandID.TUSK_ACT_4;
+        return standId == StandID.THE_WORLD;
     }
 
     public static boolean isTimeStoppedForEntity(LivingEntity entity){
@@ -221,25 +222,6 @@ public class Util {
         switch (standID) {
             default:
                 break;
-            case StandID.BEACH_BOY: {
-                switch (act) {
-                    default:
-                        break;
-                    case 0: {
-                        standMaster.sendStatusMessage(new StringTextComponent("Mode: Fishing Rod"), true);
-                        break;
-                    }
-                    case 1: {
-                        standMaster.sendStatusMessage(new StringTextComponent("Mode: Damage"), true);
-                        break;
-                    }
-                    case 2: {
-                        standMaster.sendStatusMessage(new StringTextComponent("Mode: Homing"), true);
-                        break;
-                    }
-                }
-            }
-            break;
         }
     }
 
@@ -247,15 +229,15 @@ public class Util {
         return InputMappings.isKeyDown(Minecraft.getInstance().getMainWindow().getHandle(), GLFW.GLFW_KEY_LEFT_SHIFT) || InputMappings.isKeyDown(Minecraft.getInstance().getMainWindow().getHandle(), GLFW.GLFW_KEY_RIGHT_SHIFT);
     }
 
-    public static EntityRayTraceResult rayTraceEntities(Entity shooter, Vec3d startVec, Vec3d endVec, AxisAlignedBB boundingBox, Predicate<Entity> filter, double distance) {
+    public static EntityRayTraceResult rayTraceEntities(Entity shooter, Vector3d startVec, Vector3d endVec, AxisAlignedBB boundingBox, Predicate<Entity> filter, double distance) {
         World world = shooter.world;
         double d0 = distance;
         Entity entity = null;
-        Vec3d vec3d = null;
+        Vector3d vec3d = null;
 
         for (Entity entity1 : world.getEntitiesInAABBexcluding(shooter, boundingBox, filter)) {
             AxisAlignedBB axisalignedbb = entity1.getBoundingBox().grow(entity1.getCollisionBorderSize());
-            Optional<Vec3d> optional = axisalignedbb.rayTrace(startVec, endVec);
+            Optional<Vector3d> optional = axisalignedbb.rayTrace(startVec, endVec);
             if (axisalignedbb.contains(startVec)) {
                 if (d0 >= 0) {
                     entity = entity1;
@@ -263,7 +245,7 @@ public class Util {
                     d0 = 0;
                 }
             } else if (optional.isPresent()) {
-                Vec3d vec3d1 = optional.get();
+                Vector3d vec3d1 = optional.get();
                 double d1 = startVec.squareDistanceTo(vec3d1);
                 if (d1 < d0 || d0 == 0) {
                     if (entity1.getLowestRidingEntity() == shooter.getLowestRidingEntity() && !entity1.canRiderInteract()) {
@@ -294,8 +276,8 @@ public class Util {
     /**
      * Got these values from <a href ="https://www.minecraftforum.net/forums/mapping-and-modding-java-edition/minecraft-mods/modification-development/1435515-how-i-can-do-to-move-to-where-i-look#c5">this</a> thread, shortened it a little bit.
      */
-    public static Vec3d getEntityForwardsMotion(Entity entity) {
-        return new Vec3d(
+    public static Vector3d getEntityForwardsMotion(Entity entity) {
+        return new Vector3d(
                 -MathHelper.sin(entity.rotationYaw / 180 * (float) Math.PI) * MathHelper.cos(entity.rotationPitch / 180 * (float) Math.PI),
                 MathHelper.cos(entity.rotationYaw / 180 * (float) Math.PI) * MathHelper.cos(entity.rotationPitch / 180 * (float) Math.PI),
                 MathHelper.cos(entity.rotationYaw / 180 * (float) Math.PI) * MathHelper.cos(entity.rotationPitch / 180 * (float) Math.PI)
@@ -315,7 +297,7 @@ public class Util {
     /**
      * Statically renders the given {@link BlockState} at the given {@link BlockPos}, like {@link net.minecraft.client.renderer.entity.EntityRendererManager#renderEntityStatic(Entity, double, double, double, float, float, MatrixStack, IRenderTypeBuffer, int)}, but for blocks.
      */
-    public static void renderBlockStatic(MatrixStack matrixStack, IRenderTypeBuffer.Impl buffer, World world, BlockState blockState, BlockPos blockPos, Vec3d projectedView, boolean occlusionCulling) {
+    public static void renderBlockStatic(MatrixStack matrixStack, IRenderTypeBuffer.Impl buffer, World world, BlockState blockState, BlockPos blockPos, Vector3d projectedView, boolean occlusionCulling) {
         matrixStack.push();
         matrixStack.translate(-projectedView.x + blockPos.getX(), -projectedView.y + blockPos.getY(), -projectedView.z + blockPos.getZ());
         for (RenderType renderType : RenderType.getBlockRenderTypes()) {
@@ -351,7 +333,7 @@ public class Util {
     }
 
     public static void travelWithFriction(LivingEntity entity, float slipperiness) {
-        Vec3d positionIn = new Vec3d(entity.moveStrafing, entity.moveVertical, entity.moveForward);
+        Vector3d positionIn = new Vector3d(entity.moveStrafing, entity.moveVertical, entity.moveForward);
         if (entity.isServerWorld() || entity.canPassengerSteer()) {
             double d0 = 0.08;
             boolean flag = entity.getMotion().y <= 0;
@@ -360,11 +342,11 @@ public class Util {
             if (!entity.isInWater() || entity instanceof PlayerEntity && ((PlayerEntity) entity).abilities.isFlying) {
                 if (!entity.isInLava() || entity instanceof PlayerEntity && ((PlayerEntity) entity).abilities.isFlying) {
                     if (entity.isElytraFlying()) {
-                        Vec3d vec3d3 = entity.getMotion();
+                        Vector3d vec3d3 = entity.getMotion();
                         if (vec3d3.y > -0.5)
                             entity.fallDistance = 1;
 
-                        Vec3d vec3d = entity.getLookVec();
+                        Vector3d vec3d = entity.getLookVec();
                         float f6 = entity.rotationPitch * ((float) Math.PI / 180);
                         double d9 = Math.sqrt(vec3d.x * vec3d.x + vec3d.z * vec3d.z);
                         double d11 = Math.sqrt(horizontalMag(vec3d3));
@@ -394,12 +376,12 @@ public class Util {
                         }
                     } else {
                         BlockPos blockpos = new BlockPos(entity.getPosX(), entity.getBoundingBox().minY - 0.5000001, entity.getPosZ());
-                        float f7 = entity.onGround ? slipperiness * 0.91F : 0.91F;
-                        entity.moveRelative(entity.onGround ? entity.getAIMoveSpeed() * (0.21600002f / (slipperiness * slipperiness * slipperiness)) : entity.jumpMovementFactor, positionIn);
+                        float f7 = entity.isOnGround() ? slipperiness * 0.91F : 0.91F;
+                        entity.moveRelative(entity.isOnGround() ? entity.getAIMoveSpeed() * (0.21600002f / (slipperiness * slipperiness * slipperiness)) : entity.jumpMovementFactor, positionIn);
                         entity.move(MoverType.SELF, entity.getMotion());
-                        Vec3d vec3d5 = entity.getMotion();
-                        if ((entity.collidedHorizontally || !entity.onGround) && entity.isOnLadder())
-                            vec3d5 = new Vec3d(vec3d5.x, 0.2, vec3d5.z);
+                        Vector3d vec3d5 = entity.getMotion();
+                        if ((entity.collidedHorizontally || !entity.isOnGround()) && entity.isOnLadder())
+                            vec3d5 = new Vector3d(vec3d5.x, 0.2, vec3d5.z);
                         double d10 = vec3d5.y;
                         if (entity.isPotionActive(Effects.LEVITATION)) {
                             d10 += (0.05 * (double) (entity.getActivePotionEffect(Effects.LEVITATION).getAmplifier() + 1) - vec3d5.y) * 0.2;
@@ -420,7 +402,7 @@ public class Util {
                     entity.setMotion(entity.getMotion().scale(0.5D));
                     if (!entity.hasNoGravity())
                         entity.setMotion(entity.getMotion().add(0, -d0 / 4, 0));
-                    Vec3d vec3d4 = entity.getMotion();
+                    Vector3d vec3d4 = entity.getMotion();
                     if (entity.collidedHorizontally && entity.isOffsetPositionInLiquid(vec3d4.x, vec3d4.y + 0.6 - entity.getPosY() + d7, vec3d4.z))
                         entity.setMotion(vec3d4.x, 0.3, vec3d4.z);
                 }
@@ -429,14 +411,14 @@ public class Util {
                 float f1 = 0.02f;
                 float f2 = (float) EnchantmentHelper.getDepthStriderModifier(entity);
                 entity.move(MoverType.SELF, entity.getMotion());
-                Vec3d vec3d1 = entity.getMotion();
+                Vector3d vec3d1 = entity.getMotion();
                 if (entity.collidedHorizontally && entity.isOnLadder()) {
-                    vec3d1 = new Vec3d(vec3d1.x, 0.2, vec3d1.z);
+                    vec3d1 = new Vector3d(vec3d1.x, 0.2, vec3d1.z);
                 }
 
                 entity.setMotion(vec3d1.mul(1, 0.8, 1));
                 if (!entity.hasNoGravity() && !entity.isSprinting()) {
-                    Vec3d vec3d2 = entity.getMotion();
+                    Vector3d vec3d2 = entity.getMotion();
                     double d2;
                     if (flag && Math.abs(vec3d2.y - 0.005) >= 0.003 && Math.abs(vec3d2.y - d0 / 16) < 0.003)
                         d2 = -0.003D;
@@ -445,7 +427,7 @@ public class Util {
                     entity.setMotion(vec3d2.x, d2, vec3d2.z);
                 }
 
-                Vec3d vec3d6 = entity.getMotion();
+                Vector3d vec3d6 = entity.getMotion();
                 if (entity.collidedHorizontally && entity.isOffsetPositionInLiquid(vec3d6.x, vec3d6.y + 0.6 - entity.getPosY() + d1, vec3d6.z))
                     entity.setMotion(vec3d6.x, 0.3, vec3d6.z);
             }
@@ -468,15 +450,15 @@ public class Util {
         DiamondIsUncraftable.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> trackingEntity), new SParticlePacket(particleId, posX, posY, posZ, dX, dY, dZ, amount));
     }
 
-    public static void spawnParticle(DimensionType trackingDimension, int particleId, double posX, double posY, double posZ, double dX, double dY, double dZ, int amount) {
-        DiamondIsUncraftable.INSTANCE.send(PacketDistributor.DIMENSION.with(() -> trackingDimension), new SParticlePacket(particleId, posX, posY, posZ, dX, dY, dZ, amount));
+    public static void spawnParticle(World world, int particleId, double posX, double posY, double posZ, double dX, double dY, double dZ, int amount) {
+        DiamondIsUncraftable.INSTANCE.send(PacketDistributor.DIMENSION.with(world::getDimensionKey), new SParticlePacket(particleId, posX, posY, posZ, dX, dY, dZ, amount));
     }
 
     public static void spawnClientParticle(ServerPlayerEntity player, int particleId, double posX, double posY, double posZ, double dX, double dY, double dZ, int amount) {
         DiamondIsUncraftable.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new SParticlePacket(particleId, posX, posY, posZ, dX, dY, dZ, amount));
     }
 
-    public static void dealStandDamage(AbstractStandEntity stand, LivingEntity entity, float damage, Vec3d motion, boolean blockable){
+    public static void dealStandDamage(AbstractStandEntity stand, LivingEntity entity, float damage, Vector3d motion, boolean blockable){
 
         LivingEntity attackedEntity;
 
@@ -546,7 +528,6 @@ public class Util {
             Util.spawnParticle(stand, 3, entity.getPosX(), entity.getEyeHeight() + entity.getPosY(), entity.getPosZ(), 2.4, 1.4, 2.4, 1);
             Util.spawnParticle(stand, 4, entity.getPosX() + (random.nextFloat() - 0.5), entity.getEyeHeight() + entity.getPosY() + (random.nextFloat() - 0.5), entity.getPosZ() + (random.nextFloat() - 0.5), 0.7, 0.9, 0.7, (int) (damage * 8.5));
 
-
             Stand.getLazyOptional(stand.getMaster()).ifPresent(props -> {
                 if (stand instanceof IMomentum) {
                     props.setMomentum(Math.min(100, props.getMomentum() + ((IMomentum) stand).addMomentumAmount()));
@@ -562,7 +543,7 @@ public class Util {
 
     }
 
-    public static void dealUnsummonedStandDamage(PlayerEntity standMaster, LivingEntity entity, float damage, Vec3d motion, boolean blockable){
+    public static void dealUnsummonedStandDamage(PlayerEntity standMaster, LivingEntity entity, float damage, Vector3d motion, boolean blockable){
 
         LivingEntity attackedEntity;
 
@@ -678,7 +659,7 @@ public class Util {
                                                                         .and(((Predicate<Entity>) entity -> !(entity instanceof GiantEntity))
                                                                                 .and(((Predicate<Entity>) entity -> !(entity instanceof ZombieVillagerEntity))
                                                                                         .and(((Predicate<Entity>) entity -> !(entity instanceof StrayEntity))
-                                                                                                .and(entity -> !(entity instanceof ZombiePigmanEntity))
+                                                                                                .and(entity -> !(entity instanceof ZombifiedPiglinEntity))
                                                                                                 .and(entity -> !(entity instanceof PhantomEntity))
                                                                                                 .and(entity -> !(entity instanceof AbstractStandAttackEntity))
                                                                                                 .and(entity -> !(entity instanceof AbstractStandEntity))
@@ -694,59 +675,8 @@ public class Util {
 
         public static final int THE_WORLD = 4;
 
-        public static final int PURPLE_HAZE = -69;
+        public static final int STICKY_FINGERS = -1;
 
-        public static final int D4C = -1;
-
-        public static final int GOLD_EXPERIENCE = -2;
-
-        public static final int MADE_IN_HEAVEN = -3;
-
-        public static final int GER = -4;
-
-        public static final int AEROSMITH = -5;
-
-        public static final int WEATHER_REPORT = -6;
-
-        public static final int CRAZY_DIAMOND = -8;
-
-        public static final int THE_EMPEROR = -10;
-
-        public static final int WHITESNAKE = -11;
-
-        public static final int CMOON = -12;
-
-        public static final int STAR_PLATINUM = -13;
-
-        public static final int MAGICIANS_RED = -16;
-
-        public static final int THE_HAND = -17;
-
-        public static final int HIEROPHANT_GREEN = -18;
-
-        public static final int GREEN_DAY = -19;
-
-        public static final int TWENTIETH_CENTURY_BOY = -20;
-
-        public static final int THE_GRATEFUL_DEAD = -21;
-
-        public static final int STICKY_FINGERS = -22;
-
-        public static final int TUSK_ACT_1 = -23;
-
-        public static final int TUSK_ACT_2 = -24;
-
-        public static final int TUSK_ACT_3 = -25;
-
-        public static final int TUSK_ACT_4 = -26;
-
-        public static final int ECHOES_ACT_1 = -27;
-
-        public static final int ECHOES_ACT_2 = -28;
-
-        public static final int ECHOES_ACT_3 = -29;
-
-        public static final int BEACH_BOY = -30;
 
         /**
          * An array of Stand's that can be obtained through the {@link StandArrowItem}.
@@ -763,33 +693,12 @@ public class Util {
             THE_WORLD
         );
 
-        public static final List<Integer> ITEM_STANDS = Arrays.asList(
-                THE_EMPEROR,
-                BEACH_BOY
-        );
+        public static final List<Integer> STANDS_WITH_ACTS = Arrays.asList( //What stands should render the momentum meter on the HUD
 
-
-        public static final List<Integer> STANDS_WITH_ACTS = Arrays.asList(
-                MADE_IN_HEAVEN,
-                CMOON,
-                TUSK_ACT_2,
-                TUSK_ACT_3,
-                TUSK_ACT_4,
-                ECHOES_ACT_2,
-                ECHOES_ACT_3,
-                BEACH_BOY //Not really, but he uses the switch act button.
         );
 
         public static final List<Integer> EVOLUTION_STANDS = Arrays.asList(
-                WHITESNAKE,
-                CMOON,
-                TUSK_ACT_1,
-                TUSK_ACT_2,
-                TUSK_ACT_3,
-                ECHOES_ACT_1,
-                ECHOES_ACT_2,
-                KILLER_QUEEN,
-                GOLD_EXPERIENCE
+                KILLER_QUEEN
         );
 
         /**
@@ -804,118 +713,28 @@ public class Util {
                     return Null();
                 case KING_CRIMSON:
                     return new KingCrimsonEntity(EntityInit.KING_CRIMSON.get(), world);
-                case D4C:
-                    return new D4CEntity(EntityInit.D4C.get(), world);
-                case GOLD_EXPERIENCE:
-                    return new GoldExperienceEntity(EntityInit.GOLD_EXPERIENCE.get(), world);
-                case MADE_IN_HEAVEN:
-                    return new MadeInHeavenEntity(EntityInit.MADE_IN_HEAVEN.get(), world);
-                case GER:
-                    return new GoldExperienceRequiemEntity(EntityInit.GOLD_EXPERIENCE_REQUIEM.get(), world);
-                case AEROSMITH:
-                    return new AerosmithEntity(EntityInit.AEROSMITH.get(), world);
-                case WEATHER_REPORT:
-                    return new WeatherReportEntity(EntityInit.WEATHER_REPORT.get(), world);
                 case KILLER_QUEEN:
                     return new KillerQueenEntity(EntityInit.KILLER_QUEEN.get(), world);
-                case CRAZY_DIAMOND:
-                    return new CrazyDiamondEntity(EntityInit.CRAZY_DIAMOND.get(), world);
-                case PURPLE_HAZE:
-                    return new PurpleHazeEntity(EntityInit.PURPLE_HAZE.get(), world);
-                case WHITESNAKE:
-                    return new WhitesnakeEntity(EntityInit.WHITESNAKE.get(), world);
-                case CMOON:
-                    return new CMoonEntity(EntityInit.CMOON.get(), world);
                 case THE_WORLD:
                     return new TheWorldEntity(EntityInit.THE_WORLD.get(), world);
-                case STAR_PLATINUM:
-                    return new StarPlatinumEntity(EntityInit.STAR_PLATINUM.get(), world);
                 case SILVER_CHARIOT:
                     return new SilverChariotEntity(EntityInit.SILVER_CHARIOT.get(), world);
-                case MAGICIANS_RED:
-                    return new MagiciansRedEntity(EntityInit.MAGICIANS_RED.get(), world);
-                case THE_HAND:
-                    return new TheHandEntity(EntityInit.THE_HAND.get(), world);
-                case HIEROPHANT_GREEN:
-                    return new HierophantGreenEntity(EntityInit.HIEROPHANT_GREEN.get(), world);
-                case GREEN_DAY:
-                    return new GreenDayEntity(EntityInit.GREEN_DAY.get(), world);
-                case TWENTIETH_CENTURY_BOY:
-                    return new TwentiethCenturyBoyEntity(EntityInit.TWENTIETH_CENTURY_BOY.get(), world);
-                case THE_GRATEFUL_DEAD:
-                    return new TheGratefulDeadEntity(EntityInit.THE_GRATEFUL_DEAD.get(), world);
-                case STICKY_FINGERS:
-                    return new StickyFingersEntity(EntityInit.STICKY_FINGERS.get(), world);
-                case TUSK_ACT_1:
-                    return new TuskAct1Entity(EntityInit.TUSK_ACT_1.get(), world);
-                case TUSK_ACT_2:
-                    return new TuskAct2Entity(EntityInit.TUSK_ACT_2.get(), world);
-                case TUSK_ACT_3:
-                    return new TuskAct3Entity(EntityInit.TUSK_ACT_3.get(), world);
-                case TUSK_ACT_4:
-                    return new TuskAct4Entity(EntityInit.TUSK_ACT_4.get(), world);
-                case ECHOES_ACT_1:
-                    return new EchoesAct1Entity(EntityInit.ECHOES_ACT_1.get(), world);
-                case ECHOES_ACT_2:
-                    return new EchoesAct2Entity(EntityInit.ECHOES_ACT_2.get(), world);
-                case ECHOES_ACT_3:
-                    return new EchoesAct3Entity(EntityInit.ECHOES_ACT_3.get(), world);
             }
-        }
-
-        public static ItemStack getItemStandById(int standID) {
-            switch (standID) {
-                default:
-                    return Null();
-                case THE_EMPEROR:
-                    return new ItemStack(ItemInit.THE_EMPEROR.get());
-                case BEACH_BOY:
-                    return new ItemStack(ItemInit.BEACH_BOY.get());
-            }
-        }
-
-        public static void summonItemStand(ServerPlayerEntity master) {
-            Stand.getLazyOptional(master).ifPresent(capability -> {
-                ItemStack itemStack = Util.StandID.getItemStandById(capability.getStandID());
-                if (!master.inventory.hasItemStack(itemStack)) {
-                    if (master.inventory.getStackInSlot(master.inventory.getBestHotbarSlot()).isEmpty()) {
-                        master.inventory.currentItem = master.inventory.getBestHotbarSlot();
-                        master.inventory.add(master.inventory.getBestHotbarSlot(), itemStack);
-                        switch (capability.getStandID()) {
-                            default:
-                                break;
-                            case THE_EMPEROR: {
-                                master.world.playSound(null, master.getPosition(), SoundInit.SPAWN_THE_EMPEROR.get(), SoundCategory.NEUTRAL, 1, 1);
-                                break;
-                            }
-                            case BEACH_BOY: {
-                                master.world.playSound(null, master.getPosition(), SoundInit.SPAWN_BEACH_BOY.get(), SoundCategory.NEUTRAL, 1, 1);
-                                break;
-                            }
-                        }
-                        capability.setStandOn(true);
-                    } else
-                        master.sendMessage(new StringTextComponent("Your hotbar is full!"), ChatType.GAME_INFO);
-                } else {
-                    itemStack.shrink(1);
-                    capability.setStandOn(false);
-                }
-            });
         }
 
         public static boolean isStandThatEvolves(int id){
-            return EVOLUTION_STANDS.contains(id) || id == MADE_IN_HEAVEN || id == TUSK_ACT_4 || id == ECHOES_ACT_3;
+            return EVOLUTION_STANDS.contains(id); //Add any maximum tier evolutions here.
         }
     }
 
 
     public static class KeyCodes {
-        public static final String SUMMON_STAND = KeyInit.SPAWN_STAND.getLocalizedName().toUpperCase();
-        public static final String ABILITY_TOGGLE = KeyInit.TOGGLE_ABILITY.getLocalizedName().toUpperCase();
-        public static final String ABILITY_1 = KeyInit.ABILITY1.getLocalizedName().toUpperCase();
-        public static final String ABILITY_2 = KeyInit.ABILITY2.getLocalizedName().toUpperCase();
-        public static final String ABILITY_3 = KeyInit.ABILITY3.getLocalizedName().toUpperCase();
-        public static final String SWITCH_ACT = KeyInit.SWITCH_ACT.getLocalizedName().toUpperCase();
+        public static final String SUMMON_STAND = KeyInit.SPAWN_STAND.getTranslationKey().toUpperCase();
+        public static final String ABILITY_TOGGLE = KeyInit.TOGGLE_ABILITY.getTranslationKey().toUpperCase();
+        public static final String ABILITY_1 = KeyInit.ABILITY1.getTranslationKey().toUpperCase();
+        public static final String ABILITY_2 = KeyInit.ABILITY2.getTranslationKey().toUpperCase();
+        public static final String ABILITY_3 = KeyInit.ABILITY3.getTranslationKey().toUpperCase();
+        public static final String SWITCH_ACT = KeyInit.SWITCH_ACT.getTranslationKey().toUpperCase();
     }
 
     public static class ResourceLocations {
@@ -1007,29 +826,31 @@ public class Util {
         return false;
     }
 
-    public static void standExplosion(PlayerEntity master, World world, Vec3d position, double range, double blockableDistance, double minDamage, double maxDamage) {
+    public static void standExplosion(PlayerEntity master, World world, Vector3d position, double range, double blockableDistance, double minDamage, double maxDamage) {
         if(!world.isRemote()) {
-            if (master.dimension != null) {
-                Util.spawnParticle(master.dimension, 5, position.getX(), position.getY(), position.getZ(), 1, 1, 1, 1);
-                Util.spawnParticle(master.dimension, 14, position.getX(), position.getY(), position.getZ(), 1, 1, 1, 20);
+            if (master.world != null) {
+                Util.spawnParticle(master.world, 5, position.getX(), position.getY(), position.getZ(), 1, 1, 1, 1);
+                Util.spawnParticle(master.world, 14, position.getX(), position.getY(), position.getZ(), 1, 1, 1, 20);
                 Explosion explosion = new Explosion(master.world, master, position.getX(), position.getY(), position.getZ(), 4, true, Explosion.Mode.NONE);
                 master.world.playSound(null, new BlockPos(position), SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 1, 1);
                 explosion.doExplosionB(true);
 
-                Objects.requireNonNull(master.getServer()).getWorld(master.dimension).getEntities()
-                        .filter(entity -> entity instanceof LivingEntity)
-                        .filter(entity -> !(entity instanceof AbstractStandEntity))
-                        .filter(entity -> Math.sqrt((entity.getDistanceSq(position))) <= range)
-                        .filter(Entity::isAlive)
-                        .forEach(entity -> Util.dealUnsummonedStandDamage(master, (LivingEntity) entity, (float) lerp(minDamage, maxDamage, Math.sqrt((entity.getDistanceSq(position))) / range), Vec3d.ZERO, Math.sqrt((entity.getDistanceSq(position))) >= blockableDistance));
-            }
+                if(master.getServer() != null && master.getServer().getWorld(master.world.getDimensionKey()) != null) {
+                    Objects.requireNonNull(master.getServer().getWorld(master.world.getDimensionKey())).getEntities()
+                            .filter(entity -> entity instanceof LivingEntity)
+                            .filter(entity -> !(entity instanceof AbstractStandEntity))
+                            .filter(entity -> Math.sqrt((entity.getDistanceSq(position))) <= range)
+                            .filter(Entity::isAlive)
+                            .forEach(entity -> Util.dealUnsummonedStandDamage(master, (LivingEntity) entity, (float) lerp(minDamage, maxDamage, Math.sqrt((entity.getDistanceSq(position))) / range), Vector3d.ZERO, Math.sqrt((entity.getDistanceSq(position))) >= blockableDistance));
+                    }
+                }
         }
     }
 
-    public static void standExplosionFX(PlayerEntity master, World world, Vec3d position) {
+    public static void standExplosionFX(PlayerEntity master, World world, Vector3d position) {
         if(!world.isRemote()) {
-            Util.spawnParticle(master.dimension, 5, position.getX(), position.getY(), position.getZ(), 1, 1, 1, 1);
-            Util.spawnParticle(master.dimension, 14, position.getX(), position.getY(), position.getZ(), 1, 1, 1, 20);
+            Util.spawnParticle(master.world, 5, position.getX(), position.getY(), position.getZ(), 1, 1, 1, 1);
+            Util.spawnParticle(master.world, 14, position.getX(), position.getY(), position.getZ(), 1, 1, 1, 20);
             Explosion explosion = new Explosion(master.world, master, position.getX(), position.getY(), position.getZ(), 4, true, Explosion.Mode.NONE);
             master.world.playSound(null, new BlockPos(position), SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 1, 1);
             explosion.doExplosionB(true);

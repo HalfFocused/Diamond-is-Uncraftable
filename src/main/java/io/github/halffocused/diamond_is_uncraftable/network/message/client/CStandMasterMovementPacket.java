@@ -36,7 +36,7 @@ public class CStandMasterMovementPacket implements IMessage<CStandMasterMovement
                 World world = sender.world;
                 if (world != null)
                     if (!world.isRemote) {
-                        world.getServer().getWorld(sender.dimension).getEntities()
+                        world.getServer().getWorld(sender.world.getDimensionKey()).getEntities()
                                 .filter(entity -> entity instanceof AbstractStandEntity)
                                 .filter(entity -> ((AbstractStandEntity) entity).getMaster().equals(sender))
                                 .forEach(entity -> {

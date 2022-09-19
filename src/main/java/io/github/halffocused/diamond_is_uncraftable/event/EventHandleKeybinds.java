@@ -54,32 +54,6 @@ public class EventHandleKeybinds {
                     }else{
                         DiamondIsUncraftable.INSTANCE.sendToServer(new CStandMasterMovementPacket(CStandMasterMovementPacket.Direction.NOT_MOVING));
                     }
-
-                    switch (props.getStandID()) {
-                        default:
-                            break;
-                        case Util.StandID.AEROSMITH: {
-                            if (props.getAbility()) {
-                                DiamondIsUncraftable.INSTANCE.sendToServer(new CAerosmithMovePacket(mc.gameSettings.keyBindForward.isKeyDown(), mc.gameSettings.keyBindSprint.isKeyDown(), mc.gameSettings.keyBindBack.isKeyDown(), mc.gameSettings.keyBindLeft.isKeyDown(), mc.gameSettings.keyBindRight.isKeyDown(), mc.gameSettings.keyBindJump.isKeyDown(), mc.gameSettings.keyBindSneak.isKeyDown()));
-                            }
-                            break;
-                        }
-                        case Util.StandID.HIEROPHANT_GREEN: {
-                            if (mc.gameSettings.keyBindForward.isKeyDown())
-                                DiamondIsUncraftable.INSTANCE.sendToServer(new CHierophantGreenPossessionPacket(CHierophantGreenPossessionPacket.Direction.FORWARDS));
-                            if (mc.gameSettings.keyBindBack.isKeyDown())
-                                DiamondIsUncraftable.INSTANCE.sendToServer(new CHierophantGreenPossessionPacket(CHierophantGreenPossessionPacket.Direction.BACKWARDS));
-                            if (mc.gameSettings.keyBindRight.isKeyDown())
-                                DiamondIsUncraftable.INSTANCE.sendToServer(new CHierophantGreenPossessionPacket(CHierophantGreenPossessionPacket.Direction.RIGHT));
-                            if (mc.gameSettings.keyBindLeft.isKeyDown())
-                                DiamondIsUncraftable.INSTANCE.sendToServer(new CHierophantGreenPossessionPacket(CHierophantGreenPossessionPacket.Direction.LEFT));
-                            if (mc.gameSettings.keyBindJump.isKeyDown())
-                                DiamondIsUncraftable.INSTANCE.sendToServer(new CHierophantGreenPossessionPacket(CHierophantGreenPossessionPacket.Direction.JUMP));
-                            if (mc.gameSettings.keyBindSneak.isKeyDown())
-                                DiamondIsUncraftable.INSTANCE.sendToServer(new CHierophantGreenPossessionPacket(CHierophantGreenPossessionPacket.Direction.CROUCH));
-                            break;
-                        }
-                    }
                 }
             });
 

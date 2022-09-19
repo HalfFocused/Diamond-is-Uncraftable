@@ -22,7 +22,7 @@ public class StandDiscItem extends Item {
             ItemStack stack = player.getHeldItem(hand);
             CompoundNBT nbt = stack.getTag() == null ? new CompoundNBT() : stack.getTag();
             Stand props = Stand.getCapabilityFromPlayer(player);
-            if (props.getStandID() != 0 && props.getStandID() != Util.StandID.GER && nbt.getInt("StandID") == 0) {
+            if (props.getStandID() != 0 && nbt.getInt("StandID") == 0) {
                 nbt.putInt("StandID", props.getStandID());
                 props.removeStand(false);
                 stack.setTag(nbt);
@@ -45,6 +45,7 @@ public class StandDiscItem extends Item {
                 if (attacker instanceof PlayerEntity) {
                     final int standID = Stand.getCapabilityFromPlayer(((PlayerEntity) attacker)).getStandID();
                     final int standAct = Stand.getCapabilityFromPlayer(((PlayerEntity) attacker)).getAct();
+                    /*
                     if (standID == Util.StandID.WHITESNAKE || (standID == Util.StandID.MADE_IN_HEAVEN && standAct == 2)) {
                         if (props.getStandID() != 0 && nbt.getInt("StandID") == 0) {
                             nbt.putInt("StandID", props.getStandID());
@@ -56,6 +57,7 @@ public class StandDiscItem extends Item {
                         }
                         stack.setTag(nbt);
                     }
+                     */
                 }
             });
         }

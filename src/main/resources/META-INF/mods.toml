@@ -4,11 +4,13 @@ loaderVersion="[31,)"
 
 issueTrackerURL="https://github.com/HalfFocused/Diamond-is-Uncraftable/issues"
 
+license="MIT"
+
 [[mods]]
 
 modId="diamond_is_uncraftable"
 
-version="1.15.2-0.0.4.1"
+version="1.16.5-0.0.5.0"
 
 displayName="Diamond is Uncraftable"
 
@@ -30,13 +32,13 @@ description='''
 [[dependencies.diamond_is_uncraftable]]
     modId="forge" #mandatory
     mandatory=true #mandatory
-    versionRange="[31,)" #mandatory
+    versionRange="[36,)" #mandatory
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.diamond_is_uncraftable]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.15.2]"
+    versionRange="[1.16.5]"
     ordering="NONE"
     side="BOTH"

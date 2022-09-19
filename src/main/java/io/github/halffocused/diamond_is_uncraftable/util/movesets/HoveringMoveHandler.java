@@ -9,6 +9,7 @@ import io.github.halffocused.diamond_is_uncraftable.util.timestop.TimestopHelper
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.network.PacketDistributor;
 
@@ -198,7 +199,7 @@ public class HoveringMoveHandler {
     public void setAnimation(String animationNameIn, boolean shouldLoop){
         if(!stand.world.isRemote) {
             if(!animationNameIn.equals(lastAnimation)) {
-                DiamondIsUncraftable.INSTANCE.send(PacketDistributor.DIMENSION.with(() -> stand.dimension), new SAnimatePacket(stand.getEntityId(), animationNameIn, shouldLoop));
+                DiamondIsUncraftable.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> stand), new SAnimatePacket(stand.getEntityId(), animationNameIn, shouldLoop));
                 currentAnimation = animationNameIn;
                 lastAnimation = animationNameIn;
             }
@@ -341,14 +342,14 @@ public class HoveringMoveHandler {
 
         PlayerEntity master = stand.getMaster();
         StringTextComponent actionText = new StringTextComponent("");
-        Style moveNameStyle = new Style().setColor(TextFormatting.GRAY).setBold(true);
-        Style menacingMoveNameStyle = new Style().setColor(TextFormatting.LIGHT_PURPLE).setBold(true).setItalic(true);
-        Style notationStyle = new Style().setColor(TextFormatting.GRAY).setBold(false);
-        Style actionBarBracketStyle = new Style().setColor(TextFormatting.BLACK).setBold(true);
-        Style positiveStyle = new Style().setColor(TextFormatting.GREEN).setBold(false);
-        Style negativeStyle = new Style().setColor(TextFormatting.RED).setBold(false);
-        Style sneakIndicatorOffStyle = new Style().setColor(TextFormatting.DARK_RED).setBold(true);
-        Style sneakIndicatorOnStyle = new Style().setColor(TextFormatting.GREEN).setBold(true);
+        Style moveNameStyle = Style.EMPTY.applyFormatting(TextFormatting.GRAY).setBold(true);
+        Style menacingMoveNameStyle = Style.EMPTY.applyFormatting(TextFormatting.LIGHT_PURPLE).setBold(true).setItalic(true);
+        Style notationStyle = Style.EMPTY.applyFormatting(TextFormatting.GRAY).setBold(false);
+        Style actionBarBracketStyle = Style.EMPTY.applyFormatting(TextFormatting.BLACK).setBold(true);
+        Style positiveStyle = Style.EMPTY.applyFormatting(TextFormatting.GREEN).setBold(false);
+        Style negativeStyle = Style.EMPTY.applyFormatting(TextFormatting.RED).setBold(false);
+        Style sneakIndicatorOffStyle = Style.EMPTY.applyFormatting(TextFormatting.DARK_RED).setBold(true);
+        Style sneakIndicatorOnStyle = Style.EMPTY.applyFormatting(TextFormatting.GREEN).setBold(true);
         if(isMoveActive()){
             actionText.appendSibling(new StringTextComponent(getActiveMove().getName()).setStyle(getActiveMove().isMenacing() ? menacingMoveNameStyle : moveNameStyle));
             actionText.appendSibling(new StringTextComponent(" [").setStyle(actionBarBracketStyle));

@@ -6,11 +6,12 @@ import io.github.halffocused.diamond_is_uncraftable.capability.StandPerWorldCapa
 import io.github.halffocused.diamond_is_uncraftable.capability.Timestop;
 import io.github.halffocused.diamond_is_uncraftable.config.DiamondIsUncraftableConfig;
 import io.github.halffocused.diamond_is_uncraftable.entity.stand.*;
+import io.github.halffocused.diamond_is_uncraftable.entity.stand.attack.SheerHeartAttackEntity;
 import io.github.halffocused.diamond_is_uncraftable.network.message.server.SSyncStandCapabilityPacket;
 import io.github.halffocused.diamond_is_uncraftable.util.timestop.TimestopHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.DimensionType;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -33,8 +34,8 @@ public class EventSyncCapability {
 
         if(event.isWasDeath() && !DiamondIsUncraftableConfig.COMMON.saveStandOnDeath.get()){
             if(DiamondIsUncraftableConfig.COMMON.uniqueStandMode.get()){
-                Objects.requireNonNull(event.getPlayer().world.getServer()).getWorld(DimensionType.OVERWORLD);
-                StandPerWorldCapability.getLazyOptional(event.getPlayer().world.getServer().getWorld(DimensionType.OVERWORLD)).ifPresent(uniqueStandHandler -> {
+                Objects.requireNonNull(event.getPlayer().world.getServer()).getWorld(event.getPlayer().getEntityWorld().getDimensionKey());
+                StandPerWorldCapability.getLazyOptional(event.getPlayer().getEntityWorld()).ifPresent(uniqueStandHandler -> {
                     ServerPlayerEntity player = (ServerPlayerEntity) event.getPlayer();
                     Stand stand = Stand.getCapabilityFromPlayer(player);
                     List standAssignments = Collections.singletonList(STANDS);
@@ -95,10 +96,12 @@ public class EventSyncCapability {
                             entity.remove();
                         });
 
+                /*
                 if(props.getStandID() == PURPLE_HAZE){
                     props.setPreventUnsummon2(false);
                     props.setRage(0);
                 }
+                 */
 
                 DiamondIsUncraftable.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new SSyncStandCapabilityPacket(props));
             }

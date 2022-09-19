@@ -11,7 +11,7 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -34,7 +34,7 @@ public class StandEffects implements ICapabilitySerializable<INBT> {
     public static final Capability<StandEffects> STAND_EFFECTS = Null();
     private final Entity entity;
     private boolean aging;
-    private Vec3d motion = Vec3d.ZERO;
+    private Vector3d motion = Vector3d.ZERO;
     private boolean bomb;
     private UUID standUser = UUID.fromString("c9362041-f5e8-447c-80a8-9db27a2646bb");
     private boolean rotating;
@@ -124,7 +124,7 @@ public class StandEffects implements ICapabilitySerializable<INBT> {
             public void readNBT(Capability<StandEffects> capability, StandEffects instance, Direction side, INBT nbt) {
                 CompoundNBT compoundNBT = (CompoundNBT) nbt;
                 instance.aging = compoundNBT.getBoolean("aging");
-                instance.motion = new Vec3d(compoundNBT.getDouble("motionX"), compoundNBT.getDouble("motionY"), compoundNBT.getDouble("motionZ"));
+                instance.motion = new Vector3d(compoundNBT.getDouble("motionX"), compoundNBT.getDouble("motionY"), compoundNBT.getDouble("motionZ"));
                 instance.bomb = compoundNBT.getBoolean("bomb");
                 instance.standUser = compoundNBT.getUniqueId("standUser");
                 instance.rotating = compoundNBT.getBoolean("rotating");
@@ -197,11 +197,11 @@ public class StandEffects implements ICapabilitySerializable<INBT> {
         onDataUpdated();
     }
 
-    public Vec3d getMotion() {
+    public Vector3d getMotion() {
         return motion;
     }
 
-    public void setMotion(Vec3d motion) {
+    public void setMotion(Vector3d motion) {
         this.motion = motion;
         onDataUpdated();
     }

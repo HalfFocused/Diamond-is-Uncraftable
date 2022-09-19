@@ -45,9 +45,9 @@ public class StandCommand {
             stand.removeStand(false);
             stand.setStandID(standID);
             stand.setStandOn(false);
-            source.sendFeedback(new StringTextComponent("Successfully set StandID for " + target.getDisplayName().getFormattedText() + "."), true);
+            source.sendFeedback(new StringTextComponent("Successfully set StandID for " + target.getDisplayName().getString() + "."), true);
         } else
-            source.sendErrorMessage(new StringTextComponent(target.getDisplayName().getFormattedText() + " already has that Stand."));
+            source.sendErrorMessage(new StringTextComponent(target.getDisplayName().getString() + " already has that Stand."));
         return stand.getStandID();
     }
 
@@ -55,9 +55,9 @@ public class StandCommand {
         Stand props = Stand.getCapabilityFromPlayer(target);
         if (props.getStandID() != 0) {
             props.removeStand(false);
-            source.sendFeedback(new StringTextComponent("Successfully removed Stand from " + target.getDisplayName().getFormattedText() + "."), true);
+            source.sendFeedback(new StringTextComponent("Successfully removed Stand from " + target.getDisplayName().getUnformattedComponentText() + "."), true);
         } else
-            source.sendErrorMessage(new StringTextComponent(target.getDisplayName().getFormattedText() + " does not have a Stand."));
+            source.sendErrorMessage(new StringTextComponent(target.getDisplayName() + " does not have a Stand."));
         return 1;
     }
 
@@ -66,43 +66,11 @@ public class StandCommand {
         int standID = 0;
         switch (stand.getStandID()) {
             default: {
-                source.sendErrorMessage(new StringTextComponent(target.getDisplayName().getFormattedText() + "'s Stand cannot be evolved."));
+                source.sendErrorMessage(new StringTextComponent(target.getDisplayName().getUnformattedComponentText() + "'s Stand cannot be evolved."));
                 break;
             }
             case 0: {
-                source.sendErrorMessage(new StringTextComponent(target.getDisplayName().getFormattedText() + " does not have a Stand."));
-                break;
-            }
-            case Util.StandID.GOLD_EXPERIENCE: {
-                standID = Util.StandID.GER;
-                break;
-            }
-            case Util.StandID.WHITESNAKE: {
-                standID = Util.StandID.CMOON;
-                break;
-            }
-            case Util.StandID.CMOON: {
-                standID = Util.StandID.MADE_IN_HEAVEN;
-                break;
-            }
-            case Util.StandID.TUSK_ACT_1: {
-                standID = Util.StandID.TUSK_ACT_2;
-                break;
-            }
-            case Util.StandID.TUSK_ACT_2: {
-                standID = Util.StandID.TUSK_ACT_3;
-                break;
-            }
-            case Util.StandID.TUSK_ACT_3: {
-                standID = Util.StandID.TUSK_ACT_4;
-                break;
-            }
-            case Util.StandID.ECHOES_ACT_1: {
-                standID = Util.StandID.ECHOES_ACT_2;
-                break;
-            }
-            case Util.StandID.ECHOES_ACT_2: {
-                standID = Util.StandID.ECHOES_ACT_3;
+                source.sendErrorMessage(new StringTextComponent(target.getDisplayName().getUnformattedComponentText() + " does not have a Stand."));
                 break;
             }
             case Util.StandID.KILLER_QUEEN: {
@@ -114,7 +82,7 @@ public class StandCommand {
             stand.removeStand(true);
             stand.setStandOn(false);
             stand.setStandID(standID);
-            source.sendFeedback(new StringTextComponent("Successfully evolved " + target.getDisplayName().getFormattedText() + "'s Stand."), true);
+            source.sendFeedback(new StringTextComponent("Successfully evolved " + target.getDisplayName().getUnformattedComponentText() + "'s Stand."), true);
         }
         return stand.getStandID();
     }

@@ -2,13 +2,10 @@ package io.github.halffocused.diamond_is_uncraftable.init;
 
 import io.github.halffocused.diamond_is_uncraftable.DiamondIsUncraftable;
 import io.github.halffocused.diamond_is_uncraftable.DiamondIsUncraftable.JojoItemGroup;
-import io.github.halffocused.diamond_is_uncraftable.item.BeachBoyItem;
-import io.github.halffocused.diamond_is_uncraftable.item.EmperorItem;
 import io.github.halffocused.diamond_is_uncraftable.item.StandArrowItem;
 import io.github.halffocused.diamond_is_uncraftable.item.StandDiscItem;
 import io.github.halffocused.diamond_is_uncraftable.util.Util;
 import net.minecraft.item.Item;
-import net.minecraft.item.MusicDiscItem;
 import net.minecraft.item.Rarity;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.Style;
@@ -22,7 +19,7 @@ import net.minecraftforge.registries.ForgeRegistries;
  */
 @SuppressWarnings("unused")
 public class ItemInit {
-    public static DeferredRegister<Item> ITEMS = new DeferredRegister<>(ForgeRegistries.ITEMS, DiamondIsUncraftable.MOD_ID);
+    public static DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, DiamondIsUncraftable.MOD_ID);
 
     static StandArrowTooltip theWorldTooltip = new StandArrowTooltip("The World's speed and power are bested only by it's ability to stop time. The ultimate close-quarters combatant.")
             .addAbility("Passive 1 - Momentum Barrage", "The World's barrage is really powerful, but using it drains momentum until empty. When out of momentum due to this effect, stop barraging.")
@@ -91,8 +88,6 @@ public class ItemInit {
     */
 
     public static final RegistryObject<Item> STAND_DISC = ITEMS.register("stand_disc", () -> new StandDiscItem(new Item.Properties().maxStackSize(1).group(JojoItemGroup.INSTANCE)));
-    public static final RegistryObject<Item> THE_EMPEROR = ITEMS.register("the_emperor", () -> new EmperorItem(new Item.Properties().maxStackSize(1)));
-    public static final RegistryObject<Item> BEACH_BOY = ITEMS.register("beach_boy", () -> new BeachBoyItem(new Item.Properties().maxStackSize(1)));
 
     /*
     public static final RegistryObject<Item> CANZONI_PREFERITE = ITEMS.register("canzoni_preferite", () -> new MusicDiscItem(69, SoundInit.CANZONI_PREFERITE, new Item.Properties().maxStackSize(1).rarity(Rarity.RARE).group(JojoItemGroup.INSTANCE)));
@@ -102,9 +97,9 @@ public class ItemInit {
         private final StringTextComponent moveset;
         private final StringTextComponent description;
 
-        Style descriptionStyle = new Style().setColor(TextFormatting.GOLD).setUnderlined(true);
-        Style abilityNameStyle = new Style().setColor(TextFormatting.GRAY);
-        Style abilityDescriptionStyle = new Style().setColor(TextFormatting.DARK_GRAY).setItalic(true).setUnderlined(false);
+        Style descriptionStyle = Style.EMPTY.setFormatting(TextFormatting.GOLD).setUnderlined(true);
+        Style abilityNameStyle = Style.EMPTY.setFormatting(TextFormatting.GRAY);
+        Style abilityDescriptionStyle = Style.EMPTY.setFormatting(TextFormatting.DARK_GRAY).setItalic(true).setUnderlined(false);
 
         public StandArrowTooltip(String descriptionIn){
             moveset = new StringTextComponent("");

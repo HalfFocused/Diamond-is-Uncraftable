@@ -9,7 +9,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class ParticleList {
 
-    public static final DeferredRegister<ParticleType<?>> PARTICLES = new DeferredRegister<>(ForgeRegistries.PARTICLE_TYPES, DiamondIsUncraftable.MOD_ID);
+    public static final DeferredRegister<ParticleType<?>> PARTICLES = DeferredRegister.create(ForgeRegistries.PARTICLE_TYPES, DiamondIsUncraftable.MOD_ID);
 
     public static final RegistryObject<BasicParticleType> MENACING_PARTICLE = PARTICLES.register("menacing_particle",() -> new BasicParticleType(true));
 

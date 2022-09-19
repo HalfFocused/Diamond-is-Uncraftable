@@ -18,7 +18,7 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.PacketDistributor;
 import software.bernie.geckolib3.core.IAnimatable;
@@ -48,45 +48,45 @@ public class SilverChariotEntity extends AbstractStandEntity implements IAnimata
     final int ARMOR_OFF_FRAME = 40;
 
     AttackFramedata jabData = new AttackFramedata()
-            .addDamageFrame(6, 1, Vec3d.ZERO, 2.6, 3)
-            .addDamageFrame(8, 1, Vec3d.ZERO, 2.6, 3)
-            .addDamageFrame(10, 1, Vec3d.ZERO, 2.6, 3)
-            .addDamageFrame(12, 1, Vec3d.ZERO, 2.6, 3)
-            .addDamageFrame(14, 2, Vec3d.ZERO, 2.6, 3)
+            .addDamageFrame(6, 1, Vector3d.ZERO, 2.6, 3)
+            .addDamageFrame(8, 1, Vector3d.ZERO, 2.6, 3)
+            .addDamageFrame(10, 1, Vector3d.ZERO, 2.6, 3)
+            .addDamageFrame(12, 1, Vector3d.ZERO, 2.6, 3)
+            .addDamageFrame(14, 2, Vector3d.ZERO, 2.6, 3)
             .setAttackDuration(22);
 
     AttackFramedata fastJabData = new AttackFramedata()
-            .addDamageFrame(6, 1, Vec3d.ZERO, 2.6, 4)
-            .addDamageFrame(7, 1, Vec3d.ZERO, 2.6, 4)
-            .addDamageFrame(8, 1, Vec3d.ZERO, 2.6, 4)
-            .addDamageFrame(9, 1, Vec3d.ZERO, 2.6, 4)
-            .addDamageFrame(10, 2, Vec3d.ZERO, 2.6, 4)
-            .addDamageFrame(12, 2, Vec3d.ZERO, 2.6, 4)
-            .addDamageFrame(14, 2, new Vec3d(0, 0.45, 0), 2.6, 4)
+            .addDamageFrame(6, 1, Vector3d.ZERO, 2.6, 4)
+            .addDamageFrame(7, 1, Vector3d.ZERO, 2.6, 4)
+            .addDamageFrame(8, 1, Vector3d.ZERO, 2.6, 4)
+            .addDamageFrame(9, 1, Vector3d.ZERO, 2.6, 4)
+            .addDamageFrame(10, 2, Vector3d.ZERO, 2.6, 4)
+            .addDamageFrame(12, 2, Vector3d.ZERO, 2.6, 4)
+            .addDamageFrame(14, 2, new Vector3d(0, 0.45, 0), 2.6, 4)
             .setAttackDuration(16);
 
     AttackFramedata barrageData = new AttackFramedata()
-            .addDamageFrame(4, 2, Vec3d.ZERO, 2.2, 2)
-            .addDamageFrame(9, 2, Vec3d.ZERO, 2.4, 2)
-            .generateInterval(16, 38, 2, 1, Vec3d.ZERO, 2.6, 3)
+            .addDamageFrame(4, 2, Vector3d.ZERO, 2.2, 2)
+            .addDamageFrame(9, 2, Vector3d.ZERO, 2.4, 2)
+            .generateInterval(16, 38, 2, 1, Vector3d.ZERO, 2.6, 3)
             .setAttackDuration(47);
 
     AttackFramedata spinAttack = new AttackFramedata()
-            .addRadialDamageFrame(1, 2, new Vec3d(0, 0.4, 0), 4)
-            .generateRadialInterval(0, 20, 2, 1, Vec3d.ZERO, 5)
+            .addRadialDamageFrame(1, 2, new Vector3d(0, 0.4, 0), 4)
+            .generateRadialInterval(0, 20, 2, 1, Vector3d.ZERO, 5)
             .setAttackDuration(20);
 
     AttackFramedata countering = new AttackFramedata().setAttackDuration(15);
 
     AttackFramedata counterSlash = new AttackFramedata()
-            .addRadialDamageFrame(1, 2, new Vec3d(0, 0.4, 0), 5)
+            .addRadialDamageFrame(1, 2, new Vector3d(0, 0.4, 0), 5)
             .addMenacingFrame(1)
             .addMessageFrame(1, 2, null, null)
-            .generateRadialInterval(18, 30, 2, 4, Vec3d.ZERO, 5)
+            .generateRadialInterval(18, 30, 2, 4, Vector3d.ZERO, 5)
             .setAttackDuration(60);
 
     AttackFramedata shedArmor = new AttackFramedata()
-            .addRadialDamageFrame(ARMOR_OFF_FRAME, 3, Vec3d.ZERO, 8, false)
+            .addRadialDamageFrame(ARMOR_OFF_FRAME, 3, Vector3d.ZERO, 8, false)
             .addMessageFrame(54, 3, null, null)
             .setAttackDuration(55);
 

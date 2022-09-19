@@ -17,8 +17,8 @@ public class StandLevelGUI extends AbstractGui
     }
 
     public void renderLevelScreen(){
-        drawCenteredString(mc.fontRenderer, "Stand Leveling: ", 10 + mc.fontRenderer.getStringWidth("Stand Leveling: ") / 2, height - 2 * (mc.fontRenderer.FONT_HEIGHT + 4), Integer.parseInt("FFAA00", 16));
-        drawCenteredString(mc.fontRenderer, "Current Points: ", 10 + mc.fontRenderer.getStringWidth("Current Points: ") / 2, height - (mc.fontRenderer.FONT_HEIGHT + 4), Integer.parseInt("FFAA00", 16));
+        drawCenteredString(null, mc.fontRenderer, "Stand Leveling: ", 10 + mc.fontRenderer.getStringWidth("Stand Leveling: ") / 2, height - 2 * (mc.fontRenderer.FONT_HEIGHT + 4), Integer.parseInt("FFAA00", 16));
+        drawCenteredString(null, mc.fontRenderer, "Current Points: ", 10 + mc.fontRenderer.getStringWidth("Current Points: ") / 2, height - (mc.fontRenderer.FONT_HEIGHT + 4), Integer.parseInt("FFAA00", 16));
 
     }
 }

@@ -6,6 +6,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -29,6 +30,11 @@ public class EmeraldSplashEntity extends AbstractStandAttackEntity {
         Entity entity = result.getEntity();
         entity.attackEntityFrom(DamageSource.causeMobDamage(standMaster), 1.5f);
         entity.hurtResistantTime = 0;
+    }
+
+    @Override
+    protected ItemStack getArrowStack() {
+        return null;
     }
 
     @Override

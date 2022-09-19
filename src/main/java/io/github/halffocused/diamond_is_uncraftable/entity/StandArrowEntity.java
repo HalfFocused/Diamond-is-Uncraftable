@@ -48,11 +48,6 @@ public class StandArrowEntity extends AbstractArrowEntity {
                     world.playSound(null, getPosition(), SoundEvents.ITEM_SHIELD_BREAK, SoundCategory.NEUTRAL, 1, 1);
                     remove();
                 }
-                else if (props.getStandID() == Util.StandID.GOLD_EXPERIENCE) {
-                    props.setStandID(Util.StandID.GER);
-                    world.playSound(null, getPosition(), SoundEvents.ITEM_SHIELD_BREAK, SoundCategory.NEUTRAL, 1, 1);
-                    remove();
-                }
             });
         }
         super.onEntityHit(result);

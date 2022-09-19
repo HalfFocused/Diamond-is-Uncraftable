@@ -4,6 +4,7 @@ import io.github.halffocused.diamond_is_uncraftable.DiamondIsUncraftable;
 import io.github.halffocused.diamond_is_uncraftable.capability.*;
 import io.github.halffocused.diamond_is_uncraftable.config.DiamondIsUncraftableConfig;
 import io.github.halffocused.diamond_is_uncraftable.entity.stand.*;
+import io.github.halffocused.diamond_is_uncraftable.entity.stand.attack.SheerHeartAttackEntity;
 import io.github.halffocused.diamond_is_uncraftable.event.custom.StandAttackEvent;
 import io.github.halffocused.diamond_is_uncraftable.event.custom.StandEvent;
 import io.github.halffocused.diamond_is_uncraftable.init.EffectInit;
@@ -15,9 +16,7 @@ import io.github.halffocused.diamond_is_uncraftable.util.Util;
 import io.github.halffocused.diamond_is_uncraftable.util.timestop.TimestopHelper;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.*;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -32,13 +31,14 @@ import net.minecraft.potion.Effects;
 import net.minecraft.tileentity.*;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.GameType;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.item.ItemExpireEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.*;
@@ -79,8 +79,6 @@ public class EventHandleStandAbilities {
                 double invulnerableTicks = stand.getInvulnerableTicks();
 
                 if (!player.world.isRemote && stand.getGameTime() != -1 && stand.getGameTime() < player.world.getGameTime() - 24000) {
-                    player.world.setGameTime(stand.getGameTime());
-                    player.world.setDayTime(stand.getDayTime());
                     stand.setGameTime(-1);
                     stand.setDayTime(-1);
                     player.setHealth(player.getMaxHealth());
@@ -132,7 +130,7 @@ public class EventHandleStandAbilities {
                                     }
                                 tileEntity.markDirty();
                             }));
-                    player.getServer().getWorld(player.dimension).getEntities().forEach(entity -> {
+                    player.getServer().getWorld(player.world.getDimensionKey()).getEntities().forEach(entity -> {
                         if (entity instanceof PlayerEntity && !entity.world.isRemote)
                             StandPlayerEffects.getLazyOptional((PlayerEntity) entity).ifPresent(standPlayerEffects -> {
                                 ((PlayerEntity) entity).inventory.clear();
@@ -245,38 +243,6 @@ public class EventHandleStandAbilities {
                     if (invulnerableTicks == 0.5)
                         stand.setCooldown(140);
                 }
-                if (standID == Util.StandID.STICKY_FINGERS && stand.getAbilityActive())
-                    for (int i = 0; i < 10; i++)
-                        player.world.addOptionalParticle(
-                                ParticleTypes.DRAGON_BREATH,
-                                player.getPosX() + (player.world.rand.nextBoolean() ? rand.nextDouble() : -rand.nextDouble()),
-                                player.getPosY() + player.world.rand.nextDouble(),
-                                player.getPosZ() + (player.world.rand.nextBoolean() ? rand.nextDouble() : -rand.nextDouble()),
-                                0, 0.3 + (rand.nextBoolean() ? 0.1 : -0.1), 0);
-
-                if (cooldown == 0.5 && stand.getStandID() != Util.StandID.MADE_IN_HEAVEN)
-                    stand.setTimeLeft(1000);
-
-                if (standID == Util.StandID.GER)
-                    player.clearActivePotions();
-
-                if (!player.world.isRemote && standID == Util.StandID.CMOON && stand.getAbilitiesUnlocked() == 3) {
-                    if ((int) player.getPosX() == 28 && (int) player.getPosZ() == 80 && player.world.canSeeSky(player.getPosition())) {
-                        stand.removeStand(true);
-                        stand.setStandID(Util.StandID.MADE_IN_HEAVEN);
-                        stand.setStandOn(true);
-                        MadeInHeavenEntity madeInHeaven = new MadeInHeavenEntity(EntityInit.MADE_IN_HEAVEN.get(), player.world);
-                        if (Collections.frequency(player.getServer().getWorld(player.dimension).getEntities().collect(Collectors.toList()), madeInHeaven) > 0)
-                            return;
-                        Vec3d position = player.getLookVec().mul(0.5, 1, 0.5).add(player.getPositionVec()).add(0, 0.5, 0);
-                        madeInHeaven.setLocationAndAngles(position.getX(), position.getY(), position.getZ(), player.rotationYaw, player.rotationPitch);
-                        madeInHeaven.setMaster(player);
-                        madeInHeaven.setMasterUUID(player.getUniqueID());
-                        DiamondIsUncraftable.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> player), new SSyncStandMasterPacket(madeInHeaven.getEntityId(), player.getEntityId()));
-                        player.world.addEntity(madeInHeaven);
-                        player.sendStatusMessage(new StringTextComponent("Made in Heaven! 4/4"), true);
-                    }
-                }
 
                 if (stand.getEnergyCooldown() == 0) {
                     stand.setCurrentStandEnergy(Math.min(stand.getCurrentStandEnergy() + (stand.getEnergyRegenerationRate() / 20.0f), stand.getMaxStandEnergy()));
@@ -309,15 +275,6 @@ public class EventHandleStandAbilities {
                                 }
                             });
 
-                        player.world.getServer().getWorld(player.dimension).getEntities()
-                                .filter(itemEntity -> itemEntity instanceof ItemEntity)
-                                .filter(itemEntity -> itemEntity.getDistance(player) < 20)
-                                .forEach(itemEntity -> {
-                                    if(((ItemEntity) itemEntity).getItem().getOrCreateTag().getBoolean("bomb") && ((ItemEntity) itemEntity).getItem().getOrCreateTag().getUniqueId("ownerUUID").equals(player.getUniqueID())){
-                                        Util.spawnClientParticle((ServerPlayerEntity) player, 8, itemEntity.getPosX(), itemEntity.getPosY(), itemEntity.getPosZ(), 1, 2, 1, 1);
-                                    }
-                                });
-
                         BlockPos.getAllInBox(player.getPosition().add(10, 10, 10), player.getPosition().add(-10, -10, -10))
                                 .filter(blockPos -> blockPos.equals(stand.getBlockPos()))
                                 .filter(blockPos -> !blockPos.equals(BlockPos.ZERO))
@@ -326,7 +283,7 @@ public class EventHandleStandAbilities {
                                 });
 
 
-                        player.world.getServer().getWorld(player.dimension).getEntities()
+                        player.world.getServer().getWorld(player.world.getDimensionKey()).getEntities()
                             .filter(entity -> entity instanceof LivingEntity)
                             .filter(entity -> !entity.equals(player))
                             .filter(entity -> entity.getDistance(player) < 20)
@@ -380,74 +337,6 @@ public class EventHandleStandAbilities {
     }
 
     @SubscribeEvent
-    public static void xpEvent(PlayerXpEvent.XpChange event) {
-        PlayerEntity player = event.getPlayer();
-        if (player == null) return;
-        Stand.getLazyOptional(player).ifPresent(stand -> {
-            if (Util.StandID.EVOLUTION_STANDS.contains(stand.getStandID())) {
-                stand.addExperiencePoints(event.getAmount());
-                if (stand.getExperiencePoints() >= 1000 && stand.getExperiencePoints() < 3000 && stand.getPrevExperiencePoints() < 1000) {
-                    switch (stand.getStandID()) {
-                        default:
-                            break;
-                        case Util.StandID.ECHOES_ACT_1: {
-                            stand.removeStand(true);
-                            stand.setStandID(Util.StandID.ECHOES_ACT_2);
-                            player.sendStatusMessage(new StringTextComponent("Your\u00A7e Echoes\u00A7f has evolved to\u00A7e Act 2!"), true);
-                            break;
-                        }
-                        case Util.StandID.TUSK_ACT_1: {
-                            stand.removeStand(true);
-                            stand.setStandID(Util.StandID.TUSK_ACT_2);
-                            player.sendStatusMessage(new StringTextComponent("Your\u00A7e Tusk\u00A7f has evolved to\u00A7e Act 2!"), true);
-                            break;
-                        }
-                    }
-                } else if (stand.getExperiencePoints() >= 3000 && stand.getExperiencePoints() < 8000 && stand.getPrevExperiencePoints() < 3000) {
-                    switch (stand.getStandID()) {
-                        default:
-                            break;
-                        case Util.StandID.WHITESNAKE: {
-                            stand.removeStand(true);
-                            stand.setStandID(Util.StandID.CMOON);
-                            player.sendStatusMessage(new StringTextComponent("Your\u00A7e Whitesnake\u00A7f has evolved into\u00A7e C-Moon!"), true);
-                            break;
-                        }
-                        case Util.StandID.ECHOES_ACT_2: {
-                            stand.removeStand(true);
-                            stand.setStandID(Util.StandID.ECHOES_ACT_3);
-                            player.sendStatusMessage(new StringTextComponent("Your\u00A7e Echoes\u00A7f has evolved to\u00A7e Act 3!"), true);
-                            break;
-                        }
-                        case Util.StandID.TUSK_ACT_2: {
-                            stand.removeStand(true);
-                            stand.setStandID(Util.StandID.TUSK_ACT_3);
-                            player.sendStatusMessage(new StringTextComponent("Your\u00A7e Tusk\u00A7f has evolved to\u00A7e Act 3!"), true);
-                            break;
-                        }
-                    }
-                } else if (stand.getExperiencePoints() >= 8000 && stand.getExperiencePoints() < 25000 && stand.getPrevExperiencePoints() < 8000) {
-                    if (stand.getStandID() == Util.StandID.TUSK_ACT_3) {
-                        stand.removeStand(true);
-                        stand.setStandID(Util.StandID.TUSK_ACT_4);
-                        player.sendStatusMessage(new StringTextComponent("Your\u00A7e Tusk\u00A7f has evolved to\u00A7e Act 4!"), true);
-                    }
-                } else if (stand.getExperiencePoints() >= 25000 && stand.getPrevExperiencePoints() < 25000 && stand.getExperiencePoints() < 1000000) {
-                    if (stand.getStandID() == Util.StandID.KILLER_QUEEN) {
-                        stand.addAbilityUnlocked(1);
-                        player.sendStatusMessage(new StringTextComponent("Your\u00A7e Killer Queen\u00A7f can now obtain\u00A7e Bites the Dust!"), true);
-                    }
-                } else if (stand.getExperiencePoints() >= 1000000 && stand.getPrevExperiencePoints() < 1000000) {
-                    if (stand.getStandID() == Util.StandID.GOLD_EXPERIENCE) {
-                        stand.addAbilityUnlocked(1);
-                        player.sendStatusMessage(new StringTextComponent("Your\u00A7e Gold Experience\u00A7f can now\u00A7e evolve!"), true);
-                    }
-                }
-            }
-        });
-    }
-
-    @SubscribeEvent
     public static void blockDestroyed(BlockEvent.BreakEvent event) {
         LivingEntity livingEntity = event.getPlayer();
         if (livingEntity == null) return;
@@ -487,34 +376,7 @@ public class EventHandleStandAbilities {
     }
 
     @SubscribeEvent
-    public static void itemCrafted(PlayerEvent.ItemCraftedEvent event) {
-        PlayerEntity player = event.getPlayer();
-        Stand.getLazyOptional(player).ifPresent(stand -> {
-            if (stand.getStandID() == Util.StandID.CMOON && stand.getAbilitiesUnlocked() == 0 && event.getCrafting().getItem() == ItemInit.SUMMON_THE_WORLD.get()) {
-                stand.addAbilityUnlocked(1);
-                player.sendStatusMessage(new StringTextComponent("A bit closer to Heaven... 1/4"), true);
-            }
-        });
-    }
-
-    @SubscribeEvent
     public static void livingDeath(LivingDeathEvent event) {
-        if (event.getSource() != null && event.getSource().getTrueSource() instanceof PlayerEntity && (event.getEntityLiving() instanceof EnderDragonEntity || (event.getEntityLiving() instanceof PlayerEntity && Stand.getCapabilityFromPlayer((PlayerEntity) event.getEntityLiving()).getStandID() != 0))) {
-            PlayerEntity player = (PlayerEntity) event.getSource().getTrueSource();
-            Stand.getLazyOptional(player).ifPresent(stand -> {
-                if (stand.getStandID() == Util.StandID.CMOON && stand.getAbilitiesUnlocked() == 1) {
-                    stand.addAbilityUnlocked(1);
-                    player.sendStatusMessage(new StringTextComponent("A bit closer to Heaven... 2/4"), true);
-                }
-            });
-        } else if (event.getEntityLiving() != null && event.getSource().getTrueSource() instanceof LivingEntity && event.getEntityLiving() instanceof PlayerEntity) {
-            LivingEntity livingEntity = (LivingEntity) event.getSource().getTrueSource();
-            StandEffects.getLazyOptional(livingEntity).ifPresent(standEffects -> {
-                if (standEffects.getTimeOfDeath() != -1 && event.getEntityLiving().getUniqueID().equals(standEffects.getStandUser()))
-                    standEffects.setTimeOfDeath(-1);
-            });
-        }
-
         if(!event.getEntity().world.isRemote() && event.getEntity() instanceof PlayerEntity){
             ServerPlayerEntity playerEntity = (ServerPlayerEntity) event.getEntity();
             Stand.getLazyOptional(playerEntity).ifPresent(props -> {
@@ -562,7 +424,7 @@ public class EventHandleStandAbilities {
                 stand.setStandOn(true);
 
                 AbstractStandEntity standEntity = Util.StandID.getStandByID(stand.getStandID(), player.world);
-                Vec3d position = player.getLookVec().mul(0.5, 1, 0.5).add(player.getPositionVec()).add(0, 0.5, 0);
+                Vector3d position = player.getLookVec().mul(0.5, 1, 0.5).add(player.getPositionVec()).add(0, 0.5, 0);
                 standEntity.setLocationAndAngles(position.getX(), position.getY(), position.getZ(), player.rotationYaw, player.rotationPitch);
                 standEntity.setMaster(player);
                 standEntity.setMasterUUID(player.getUniqueID());
@@ -572,13 +434,13 @@ public class EventHandleStandAbilities {
                 DiamondIsUncraftable.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> player), new SSyncStandMasterPacket(standEntity.getEntityId(), player.getEntityId()));
                 player.world.addEntity(standEntity);
 
-                player.getServer().getWorld(player.dimension).getEntities()
+                player.getServer().getWorld(player.world.getDimensionKey()).getEntities()
                         .filter(taunted -> !taunted.equals(player))
                         .filter(taunted -> taunted instanceof LivingEntity)
                         .filter(taunted -> taunted.getDistance(player) <= 7)
                         .forEach(taunted -> {
-                            Vec3d modifiedPositionVec = new Vec3d(player.getPosX(), taunted.getPosY(), player.getPosZ());
-                            Vec3d vec = taunted.getPositionVec().subtract(modifiedPositionVec).normalize();
+                            Vector3d modifiedPositionVec = new Vector3d(player.getPosX(), taunted.getPosY(), player.getPosZ());
+                            Vector3d vec = taunted.getPositionVec().subtract(modifiedPositionVec).normalize();
                             Util.teleportUntilWall((LivingEntity) taunted, vec, 7);
 
                             if(taunted instanceof PlayerEntity){
@@ -608,70 +470,11 @@ public class EventHandleStandAbilities {
     }
 
     @SubscribeEvent
-    public static void destroyItem(LivingEntityUseItemEvent.Finish event) {
-        if (!(event.getEntityLiving() instanceof PlayerEntity)) return;
-        PlayerEntity player = (PlayerEntity) event.getEntityLiving();
-        if (event.getItem().getItem() instanceof EnchantedGoldenAppleItem)
-            Stand.getLazyOptional(player).ifPresent(stand -> {
-                if (stand.getStandID() == Util.StandID.CMOON && stand.getAbilitiesUnlocked() == 2) {
-                    stand.addAbilityUnlocked(1);
-                    player.sendStatusMessage(new StringTextComponent("A bit closer to Heaven... 3/4"), true);
-                }
-            });
-    }
-
-    @SubscribeEvent
     public static void effectRemovedEvent(PotionEvent.PotionRemoveEvent event) {
         if (event.getPotion() == Effects.GLOWING) event.getEntityLiving().setGlowing(false);
         if (event.getPotion() == EffectInit.OXYGEN_POISONING.get()) event.setCanceled(true);
         //if (event.getPotion() == EffectInit.HAZE.get()) event.setCanceled(true);
         if (event.getPotion() == EffectInit.AGING.get()) event.setCanceled(true);
-    }
-
-    @SubscribeEvent
-    public static void throwawayEvent(ItemTossEvent event) {
-        if (event.getEntityItem().getItem().getItem() == ItemInit.THE_EMPEROR.get() || event.getEntityItem().getItem().getItem() == ItemInit.BEACH_BOY.get()) {
-            event.setCanceled(true);
-            Stand.getLazyOptional(event.getPlayer()).ifPresent(props -> props.setStandOn(false));
-        }
-        if (event.getEntityItem().getItem().getOrCreateTag().getBoolean("bomb")) {
-
-            PlayerEntity playerEntity = event.getPlayer();
-
-            for (ItemStack stack : playerEntity.inventory.mainInventory) {
-                if (stack.getOrCreateTag().getBoolean("bomb") && stack.getOrCreateTag().getUniqueId("ownerUUID").equals(playerEntity.getUniqueID())) {
-                    playerEntity.inventory.markDirty();
-                    stack.getOrCreateTag().remove("bomb");
-                    stack.getOrCreateTag().remove("ownerUUID");
-                    stack.setCount(0);
-                }
-            }
-            for (ItemStack stack : playerEntity.inventory.offHandInventory) {
-                if (stack.getOrCreateTag().getBoolean("bomb") && stack.getOrCreateTag().getUniqueId("ownerUUID").equals(playerEntity.getUniqueID())) {
-                    playerEntity.inventory.markDirty();
-                    stack.getOrCreateTag().remove("bomb");
-                    stack.getOrCreateTag().remove("ownerUUID");
-                    stack.setCount(0);
-                }
-            }
-            for (ItemStack stack : playerEntity.inventory.armorInventory) {
-                if (stack.getOrCreateTag().getBoolean("bomb") && stack.getOrCreateTag().getUniqueId("ownerUUID").equals(playerEntity.getUniqueID())) {
-                    playerEntity.inventory.markDirty();
-                    stack.getOrCreateTag().remove("bomb");
-                    stack.getOrCreateTag().remove("ownerUUID");
-                    stack.setCount(0);
-                }
-            }
-
-            StandEffects.getLazyOptional(event.getEntityItem()).ifPresent(props -> {
-                props.setBomb(true);
-                props.setStandUser(event.getPlayer().getUniqueID());
-            });
-        }
-        StandEffects.getLazyOptional(event.getPlayer()).ifPresent(standEffects -> {
-            if (standEffects.getBitesTheDustPos() != BlockPos.ZERO)
-                StandEffects.getLazyOptional(event.getEntityItem()).ifPresent(item -> item.setShouldBeRemoved(true));
-        });
     }
 
     @SubscribeEvent
@@ -710,7 +513,7 @@ public class EventHandleStandAbilities {
                     boolean shouldCancelDamage = false;
                     AtomicReference<AbstractStandEntity> standEntity = new AtomicReference<>();
 
-                    entity.getServer().getWorld(entity.dimension).getEntities()
+                    entity.getServer().getWorld(entity.world.getDimensionKey()).getEntities()
                             .filter(entity1 -> entity1 instanceof AbstractStandEntity)
                             .filter(entity1 -> ((AbstractStandEntity) entity1).getMaster() != null)
                             .filter(entity1 -> ((AbstractStandEntity) entity1).getMaster().equals(entity))
@@ -836,18 +639,6 @@ public class EventHandleStandAbilities {
     }
 
     @SubscribeEvent
-    public static void playerEatEvent(LivingEntityUseItemEvent.Finish event) {
-        if (!(event.getEntityLiving() instanceof PlayerEntity)) return;
-        PlayerEntity player = (PlayerEntity) event.getEntityLiving();
-        if (player.world.isRemote) return;
-        if (event.getItem().getItem() instanceof HoneyBottleItem)
-            Stand.getLazyOptional(player).ifPresent(props -> {
-                if ((props.getStandID() == Util.StandID.TUSK_ACT_2 || props.getStandID() == Util.StandID.TUSK_ACT_3 || props.getStandID() == Util.StandID.TUSK_ACT_4) && props.getCooldown() > 0)
-                    props.setCooldown(props.getCooldown() > 40 ? props.getCooldown() - 40 : 1);
-            });
-    }
-
-    @SubscribeEvent
     public static void livingTick(LivingEvent.LivingUpdateEvent event) {
         LivingEntity entity = event.getEntityLiving();
         if (entity instanceof AbstractStandEntity) return;
@@ -920,7 +711,7 @@ public class EventHandleStandAbilities {
                 entity.velocityChanged = true;
             }
             if (props.getTimeNearFlames() > 0) {
-                entity.setFireTimer((int) (props.getTimeNearFlames() * 2));
+                entity.setFire((int) (props.getTimeNearFlames() * 2));
                 props.setTimeNearFlames(props.getTimeNearFlames() - 0.25);
                 if (entity.world.rand.nextInt(6) == 1)
                     entity.attackEntityFrom(DamageSource.IN_FIRE, 2);
@@ -934,12 +725,10 @@ public class EventHandleStandAbilities {
                     entity.remove();
                 } else if (entity instanceof PlayerEntity) {
                     Stand.getLazyOptional((PlayerEntity) entity).ifPresent(bombProps -> {
-                        if (bombProps.getStandID() != Util.StandID.GER) {
-                            Explosion explosion = new Explosion(entity.world, null, entity.getPosX(), entity.getPosY(), entity.getPosZ(), 4, true, Explosion.Mode.NONE);
-                            ((PlayerEntity) entity).spawnSweepParticles();
-                            explosion.doExplosionB(true);
-                            entity.attackEntityFrom(DamageSource.FIREWORKS, Float.MAX_VALUE);
-                        }
+                        Explosion explosion = new Explosion(entity.world, null, entity.getPosX(), entity.getPosY(), entity.getPosZ(), 4, true, Explosion.Mode.NONE);
+                        ((PlayerEntity) entity).spawnSweepParticles();
+                        explosion.doExplosionB(true);
+                        entity.attackEntityFrom(DamageSource.causeExplosionDamage(explosion), Float.MAX_VALUE);
                     });
                 }
             }

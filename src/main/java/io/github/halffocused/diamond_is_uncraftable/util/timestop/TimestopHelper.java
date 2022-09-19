@@ -8,19 +8,21 @@ import io.github.halffocused.diamond_is_uncraftable.config.DiamondIsUncraftableC
 import io.github.halffocused.diamond_is_uncraftable.entity.stand.AbstractStandEntity;
 import io.github.halffocused.diamond_is_uncraftable.util.Util;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.IProjectile;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.item.TNTEntity;
 import net.minecraft.entity.item.minecart.TNTMinecartEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.entity.projectile.DamagingProjectileEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.IWorld;
+import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.TickEvent;
@@ -137,17 +139,23 @@ public class TimestopHelper {
 
     @SubscribeEvent
     public static void fluidEvent(BlockEvent.FluidPlaceBlockEvent event) {
-        World world = event.getWorld().getWorld();
-        if (isTimeStopped(world, event.getPos())) {
-            event.setCanceled(true);
+        IWorld world = event.getWorld();
+
+        if(world instanceof World) {
+            if (isTimeStopped((World) world, event.getPos())) {
+                event.setCanceled(true);
+            }
         }
     }
 
     @SubscribeEvent
     public static void fluidEvent(BlockEvent.CreateFluidSourceEvent event) {
-        World world = event.getWorld().getWorld();
-        if (isTimeStopped(world, event.getPos())) {
-            event.setCanceled(true);
+        IWorldReader worldReader = event.getWorld();
+
+        if(worldReader instanceof World) {
+            if (isTimeStopped((World) worldReader, event.getPos())) {
+                event.setCanceled(true);
+            }
         }
     }
 
@@ -156,9 +164,12 @@ public class TimestopHelper {
         if (event.getEntity() == null) {
             event.setCanceled(true);
         } else {
-            World world = event.getWorld().getWorld();
-            if (isTimeStopped(world, event.getEntity())) {
-                event.setCanceled(true);
+            IWorld world = event.getWorld();
+
+            if(world instanceof World) {
+                if (isTimeStopped((World) world, event.getPos())) {
+                    event.setCanceled(true);
+                }
             }
         }
     }
@@ -167,65 +178,87 @@ public class TimestopHelper {
 
     @SubscribeEvent
     public static void blockBreakEvent(BlockEvent.BreakEvent event) {
-        World world = event.getWorld().getWorld();
-        if (isTimeStopped(world, event.getPlayer())) {
-            event.setCanceled(true);
+        IWorld world = event.getWorld();
+
+        if(world instanceof World) {
+            if (isTimeStopped((World) world, event.getPos())) {
+                event.setCanceled(true);
+            }
         }
     }
 
 
     @SubscribeEvent
     public static void pistonEvent(PistonEvent.Pre event) {
-        World world = event.getWorld().getWorld();
-        if (isTimeStopped(world, event.getPos())) {
-            event.setCanceled(true);
+        IWorld world = event.getWorld();
+
+        if(world instanceof World) {
+            if (isTimeStopped((World) world, event.getPos())) {
+                event.setCanceled(true);
+            }
         }
     }
 
     @SubscribeEvent
     public static void playerInteract1(PlayerInteractEvent.EntityInteractSpecific event) {
-        World world = event.getWorld().getWorld();
-        if (isTimeStopped(world, event.getPlayer())) {
-            event.setCanceled(true);
+        World world = event.getWorld();
+
+        if(world != null) {
+            if (isTimeStopped(world, event.getPos())) {
+                event.setCanceled(true);
+            }
         }
     }
 
     @SubscribeEvent
     public static void playerInteract2(PlayerInteractEvent.EntityInteract event) {
-        World world = event.getWorld().getWorld();
-        if (isTimeStopped(world, event.getPlayer())) {
-            event.setCanceled(true);
+        World world = event.getWorld();
+
+        if(world != null) {
+            if (isTimeStopped(world, event.getPos())) {
+                event.setCanceled(true);
+            }
         }
     }
 
     @SubscribeEvent
     public static void playerInteract3(PlayerInteractEvent.RightClickBlock event) {
-        World world = event.getWorld().getWorld();
-        if (isTimeStopped(world, event.getPlayer())) {
-            event.setCanceled(true);
+        World world = event.getWorld();
+
+        if(world != null) {
+            if (isTimeStopped(world, event.getPos())) {
+                event.setCanceled(true);
+            }
         }
     }
 
     @SubscribeEvent
     public static void playerInteract4(PlayerInteractEvent.RightClickItem event) {
-        World world = event.getWorld().getWorld();
-        if (isTimeStopped(world, event.getPlayer())) {
-            event.setCanceled(true);
+        World world = event.getWorld();
+
+        if(world != null) {
+            if (isTimeStopped(world, event.getPos())) {
+                event.setCanceled(true);
+            }
         }
     }
 
     @SubscribeEvent
     public static void playerInteract5(PlayerInteractEvent.LeftClickBlock event) {
-        World world = event.getWorld().getWorld();
-        if (isTimeStopped(world, event.getPlayer())) {
-            event.setCanceled(true);
+        World world = event.getWorld();
+
+        if(world != null) {
+            if (isTimeStopped(world, event.getPos())) {
+                event.setCanceled(true);
+            }
         }
     }
 
     @SubscribeEvent
     public static void enderTeleport(EnderTeleportEvent event) {
-        World world = event.getEntity().world;
-        if (isTimeStopped(world, event.getEntity().getPosition())) {
+        World world = event.getEntity().getEntityWorld();
+
+        if (isTimeStopped(world, event.getEntityLiving().getPosition())) {
             event.setCanceled(true);
         }
     }
@@ -266,7 +299,7 @@ public class TimestopHelper {
                         } else {
                             Timestop.getLazyOptional(entity).ifPresent(timestop -> {
                                 if (!timestop.isEmpty()) {
-                                    if ((entity instanceof IProjectile || entity instanceof ItemEntity || entity instanceof DamagingProjectileEntity) && (timestop.getMotionX() != 0 && timestop.getMotionY() != 0 && timestop.getMotionZ() != 0)) {
+                                    if ((entity instanceof AbstractArrowEntity || entity instanceof ItemEntity || entity instanceof DamagingProjectileEntity) && (timestop.getMotionX() != 0 && timestop.getMotionY() != 0 && timestop.getMotionZ() != 0)) {
                                         entity.setMotion(timestop.getMotionX(), timestop.getMotionY(), timestop.getMotionZ());
                                         entity.setNoGravity(false);
                                     } else if (timestop.getMotionX() != 0 && timestop.getMotionY() != 0 && timestop.getMotionZ() != 0) {
@@ -361,10 +394,6 @@ public class TimestopHelper {
                                                     damageSource = DamageSource.DRAGON_BREATH;
                                                     break;
                                                 }
-                                                case "fireworks": {
-                                                    damageSource = DamageSource.FIREWORKS;
-                                                    break;
-                                                }
                                                 case "dryout": {
                                                     damageSource = DamageSource.DRYOUT;
                                                     break;
@@ -440,7 +469,7 @@ public class TimestopHelper {
         if(!timestop.isEmpty()) {
             entity.setPositionAndUpdate(timestop.getPosX(), timestop.getPosY(), timestop.getPosZ());
 
-            if ((entity instanceof IProjectile) || (entity instanceof ItemEntity) || (entity instanceof DamagingProjectileEntity))
+            if ((entity instanceof AbstractArrowEntity) || (entity instanceof ItemEntity) || (entity instanceof DamagingProjectileEntity))
                 entity.setNoGravity(true);
             else {
                 entity.rotationYaw = timestop.getRotationYaw();
@@ -453,7 +482,7 @@ public class TimestopHelper {
             }
             entity.setMotion(0, 0, 0);
             entity.fallDistance = timestop.getFallDistance();
-            entity.setFireTimer(timestop.getFire());
+            entity.setFire(timestop.getFire());
 
             if (entity instanceof TNTEntity)
                 ((TNTEntity) entity).setFuse(timestop.getFuse());
