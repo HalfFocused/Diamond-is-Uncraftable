@@ -1,6 +1,6 @@
 modLoader="javafml" #mandatory
 
-loaderVersion="[31,)"
+loaderVersion="[36,)"
 
 issueTrackerURL="https://github.com/HalfFocused/Diamond-is-Uncraftable/issues"
 

@@ -472,9 +472,6 @@ public class EventHandleStandAbilities {
     @SubscribeEvent
     public static void effectRemovedEvent(PotionEvent.PotionRemoveEvent event) {
         if (event.getPotion() == Effects.GLOWING) event.getEntityLiving().setGlowing(false);
-        if (event.getPotion() == EffectInit.OXYGEN_POISONING.get()) event.setCanceled(true);
-        //if (event.getPotion() == EffectInit.HAZE.get()) event.setCanceled(true);
-        if (event.getPotion() == EffectInit.AGING.get()) event.setCanceled(true);
     }
 
     @SubscribeEvent
