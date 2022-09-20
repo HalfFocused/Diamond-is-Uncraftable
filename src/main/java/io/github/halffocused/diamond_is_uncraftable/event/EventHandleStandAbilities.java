@@ -70,6 +70,9 @@ public class EventHandleStandAbilities {
                 if(stand.getInstantTimeStopFrame() > 0){
                     stand.setInstantTimeStopFrame(stand.getInstantTimeStopFrame() - 1);
                 }
+                if(stand.getTimeSkipEffectTicker() > 0){
+                    stand.setTimeSkipEffectTicker(stand.getTimeSkipEffectTicker() - 1);
+                }
 
                 Random rand = player.world.rand;
                 int standID = stand.getStandID();

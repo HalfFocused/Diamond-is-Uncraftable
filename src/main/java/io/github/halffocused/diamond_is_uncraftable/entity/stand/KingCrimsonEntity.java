@@ -136,11 +136,11 @@ public class KingCrimsonEntity extends AbstractStandEntity implements IAnimatabl
             } else if (!timeEraseActive) {
                 if (opportunityTicks > 0) {
                     if (getMostRecentlyDamagedEntity() != null && spendEnergy(20, true)) { //
-                        stand.setTimeSkipEffectTicker(30);
+                        stand.setTimeSkipEffectTicker(15);
                         world.playSound(null, getPosition(), SoundInit.KING_CRIMSON_COMBO.get(), SoundCategory.NEUTRAL, 0.65f, 1.2f);
                         if(getMostRecentlyDamagedEntity() instanceof PlayerEntity){
                             Stand.getLazyOptional(((PlayerEntity) getMostRecentlyDamagedEntity())).ifPresent(props -> {
-                                props.setTimeSkipEffectTicker(30);
+                                props.setTimeSkipEffectTicker(15);
                             });
                         }
 
@@ -340,7 +340,7 @@ public class KingCrimsonEntity extends AbstractStandEntity implements IAnimatabl
 
 
         Stand.getLazyOptional(master).ifPresent(stand -> {
-            stand.setTimeSkipEffectTicker(30);
+            stand.setTimeSkipEffectTicker(15);
             stand.setExperiencingTimeSkip(false);
         });
 
@@ -362,7 +362,7 @@ public class KingCrimsonEntity extends AbstractStandEntity implements IAnimatabl
 
             if (predicted instanceof PlayerEntity) {
                 Stand.getLazyOptional(((PlayerEntity) predicted)).ifPresent(props -> {
-                    props.setTimeSkipEffectTicker(30);
+                    props.setTimeSkipEffectTicker(15);
                     props.setExperiencingTimeSkip(false);
                 });
             }

@@ -4,7 +4,6 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import io.github.halffocused.diamond_is_uncraftable.DiamondIsUncraftable;
 import io.github.halffocused.diamond_is_uncraftable.capability.Stand;
 import io.github.halffocused.diamond_is_uncraftable.config.DiamondIsUncraftableConfig;
-import io.github.halffocused.diamond_is_uncraftable.network.message.client.CTimeSkipEffectPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.entity.player.PlayerEntity;
@@ -34,13 +33,12 @@ public class TimeSkipEffectGUI extends AbstractGui {
                     GlStateManager.enableBlend();
                     GlStateManager.scaled(xScaleFactor, yScaleFactor, 0);
 
-                    int frame = props.getTimeSkipEffectTicker() / 2;
-                    frame = frame == 0 ? 1 : frame;
+                    int frame = props.getTimeSkipEffectTicker();
 
                     Minecraft.getInstance().getTextureManager().bindTexture(new ResourceLocation(DiamondIsUncraftable.MOD_ID, "textures/gui/timeskip/time_skip" + (16 - frame) + ".png"));
                     GuiUtils.drawTexturedModalRect(0, 0, 0, 0, 256, 154, 0);
 
-                    DiamondIsUncraftable.INSTANCE.sendToServer(new CTimeSkipEffectPacket());
+                    //DiamondIsUncraftable.INSTANCE.sendToServer(new CTimeSkipEffectPacket());
                 }
             });
         }

@@ -33,9 +33,6 @@ public class PacketHandler {
         registerPacket(SParticlePacket.class, new SParticlePacket(), NetworkDirection.PLAY_TO_CLIENT);
         registerPacket(CStandMasterMovementPacket.class, new CStandMasterMovementPacket(), NetworkDirection.PLAY_TO_SERVER);
         registerPacket(CWalkingStandTargetPacket.class, new CWalkingStandTargetPacket(), NetworkDirection.PLAY_TO_SERVER);
-
-        registerPacket(CTimeSkipEffectPacket.class, new CTimeSkipEffectPacket(), NetworkDirection.PLAY_TO_SERVER);
-
         registerPacket(CAddStandToWorldData.class, new CAddStandToWorldData(), NetworkDirection.PLAY_TO_SERVER);
 
         registerPacket(SSyncWorldTimestopCapability.class, new SSyncWorldTimestopCapability(), NetworkDirection.PLAY_TO_CLIENT);
