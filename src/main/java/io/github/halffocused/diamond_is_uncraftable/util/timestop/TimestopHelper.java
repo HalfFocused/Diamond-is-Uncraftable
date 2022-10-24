@@ -149,17 +149,6 @@ public class TimestopHelper {
     }
 
     @SubscribeEvent
-    public static void fluidEvent(BlockEvent.CreateFluidSourceEvent event) {
-        IWorldReader worldReader = event.getWorld();
-
-        if(worldReader instanceof World) {
-            if (isTimeStopped((World) worldReader, event.getPos())) {
-                event.setCanceled(true);
-            }
-        }
-    }
-
-    @SubscribeEvent
     public static void blockPlaceEvent(BlockEvent.EntityPlaceEvent event) {
         if (event.getEntity() == null) {
             event.setCanceled(true);
