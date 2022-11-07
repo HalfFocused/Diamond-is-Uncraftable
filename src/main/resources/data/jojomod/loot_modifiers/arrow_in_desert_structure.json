@@ -1,0 +1,10 @@
+{
+  "type": "diamond_is_uncraftable:desert_loot",
+  "conditions": [
+    {
+    "condition": "forge:loot_table_id",
+    "loot_table_id": "minecraft:chests/desert_pyramid"
+    }
+  ],
+  "addition": "diamond_is_uncraftable:stand_arrow"
+}

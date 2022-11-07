@@ -4,6 +4,7 @@ import io.github.halffocused.diamond_is_uncraftable.capability.*;
 import io.github.halffocused.diamond_is_uncraftable.command.impl.StandCommand;
 import io.github.halffocused.diamond_is_uncraftable.config.DiamondIsUncraftableConfig;
 import io.github.halffocused.diamond_is_uncraftable.entity.stand.AbstractStandEntity;
+import io.github.halffocused.diamond_is_uncraftable.event.loot.DesertChestModifier;
 import io.github.halffocused.diamond_is_uncraftable.init.*;
 import io.github.halffocused.diamond_is_uncraftable.network.message.PacketHandler;
 import io.github.halffocused.diamond_is_uncraftable.particle.ParticleList;
@@ -11,15 +12,20 @@ import io.github.halffocused.diamond_is_uncraftable.proxy.ClientProxy;
 import io.github.halffocused.diamond_is_uncraftable.proxy.IProxy;
 import io.github.halffocused.diamond_is_uncraftable.proxy.ServerProxy;
 import mcp.MethodsReturnNonnullByDefault;
+import net.minecraft.data.DataGenerator;
 import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.loot.conditions.ILootCondition;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.NoFeatureConfig;
 import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.data.GlobalLootModifierProvider;
+import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
+import net.minecraftforge.common.loot.LootTableIdCondition;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -27,12 +33,15 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DeferredWorkQueue;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
+import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ObjectHolder;
 import software.bernie.geckolib3.GeckoLib;
@@ -59,6 +68,10 @@ public class DiamondIsUncraftable {
     @ObjectHolder(MOD_ID + ":desert_structure")
     public static Structure<NoFeatureConfig> DESERT_STRUCTURE;
 
+    private static final DeferredRegister<GlobalLootModifierSerializer<?>> GLOBAL_LOOT_MODIFIER = DeferredRegister.create(ForgeRegistries.LOOT_MODIFIER_SERIALIZERS, MOD_ID);
+
+    private static final RegistryObject<DesertChestModifier.Serializer> DESERT_LOOT = GLOBAL_LOOT_MODIFIER.register("desert_loot", DesertChestModifier.Serializer::new);
+
     public DiamondIsUncraftable() {
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
         IEventBus forgeBus = MinecraftForge.EVENT_BUS;
@@ -73,6 +86,7 @@ public class DiamondIsUncraftable {
         EffectInit.EFFECTS.register(modBus);
         GeckoLib.initialize();
         DiamondIsUncraftableConfig.register(ModLoadingContext.get());
+        GLOBAL_LOOT_MODIFIER.register(FMLJavaModLoadingContext.get().getModEventBus());
         modBus.register(this);
     }
 
@@ -80,6 +94,19 @@ public class DiamondIsUncraftable {
     public void registerFeatures(RegistryEvent.Register<Feature<?>> args) {
         //DesertStructurePieces.DESERT_STRUCTURE_PIECE = Registry.register(Registry.STRUCTURE_PIECE, STRUCTURE, DesertStructurePieces.Piece::new);
         //args.getRegistry().register(new DesertStructure(NoFeatureConfig::deserialize).setRegistryName(STRUCTURE));
+    }
+
+    private static class DataProvider extends GlobalLootModifierProvider {
+        public DataProvider(DataGenerator gen, String modid) {
+            super(gen, modid);
+        }
+
+        @Override
+        protected void start() {
+            add("dungeon_loot", DESERT_LOOT.get(), new DesertChestModifier(
+                    new ILootCondition[]{LootTableIdCondition.builder(new ResourceLocation("arrow_in_desert_structure")).build()}, ItemInit.STAND_ARROW.get())
+            );
+        }
     }
 
     private void setup(FMLCommonSetupEvent event) {
@@ -93,6 +120,8 @@ public class DiamondIsUncraftable {
         StandPerWorldCapability.register();
         CombatCapability.register();
         WorldTimestopCapability.register();
+
+
 
 
         DeferredWorkQueue.runLater(() -> { //This is deprecated for no reason at all.
@@ -110,6 +139,15 @@ public class DiamondIsUncraftable {
         });
 
 
+    }
+
+    @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
+    public static class EventHandlers {
+        @SubscribeEvent
+        public static void runData(GatherDataEvent event)
+        {
+            event.getGenerator().addProvider(new DataProvider(event.getGenerator(), MOD_ID));
+        }
     }
 
     private void registerCommands(RegisterCommandsEvent event){

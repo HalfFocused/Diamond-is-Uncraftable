@@ -96,8 +96,6 @@ public class TimestopHelper {
             timestoppedChunks.removeTimestoppedChunk(removeChunk.getChunkPos(), removeChunk.getUUID());
         }
 
-
-        //There is surely a better way to do this
         for(int i = masterChunkX - timeStopRange; i <= masterChunkX + timeStopRange; i++){
             for(int j = masterChunkZ - timeStopRange; j <= masterChunkZ + timeStopRange; j++){
                 if(chunkWithinTimestopRange(masterChunkPos, new ChunkPos(i,j))){
@@ -109,7 +107,6 @@ public class TimestopHelper {
                 }
             }
         }
-        System.out.println(timestoppedChunks.getTimestoppedChunkPosList().size());
     }
 
     /**
@@ -162,8 +159,6 @@ public class TimestopHelper {
             }
         }
     }
-
-
 
     @SubscribeEvent
     public static void blockBreakEvent(BlockEvent.BreakEvent event) {
