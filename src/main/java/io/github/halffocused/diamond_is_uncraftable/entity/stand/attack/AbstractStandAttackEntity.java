@@ -132,7 +132,9 @@ public abstract class AbstractStandAttackEntity extends AbstractArrowEntity impl
 
     @Override
     public void tick() {
+        System.out.println("A");
         super.tick();
+        System.out.println("B");
         if (standMaster != null && shouldMatchMaster())
             setRotation(standMaster.rotationYaw, standMaster.rotationPitch);
         if (shootingStand == null && !world.isRemote)
@@ -144,7 +146,11 @@ public abstract class AbstractStandAttackEntity extends AbstractArrowEntity impl
                 inGround = true;
         if (arrowShake > 0)
             arrowShake--;
+
+        System.out.println("C");
+
         if (!inGround) {
+            System.out.println("D");
             ticksInAir++;
             if (ticksInAir > getRange() && !world.isRemote)
                 remove();
@@ -183,13 +189,17 @@ public abstract class AbstractStandAttackEntity extends AbstractArrowEntity impl
                     world.addParticle(ParticleTypes.BUBBLE, getPosX() - getMotion().getX() * 0.25, getPosY() - getMotion().getY() * 0.25, getPosZ() - getMotion().getZ() * 0.25, getMotion().getX(), getMotion().getY(), getMotion().getZ());
             if (isWet())
                 extinguish();
+
+            System.out.println("E");
             setMotion(getMotion().mul(f1, f1, f1));
             setPosition(getPosX(), getPosY(), getPosZ());
             doBlockCollisions();
+            System.out.println("F");
         }
+        System.out.println("G");
     }
 
-    private void onHit(RayTraceResult result) {
+    protected void onHit(RayTraceResult result) {
         if (result.getType() != RayTraceResult.Type.MISS)
             if (MinecraftForge.EVENT_BUS.post(new StandAttackEvent(
                     this,
@@ -198,6 +208,7 @@ public abstract class AbstractStandAttackEntity extends AbstractArrowEntity impl
                     result.getType()
             ))) return;
         if (result.getType() == RayTraceResult.Type.ENTITY) {
+            System.out.println("OnHit code runs");
             Entity entity = ((EntityRayTraceResult) result).getEntity();
             if (!entity.equals(standMaster) && !entity.equals(this)) {
                 if (isBurning() && !(entity instanceof EndermanEntity))
@@ -364,7 +375,6 @@ public abstract class AbstractStandAttackEntity extends AbstractArrowEntity impl
     }
 
     @Override
-
     public void setPierceLevel(byte level) {
     }
 

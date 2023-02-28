@@ -81,7 +81,7 @@ public class EventSyncCapability {
 
                 player.getServerWorld().getEntities()
                         .filter(entity -> entity instanceof SheerHeartAttackEntity)
-                        .filter(entity -> ((SheerHeartAttackEntity) entity).getMaster().equals(player))
+                        .filter(entity -> ((SheerHeartAttackEntity) entity).standMaster.equals(player))
                         .forEach(Entity::remove);
 
                 player.getServerWorld().getEntities()

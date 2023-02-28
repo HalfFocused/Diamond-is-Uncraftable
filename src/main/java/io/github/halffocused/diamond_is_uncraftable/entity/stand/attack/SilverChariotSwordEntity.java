@@ -43,15 +43,6 @@ public class SilverChariotSwordEntity extends AbstractStandAttackEntity {
 
     @Override
     protected void onBlockHit(BlockRayTraceResult result) {
-        if(!world.isRemote()) {
-            BlockPos pos = result.getPos();
-            BlockState state = world.getBlockState(pos);
-            if (state.getBlockHardness(world, pos) != -1 && state.getBlockHardness(world, pos) < 3) {
-                world.removeBlock(pos, false);
-                if (world.rand.nextBoolean())
-                    state.getBlock().harvestBlock(world, standMaster, pos, state, null, standMaster.getActiveItemStack());
-            }
-        }
     }
 
     @Override

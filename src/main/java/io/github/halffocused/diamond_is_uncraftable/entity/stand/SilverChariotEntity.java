@@ -129,7 +129,9 @@ public class SilverChariotEntity extends AbstractStandEntity implements IAnimata
     public void ability(){
 
         if(hasArmor()){
-            controller.setMoveActive(9);
+            if(spendEnergy(0)) {
+                controller.setMoveActive(9);
+            }
         }else{
             Stand.getLazyOptional(master).ifPresent(props -> {
                 if (props.getCooldown() <= 0 && master.hurtResistantTime == 0 && spendEnergy(40)) {

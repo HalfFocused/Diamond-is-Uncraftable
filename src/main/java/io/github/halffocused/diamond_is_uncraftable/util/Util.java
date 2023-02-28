@@ -32,6 +32,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.*;
@@ -128,9 +129,10 @@ public class Util {
 
     public static double heightAboveGround(World world, Vector3d pos){
         double distanceUntilGround = 0;
-        while(!Util.isPointAtVecSolid(world, pos.add(new Vector3d(0, -distanceUntilGround, 0))) && pos.add(new Vector3d(0, -distanceUntilGround, 0)).y - distanceUntilGround >= 0.01){
-            distanceUntilGround = distanceUntilGround + 0.01;
+        while(!Util.isPointAtVecSolid(world, pos.add(new Vector3d(0, -distanceUntilGround, 0)))){
+            distanceUntilGround -= 0.01;
         }
+        System.out.println("heightAboveGround resolved");
         return distanceUntilGround;
     }
 
@@ -831,9 +833,8 @@ public class Util {
             if (master.world != null) {
                 Util.spawnParticle(master.world, 5, position.getX(), position.getY(), position.getZ(), 1, 1, 1, 1);
                 Util.spawnParticle(master.world, 14, position.getX(), position.getY(), position.getZ(), 1, 1, 1, 20);
-                Explosion explosion = new Explosion(master.world, master, position.getX(), position.getY(), position.getZ(), 4, true, Explosion.Mode.NONE);
-                master.world.playSound(null, new BlockPos(position), SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 1, 1);
-                explosion.doExplosionB(true);
+                master.world.playSound(null, new BlockPos(position), SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 1, (1.0F + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.2F) * 0.7F);
+
 
                 if(master.getServer() != null && master.getServer().getWorld(master.world.getDimensionKey()) != null) {
                     Objects.requireNonNull(master.getServer().getWorld(master.world.getDimensionKey())).getEntities()
@@ -851,9 +852,7 @@ public class Util {
         if(!world.isRemote()) {
             Util.spawnParticle(master.world, 5, position.getX(), position.getY(), position.getZ(), 1, 1, 1, 1);
             Util.spawnParticle(master.world, 14, position.getX(), position.getY(), position.getZ(), 1, 1, 1, 20);
-            Explosion explosion = new Explosion(master.world, master, position.getX(), position.getY(), position.getZ(), 4, true, Explosion.Mode.NONE);
-            master.world.playSound(null, new BlockPos(position), SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 1, 1);
-            explosion.doExplosionB(true);
+            master.world.playSound(null, new BlockPos(position), SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 1, (1.0F + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.2F) * 0.7F);
         }
     }
 

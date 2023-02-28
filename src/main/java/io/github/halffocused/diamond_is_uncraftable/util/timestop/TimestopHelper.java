@@ -186,9 +186,10 @@ public class TimestopHelper {
     @SubscribeEvent
     public static void playerInteract1(PlayerInteractEvent.EntityInteractSpecific event) {
         World world = event.getWorld();
+        PlayerEntity player = event.getPlayer();
 
         if(world != null) {
-            if (isTimeStopped(world, event.getPos())) {
+            if (isTimeStopped(world, player)) {
                 event.setCanceled(true);
             }
         }
@@ -197,9 +198,10 @@ public class TimestopHelper {
     @SubscribeEvent
     public static void playerInteract2(PlayerInteractEvent.EntityInteract event) {
         World world = event.getWorld();
+        PlayerEntity player = event.getPlayer();
 
         if(world != null) {
-            if (isTimeStopped(world, event.getPos())) {
+            if (isTimeStopped(world, player)) {
                 event.setCanceled(true);
             }
         }
@@ -208,9 +210,10 @@ public class TimestopHelper {
     @SubscribeEvent
     public static void playerInteract3(PlayerInteractEvent.RightClickBlock event) {
         World world = event.getWorld();
+        PlayerEntity player = event.getPlayer();
 
         if(world != null) {
-            if (isTimeStopped(world, event.getPos())) {
+            if (isTimeStopped(world, player)) {
                 event.setCanceled(true);
             }
         }
@@ -219,9 +222,10 @@ public class TimestopHelper {
     @SubscribeEvent
     public static void playerInteract4(PlayerInteractEvent.RightClickItem event) {
         World world = event.getWorld();
+        PlayerEntity player = event.getPlayer();
 
         if(world != null) {
-            if (isTimeStopped(world, event.getPos())) {
+            if (isTimeStopped(world, player)) {
                 event.setCanceled(true);
             }
         }
@@ -230,9 +234,10 @@ public class TimestopHelper {
     @SubscribeEvent
     public static void playerInteract5(PlayerInteractEvent.LeftClickBlock event) {
         World world = event.getWorld();
+        PlayerEntity player = event.getPlayer();
 
         if(world != null) {
-            if (isTimeStopped(world, event.getPos())) {
+            if (isTimeStopped(world, player)) {
                 event.setCanceled(true);
             }
         }

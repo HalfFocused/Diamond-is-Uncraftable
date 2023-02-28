@@ -108,7 +108,7 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
         if(!world.isRemote() && this.shaCount == 0 && spendEnergy(50)) {
             SheerHeartAttackEntity sheerHeartAttackEntity = new SheerHeartAttackEntity(world, this, master, 100);
             sheerHeartAttackEntity.randomizePositions();
-            sheerHeartAttackEntity.shoot(getMaster(), rotationPitch, rotationYaw, 0.5f, Float.MIN_VALUE);
+            sheerHeartAttackEntity.shoot(getMaster(), rotationPitch, rotationYaw, 0.35f, Float.MIN_VALUE);
             world.addEntity(sheerHeartAttackEntity);
             shaCount++;
         }
@@ -177,8 +177,6 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
 
     @Override
     public void messageFrame(int message1, Object message2, Object message3) {
-
-        AtomicInteger processes = new AtomicInteger();
 
         if (message1 == 1) {
             Stand stand = Stand.getCapabilityFromPlayer(master);

@@ -3,17 +3,26 @@ package io.github.halffocused.diamond_is_uncraftable.entity.stand.attack;
 import io.github.halffocused.diamond_is_uncraftable.entity.stand.AbstractStandEntity;
 import io.github.halffocused.diamond_is_uncraftable.entity.stand.KillerQueenEntity;
 import io.github.halffocused.diamond_is_uncraftable.entity.stand.attack.AbstractStandAttackEntity;
+import io.github.halffocused.diamond_is_uncraftable.event.custom.StandAttackEvent;
 import io.github.halffocused.diamond_is_uncraftable.init.EntityInit;
 import io.github.halffocused.diamond_is_uncraftable.util.Util;
 import io.github.halffocused.diamond_is_uncraftable.util.timestop.TimestopHelper;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.*;
+import net.minecraft.entity.monster.EndermanEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.play.server.SChangeGameStatePacket;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.*;
 import net.minecraft.util.math.*;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.world.BlockEvent;
 
 @SuppressWarnings("ConstantConditions")
 public class SheerHeartAttackEntity extends AbstractStandAttackEntity {
@@ -35,44 +44,50 @@ public class SheerHeartAttackEntity extends AbstractStandAttackEntity {
         masterFuse = fuse;
     }
 
-
-
-    public PlayerEntity getMaster() {
-        return standMaster;
-    }
-
-
     @Override
     protected void onEntityHit(EntityRayTraceResult result) {
-        if(result.getEntity() instanceof LivingEntity) {
-            LivingEntity hitEntity = (LivingEntity) result.getEntity();
+        if(!world.isRemote() && !detonating) {
             detonating = true;
-        }else{
-            remove();
         }
     }
 
     @Override
     protected ItemStack getArrowStack() {
-        return null;
+        return ItemStack.EMPTY;
     }
 
     @Override
     protected void onBlockHit(BlockRayTraceResult result) {
+        detonating = true;
+    }
 
-        if(world.getBlockState(result.getPos()).isSolid()) {
-            stalled = true;
-        }
+    protected boolean shouldRemoveOnHitEntity(){
+        return false;
     }
 
     @Override
     public ResourceLocation getEntityTexture() {
-        return null;
+        return Util.ResourceLocations.SHEER_HEART_ATTACK;
+    }
+
+    @Override
+    protected int getRange() {
+        return 100;
+    }
+
+    @Override
+    public void remove(){
+        if(masterStand.shaCount > 0){
+            masterStand.shaCount--;
+        }
+        super.remove();
     }
 
     @Override
     public void tick() {
-        super.tick();
+        if(!detonating) {
+            super.tick();
+        }
         if(!world.isRemote()) {
             if (detonating) {
                 setNoGravity(world.getBlockState(new BlockPos(this.getPosX(), this.getPosY() + 1, this.getPosZ())).isSolid());
@@ -123,7 +138,7 @@ public class SheerHeartAttackEntity extends AbstractStandAttackEntity {
                     double y = (target.getBoundingBox().minY + (target.getBoundingBox().maxY - target.getBoundingBox().minY) / 2) - getPosY();
                     double z = (target.getBoundingBox().minZ + (target.getBoundingBox().maxZ - target.getBoundingBox().minZ) / 2) - getPosZ();
                     Vector3d vec3d = (new Vector3d(x, y, z)).normalize().add(rand.nextGaussian() * (double) 0.0075f * (double) 0, rand.nextGaussian() * (double) 0.0075f * 0, rand.nextGaussian() * (double) 0.0075F * 0).scale(1);
-                    setMotion(vec3d.scale(0.6));
+                    setMotion(vec3d.scale(0.4));
                     float f = MathHelper.sqrt(horizontalMag(vec3d));
                     rotationYaw = (float) (MathHelper.atan2(vec3d.x, vec3d.z) * (double) (180 / (float) Math.PI));
                     rotationPitch = (float) (MathHelper.atan2(vec3d.y, f) * (double) (180 / (float) Math.PI));
@@ -139,7 +154,6 @@ public class SheerHeartAttackEntity extends AbstractStandAttackEntity {
                 }
             }
             if (detonationTime == 0) {
-
                 Util.standExplosion(standMaster, world, this.getPositionVec(), 7, 3, 7.5, 35);
 
                 Util.spawnParticle(masterStand, 5, this.getPosX(), this.getPosY(), this.getPosZ(), 0.5, 0.5, 0.5, 1);
@@ -149,27 +163,5 @@ public class SheerHeartAttackEntity extends AbstractStandAttackEntity {
                 remove();
             }
         }
-    }
-
-    @Override
-    public void remove(){
-            super.remove();
-            if (masterStand != null)
-                masterStand.shaCount--;
-    }
-
-    @Override
-    public int getRange(){
-        return 1000;
-    }
-
-    @Override
-    protected boolean shouldBeDestroyedByBlocks(BlockState state) {
-        return false;
-    }
-
-    @Override
-    protected boolean shouldRemoveOnHitEntity(){
-        return false;
     }
 }
