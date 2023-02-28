@@ -42,3 +42,10 @@ description='''
     versionRange="[1.16.5]"
     ordering="NONE"
     side="BOTH"
+
+[[dependencies.diamond_is_uncraftable]]
+    modId="geckolib3"
+    mandatory=true
+    versionRange="[3.0.92,)"
+    ordering="NONE"
+    side="CLIENT"
