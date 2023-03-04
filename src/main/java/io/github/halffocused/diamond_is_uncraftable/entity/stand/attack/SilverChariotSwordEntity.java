@@ -37,11 +37,6 @@ public class SilverChariotSwordEntity extends AbstractStandAttackEntity {
     }
 
     @Override
-    protected ItemStack getArrowStack() {
-        return ItemStack.EMPTY;
-    }
-
-    @Override
     protected void onBlockHit(BlockRayTraceResult result) {
     }
 

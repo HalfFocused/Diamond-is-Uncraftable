@@ -2,67 +2,96 @@ package io.github.halffocused.diamond_is_uncraftable.entity.stand.attack;
 
 import io.github.halffocused.diamond_is_uncraftable.entity.stand.AbstractStandEntity;
 import io.github.halffocused.diamond_is_uncraftable.entity.stand.KillerQueenEntity;
-import io.github.halffocused.diamond_is_uncraftable.entity.stand.attack.AbstractStandAttackEntity;
-import io.github.halffocused.diamond_is_uncraftable.event.custom.StandAttackEvent;
 import io.github.halffocused.diamond_is_uncraftable.init.EntityInit;
 import io.github.halffocused.diamond_is_uncraftable.util.Util;
-import io.github.halffocused.diamond_is_uncraftable.util.timestop.TimestopHelper;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.material.Material;
-import net.minecraft.entity.*;
-import net.minecraft.entity.monster.EndermanEntity;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.play.server.SChangeGameStatePacket;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.*;
-import net.minecraft.util.math.*;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.EntityRayTraceResult;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.world.BlockEvent;
 
-@SuppressWarnings("ConstantConditions")
 public class SheerHeartAttackEntity extends AbstractStandAttackEntity {
-    private KillerQueenEntity masterStand;
-    private int detonationTime = 35;
-    boolean detonating = false;
+
     LivingEntity target = null;
-    boolean stalled = false;
-    int masterFuse;
+    private int firstFuse = 100;
+    private int secondFuse = 40;
 
     public SheerHeartAttackEntity(EntityType<? extends AbstractStandAttackEntity> type, World worldIn) {
         super(type, worldIn);
     }
 
-    public SheerHeartAttackEntity(World worldIn, AbstractStandEntity shooter, PlayerEntity player, int fuse) {
+    public SheerHeartAttackEntity(World worldIn, KillerQueenEntity shooter, PlayerEntity player) {
         super(EntityInit.SHEER_HEART_ATTACK.get(), worldIn, shooter, player);
-        standMaster = player;
-        masterStand = (KillerQueenEntity) shooter;
-        masterFuse = fuse;
     }
 
     @Override
     protected void onEntityHit(EntityRayTraceResult result) {
-        if(!world.isRemote() && !detonating) {
-            detonating = true;
+        if(!world.isRemote()) {
+            firstFuse = 0;
+            setVelocity(0,0,0);
+            setMotion(0,0,0);
         }
     }
 
     @Override
-    protected ItemStack getArrowStack() {
-        return ItemStack.EMPTY;
+    public void tick(){
+        super.tick();
+        if(!world.isRemote()) {
+            firstFuse--;
+            Util.spawnParticle(shootingStand, 13, this.getPosX(), this.getPosY() + 1, this.getPosZ(), 0.5, 0.5, 0.5, 1);
+            if (firstFuse <= 0) {
+                setVelocity(0, 0, 0);
+                setMotion(0, 0, 0);
+                secondFuse--;
+                Util.spawnParticle(shootingStand, 14, this.getPosX(), this.getPosY() + 1, this.getPosZ(), 0.4, 0.4, 0.4, 2);
+                if (secondFuse <= 0) {
+                    Util.standExplosion(standMaster, standMaster.world, new Vector3d(this.getPositionVec().getX(), this.getPositionVec().getY() + 1, this.getPositionVec().getZ()), 6.5, 3, 5, 23);
+                    remove();
+                }
+            }else{
+                if(target == null) {
+                    getServer().getWorld(world.getDimensionKey()).getEntities()
+                            .filter(entity -> !entity.equals(standMaster))
+                            .filter(entity -> entity instanceof LivingEntity)
+                            .filter(entity -> !(entity instanceof AbstractStandEntity))
+                            .filter(entity -> entity.getDistance(this) < 7)
+                            .filter(Entity::isAlive)
+                            .filter(entity -> ((LivingEntity) entity).canEntityBeSeen(this))
+                            .forEach(entity -> target = (LivingEntity) entity);
+                }
+
+                if(target != null) {
+                    double x = (target.getBoundingBox().minX + (target.getBoundingBox().maxX - target.getBoundingBox().minX) / 2) - getPosX();
+                    double y = (target.getBoundingBox().minY + (target.getBoundingBox().maxY - target.getBoundingBox().minY) / 2) - getPosY();
+                    double z = (target.getBoundingBox().minZ + (target.getBoundingBox().maxZ - target.getBoundingBox().minZ) / 2) - getPosZ();
+                    Vector3d vec3d = (new Vector3d(x, y, z)).normalize().add(rand.nextGaussian() * (double) 0.0075f * (double) 0, rand.nextGaussian() * (double) 0.0075f * 0, rand.nextGaussian() * (double) 0.0075F * 0).scale(1);
+                    setMotion(vec3d.scale(0.2));
+                    float f = MathHelper.sqrt(horizontalMag(vec3d));
+                    rotationYaw = (float) (MathHelper.atan2(vec3d.x, vec3d.z) * (double) (180 / (float) Math.PI));
+                    rotationPitch = (float) (MathHelper.atan2(vec3d.y, f) * (double) (180 / (float) Math.PI));
+                    prevRotationYaw = rotationYaw;
+                    prevRotationPitch = rotationPitch;
+                }
+
+            }
+        }
     }
 
     @Override
     protected void onBlockHit(BlockRayTraceResult result) {
-        detonating = true;
-    }
-
-    protected boolean shouldRemoveOnHitEntity(){
-        return false;
+        if(!world.isRemote()) {
+            firstFuse = 0;
+            setVelocity(0,0,0);
+            setMotion(0,0,0);
+        }
     }
 
     @Override
@@ -72,96 +101,23 @@ public class SheerHeartAttackEntity extends AbstractStandAttackEntity {
 
     @Override
     protected int getRange() {
-        return 100;
+        return 10000;
     }
 
     @Override
     public void remove(){
-        if(masterStand.shaCount > 0){
-            masterStand.shaCount--;
+        if(shootingStand instanceof KillerQueenEntity){
+            ((KillerQueenEntity) shootingStand).shaCount--;
         }
         super.remove();
     }
 
     @Override
-    public void tick() {
-        if(!detonating) {
-            super.tick();
-        }
-        if(!world.isRemote()) {
-            if (detonating) {
-                setNoGravity(world.getBlockState(new BlockPos(this.getPosX(), this.getPosY() + 1, this.getPosZ())).isSolid());
-                if(!TimestopHelper.isTimeStopped(world, this)) {
-                    detonationTime = Math.max(0, detonationTime - 1);
-                }
-                setMotion(0, this.getMotion().getY(), 0);
-                Util.spawnParticle(masterStand, 14, this.getPosX(), this.getPosY() + 1, this.getPosZ(), 0.4, 0.4, 0.4, 2);
+    public boolean shouldRemoveOnHitEntity(){
+        return false;
+    }
 
-                double verticalAdjustment = Util.heightAboveGround(world, this.getPositionVec());
-                int circleDots = 32;
-                int circleRadius = 7;
-                for(int i = 0; i < circleDots; i++){
-                    double radians = ((Math.PI * 2.0) / circleDots) * i;
-                    double xOffset = Math.sin(radians) * circleRadius;
-                    double zOffset = Math.cos(radians) * circleRadius;
-                    Util.spawnParticle(masterStand, 15, this.getPosX() + xOffset, this.getPosY() - verticalAdjustment, this.getPosZ() + zOffset, 0.1, 0.1, 0.1, 1);
-                }
-            }else{
-
-                Util.spawnParticle(masterStand, 13, this.getPosX(), this.getPosY() + 1, this.getPosZ(), 0.5, 0.5, 0.5, 1);
-
-                if(stalled){
-                    setNoGravity(world.getBlockState(new BlockPos(this.getPosX(), this.getPosY() + 1, this.getPosZ())).isSolid());
-                    setMotion(0, this.getMotion().getY(), 0);
-                    if(!TimestopHelper.isTimeStopped(world, this)) {
-                        masterFuse -= 2; //After hitting the ground, SHA fuses 3x as fast.
-                    }
-                }
-                if(target == null) {
-                    getServer().getWorld(world.getDimensionKey()).getEntities()
-                            .filter(entity -> !entity.equals(standMaster))
-                            .filter(entity -> entity instanceof LivingEntity)
-                            .filter(entity -> !(entity instanceof AbstractStandEntity))
-                            .filter(entity -> entity.getDistance(this) < 6)
-                            .filter(Entity::isAlive)
-                            .filter(entity -> ((LivingEntity) entity).canEntityBeSeen(this))
-                            .forEach(entity -> target = (LivingEntity) entity);
-                }
-
-                if(target != null){
-                    stalled = false;
-                }
-
-                if(target != null && !detonating) {
-                    stalled = false;
-                    double x = (target.getBoundingBox().minX + (target.getBoundingBox().maxX - target.getBoundingBox().minX) / 2) - getPosX();
-                    double y = (target.getBoundingBox().minY + (target.getBoundingBox().maxY - target.getBoundingBox().minY) / 2) - getPosY();
-                    double z = (target.getBoundingBox().minZ + (target.getBoundingBox().maxZ - target.getBoundingBox().minZ) / 2) - getPosZ();
-                    Vector3d vec3d = (new Vector3d(x, y, z)).normalize().add(rand.nextGaussian() * (double) 0.0075f * (double) 0, rand.nextGaussian() * (double) 0.0075f * 0, rand.nextGaussian() * (double) 0.0075F * 0).scale(1);
-                    setMotion(vec3d.scale(0.4));
-                    float f = MathHelper.sqrt(horizontalMag(vec3d));
-                    rotationYaw = (float) (MathHelper.atan2(vec3d.x, vec3d.z) * (double) (180 / (float) Math.PI));
-                    rotationPitch = (float) (MathHelper.atan2(vec3d.y, f) * (double) (180 / (float) Math.PI));
-                    prevRotationYaw = rotationYaw;
-                    prevRotationPitch = rotationPitch;
-                }
-
-                if(!TimestopHelper.isTimeStopped(world, this)) {
-                    masterFuse--;
-                    if (masterFuse <= 0) {
-                        detonating = true;
-                    }
-                }
-            }
-            if (detonationTime == 0) {
-                Util.standExplosion(standMaster, world, this.getPositionVec(), 7, 3, 7.5, 35);
-
-                Util.spawnParticle(masterStand, 5, this.getPosX(), this.getPosY(), this.getPosZ(), 0.5, 0.5, 0.5, 1);
-                world.playSound(null, this.getPosition(), SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.HOSTILE, 2.0f, 1.0f);
-
-                detonating = false;
-                remove();
-            }
-        }
+    protected boolean shouldBeDestroyedByBlocks(BlockState state) {
+        return false;
     }
 }

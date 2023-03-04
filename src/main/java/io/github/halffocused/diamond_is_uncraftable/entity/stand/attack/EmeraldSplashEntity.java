@@ -33,11 +33,6 @@ public class EmeraldSplashEntity extends AbstractStandAttackEntity {
     }
 
     @Override
-    protected ItemStack getArrowStack() {
-        return null;
-    }
-
-    @Override
     protected void onBlockHit(BlockRayTraceResult result) {
         BlockPos pos = result.getPos();
         BlockState state = world.getBlockState(pos);

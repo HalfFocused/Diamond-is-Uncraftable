@@ -106,9 +106,9 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
     public void toggleSheerHeartAttack() {
 
         if(!world.isRemote() && this.shaCount == 0 && spendEnergy(50)) {
-            SheerHeartAttackEntity sheerHeartAttackEntity = new SheerHeartAttackEntity(world, this, master, 100);
-            sheerHeartAttackEntity.randomizePositions();
-            sheerHeartAttackEntity.shoot(getMaster(), rotationPitch, rotationYaw, 0.35f, Float.MIN_VALUE);
+            SheerHeartAttackEntity sheerHeartAttackEntity = new SheerHeartAttackEntity(world, this, master);
+            sheerHeartAttackEntity.setPosition(master.getPosX(), master.getPosY() + master.getEyeHeight(), master.getPosZ());
+            sheerHeartAttackEntity.shoot(getMaster(), master.rotationPitch, master.rotationYaw, 0.35f, Float.MIN_VALUE);
             world.addEntity(sheerHeartAttackEntity);
             shaCount++;
         }

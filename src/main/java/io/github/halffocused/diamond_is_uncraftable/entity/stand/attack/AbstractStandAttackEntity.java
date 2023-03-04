@@ -2,6 +2,8 @@ package io.github.halffocused.diamond_is_uncraftable.entity.stand.attack;
 
 import io.github.halffocused.diamond_is_uncraftable.entity.stand.AbstractStandEntity;
 import io.github.halffocused.diamond_is_uncraftable.event.custom.StandAttackEvent;
+import io.github.halffocused.diamond_is_uncraftable.init.SoundInit;
+import io.github.halffocused.diamond_is_uncraftable.util.Util;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
@@ -10,6 +12,8 @@ import net.minecraft.entity.monster.EndermanEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
+import net.minecraft.entity.projectile.DamagingProjectileEntity;
+import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileHelper;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.IPacket;
@@ -17,6 +21,8 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SChangeGameStatePacket;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.*;
 import net.minecraft.util.math.RayTraceContext.BlockMode;
 import net.minecraft.util.math.vector.Vector3d;
@@ -33,13 +39,13 @@ import javax.annotation.Nullable;
  * This class is a mess, I can barely read it, especially the {@link #tick()} method.
  */
 @SuppressWarnings("ALL")
-public abstract class AbstractStandAttackEntity extends AbstractArrowEntity implements IEntityAdditionalSpawnData {
+public abstract class AbstractStandAttackEntity extends DamagingProjectileEntity implements IEntityAdditionalSpawnData {
     public double xTile, yTile, zTile, arrowShake, ticksInAir;
     public AbstractStandEntity shootingStand;
     public PlayerEntity standMaster;
     protected boolean inGround;
 
-    public AbstractStandAttackEntity(EntityType<? extends AbstractArrowEntity> type, World worldIn) {
+    public AbstractStandAttackEntity(EntityType<? extends DamagingProjectileEntity> type, World worldIn) {
         super(type, worldIn);
         xTile = -1;
         yTile = -1;
@@ -47,12 +53,12 @@ public abstract class AbstractStandAttackEntity extends AbstractArrowEntity impl
         setNoGravity(true);
     }
 
-    public AbstractStandAttackEntity(EntityType<? extends AbstractArrowEntity> type, World worldIn, double x, double y, double z) {
+    public AbstractStandAttackEntity(EntityType<? extends DamagingProjectileEntity> type, World worldIn, double x, double y, double z) {
         this(type, worldIn);
         setPosition(x, y, z);
     }
 
-    public AbstractStandAttackEntity(EntityType<? extends AbstractArrowEntity> type, World worldIn, AbstractStandEntity shooter, PlayerEntity player) {
+    public AbstractStandAttackEntity(EntityType<? extends DamagingProjectileEntity> type, World worldIn, AbstractStandEntity shooter, PlayerEntity player) {
         this(type, worldIn, shooter.getPosX(), shooter.getPosY() + 0.5, shooter.getPosZ());
         shootingStand = shooter;
         standMaster = player;
@@ -132,9 +138,7 @@ public abstract class AbstractStandAttackEntity extends AbstractArrowEntity impl
 
     @Override
     public void tick() {
-        System.out.println("A");
         super.tick();
-        System.out.println("B");
         if (standMaster != null && shouldMatchMaster())
             setRotation(standMaster.rotationYaw, standMaster.rotationPitch);
         if (shootingStand == null && !world.isRemote)
@@ -147,10 +151,7 @@ public abstract class AbstractStandAttackEntity extends AbstractArrowEntity impl
         if (arrowShake > 0)
             arrowShake--;
 
-        System.out.println("C");
-
         if (!inGround) {
-            System.out.println("D");
             ticksInAir++;
             if (ticksInAir > getRange() && !world.isRemote)
                 remove();
@@ -190,13 +191,10 @@ public abstract class AbstractStandAttackEntity extends AbstractArrowEntity impl
             if (isWet())
                 extinguish();
 
-            System.out.println("E");
             setMotion(getMotion().mul(f1, f1, f1));
             setPosition(getPosX(), getPosY(), getPosZ());
             doBlockCollisions();
-            System.out.println("F");
         }
-        System.out.println("G");
     }
 
     protected void onHit(RayTraceResult result) {
@@ -208,7 +206,6 @@ public abstract class AbstractStandAttackEntity extends AbstractArrowEntity impl
                     result.getType()
             ))) return;
         if (result.getType() == RayTraceResult.Type.ENTITY) {
-            System.out.println("OnHit code runs");
             Entity entity = ((EntityRayTraceResult) result).getEntity();
             if (!entity.equals(standMaster) && !entity.equals(this)) {
                 if (isBurning() && !(entity instanceof EndermanEntity))
@@ -346,39 +343,15 @@ public abstract class AbstractStandAttackEntity extends AbstractArrowEntity impl
         return true;
     }
 
-    @Override
-    public boolean getIsCritical() {
+    protected SoundEvent getHitEntitySound() {
+        return SoundInit.PUNCH_1.get();
+    }
+
+    protected boolean isFireballFiery() {
         return false;
     }
 
-    @Override
-    public boolean getNoClip() {
-        return false;
-    }
-
-    @Override
-    public void setNoClip(boolean noClipIn) {
-    }
-
-    @Override
-    public void setIsCritical(boolean critical) {
-    }
-
-    @Override
-    public boolean getShotFromCrossbow() {
-        return false;
-    }
-
-    @Override
-    public byte getPierceLevel() {
-        return 16;
-    }
-
-    @Override
-    public void setPierceLevel(byte level) {
-    }
-
-    @Override
-    public void setShotFromCrossbow(boolean fromCrossbow) {
+    protected float getMotionFactor() {
+        return 1F;
     }
 }
