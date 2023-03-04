@@ -33,7 +33,7 @@ public class AttackFramedata {
     Move assignedMove;
     LivingEntity attackedEntity = null;
     private boolean containsMenacingFrame = false;
-    private List<Object> frameList =new ArrayList<>();
+    private List<AbstractFrame> frameList =new ArrayList<>();
     int ticker = 0;
 
     public AttackFramedata addDamageFrame(int tickIn, float damageIn, Vector3d motionIn, double hitBoxRange, int pierce){
@@ -76,8 +76,8 @@ public class AttackFramedata {
 
         return this;
     }
-    public AttackFramedata addEffectFrame(int tickIn, EffectInstance effectIn, int durationIn, int amplifierIn, double hitBoxRange){
-        EffectFrame newFrame = new EffectFrame(tickIn, effectIn, durationIn, amplifierIn, hitBoxRange);
+    public AttackFramedata addEffectFrame(int tickIn, EffectInstance effectIn, double hitBoxRange){
+        EffectFrame newFrame = new EffectFrame(tickIn, effectIn, hitBoxRange);
         frameList.add(newFrame);
 
         return this;
@@ -113,50 +113,9 @@ public class AttackFramedata {
 
     public void attackTick(AbstractStandEntity standIn){
 
-
-        for (Object frame : frameList) {
-            if(frame instanceof DamageFrame){
-                if (((DamageFrame) frame).getTick() == ticker){
-                    dealAttack((DamageFrame) frame, standIn);
-                }
-            }
-
-            if(frame instanceof SetBombFrame){
-                if (((SetBombFrame) frame).getTick() == ticker){
-                    setBomb((SetBombFrame) frame, standIn);
-                }
-            }
-
-            if(frame instanceof EffectFrame){
-                if (((EffectFrame) frame).getTick() == ticker){
-                    dealEffect((EffectFrame) frame, standIn);
-                }
-            }
-
-            if(frame instanceof RadialDamageFrame){
-                if (((RadialDamageFrame) frame).getTick() == ticker){
-                    dealRadialAttack((RadialDamageFrame) frame, standIn);
-                }
-            }
-
-            if(frame instanceof StandMessageFrame){
-                if (((StandMessageFrame) frame).getTick() == ticker){
-                    standIn.messageFrame(((StandMessageFrame) frame).getMessage1(), ((StandMessageFrame) frame).getMessage2(), ((StandMessageFrame) frame).getMessage3());
-                }
-            }
-
-            if(frame instanceof MenacingFrame){
-                if (((MenacingFrame) frame).getTick() == ticker){
-
-                    if(!standIn.getMaster().world.isRemote()){
-                        ServerPlayerEntity playerEntity = (ServerPlayerEntity) standIn.getMaster();
-                        Util.giveAdvancement(playerEntity, "menacing");
-                    }
-
-                    Util.spawnParticle(standIn, 1, standIn.getPosX(), standIn.getPosY() + 1.5, standIn.getPosZ(), 2, 2, 2, 4);
-
-                    Util.spawnParticle(standIn, 1, standIn.getMaster().getPosX(), standIn.getMaster().getPosY() + 1.5, standIn.getMaster().getPosZ(), 2, 2, 2, 4);
-                }
+        for(AbstractFrame frame : frameList){
+            if(frame.getTick() == ticker){
+                frame.doThing(standIn, assignedMove);
             }
         }
 
@@ -166,129 +125,6 @@ public class AttackFramedata {
 
         ticker++;
 
-    }
-
-    private void dealAttack(DamageFrame damageFrame, AbstractStandEntity standEntityIn) {
-
-        if(standEntityIn.getServer() == null) {return;}
-        World world = standEntityIn.getServer().getWorld(standEntityIn.world.getDimensionKey());
-        if(world == null) {return;}
-
-        AxisAlignedBB hitbox = Util.getAttackHitbox(standEntityIn, damageFrame.getHitboxRange());
-
-        List<Entity> listOfEntities = world.getEntitiesWithinAABBExcludingEntity(standEntityIn, hitbox);
-
-        Random random = standEntityIn.getRNG();
-        boolean soundFlag = false;
-        int entitiesHit = 0;
-
-        for (Entity entity : listOfEntities) {
-            if (entity instanceof LivingEntity) {
-                if (entity != standEntityIn && entitiesHit < damageFrame.getPierce()) {
-                    if (!(entity.equals(standEntityIn.getMaster())) || (entity.equals(standEntityIn.getMaster()) && assignedMove.getCanDamageMaster())) {
-
-                        Util.dealStandDamage(standEntityIn, (LivingEntity) entity, damageFrame.getDamage(), damageFrame.getMotion(), damageFrame.getBlockable());
-
-                        entitiesHit++;
-                    }
-                }
-            }
-        }
-
-        if(entitiesHit > 0){
-            world.playSound(null, standEntityIn.getPosition(), Util.getHitSound(standEntityIn), SoundCategory.NEUTRAL, 0.5F, 0.6f / (random.nextFloat() * 0.3f + 1) * 2);
-        }else{
-            world.playSound(null, standEntityIn.getPosition(), SoundInit.PUNCH_MISS.get(), SoundCategory.NEUTRAL, 0.25F, 0.6f / (random.nextFloat() * 0.3f + 1) * 2);
-            standEntityIn.setMostRecentlyDamagedEntity(null);
-        }
-    }
-
-    private void dealRadialAttack(RadialDamageFrame damageFrame, AbstractStandEntity standEntityIn) {
-
-        if(standEntityIn.getServer() == null) {return;}
-        World world = standEntityIn.getServer().getWorld(standEntityIn.world.getDimensionKey());
-        if(world == null || standEntityIn.getServer().getWorld(standEntityIn.world.getDimensionKey()) == null) {return;}
-
-        standEntityIn.getServer().getWorld(standEntityIn.world.getDimensionKey()).getEntities();
-
-
-        standEntityIn.getServer().getWorld(standEntityIn.world.getDimensionKey()).getEntities()
-                .filter(entity -> !entity.equals(standEntityIn))
-                .filter(entity -> entity instanceof LivingEntity)
-                .filter(entity -> entity.getDistance(standEntityIn) < damageFrame.getHitboxRange())
-                .filter(standEntityIn::canEntityBeSeen)
-                .forEach(entity -> radialDamage((LivingEntity) entity, damageFrame, standEntityIn));
-
-        Util.spawnParticle(standEntityIn, 2, standEntityIn.getPosX(), standEntityIn.getEyeHeight() + standEntityIn.getPosY(), standEntityIn.getPosZ(), damageFrame.getHitboxRange() * 2, 1.5, damageFrame.getHitboxRange() * 2, 2);
-
-    }
-
-    private void setBomb(SetBombFrame bombFrame, AbstractStandEntity standEntityIn){
-
-        if(standEntityIn.getServer() == null) {return;}
-        World world = standEntityIn.getServer().getWorld(standEntityIn.world.getDimensionKey());
-        if(world == null || standEntityIn.getServer().getWorld(standEntityIn.world.getDimensionKey()) == null) {return;}
-
-        AxisAlignedBB hitbox = Util.getAttackHitbox(standEntityIn, bombFrame.getHitboxRange(), 0.5);
-
-        List<Entity> listOfEntities = world.getEntitiesWithinAABBExcludingEntity(standEntityIn, hitbox);
-
-        boolean blockedFlag = false;
-
-        for(Entity entity : listOfEntities){
-            if(entity instanceof LivingEntity && !(entity instanceof AbstractStandEntity) && !(entity instanceof EnderDragonEntity)){
-                if(entity != standEntityIn.getMaster() && standEntityIn instanceof KillerQueenEntity){ //There should be no way this frame gets called without the stand being Killer Queen, but I would find a way
-                    LivingEntity bombTarget = (LivingEntity) entity;
-                    if (entity instanceof PlayerEntity) {
-                        if (bombTarget.isActiveItemStackBlocking()) {
-                            entity.getHeldEquipment().forEach(itemStack -> {
-                                if (itemStack.getItem().equals(Items.SHIELD)) {
-                                    itemStack.damageItem(50, ((PlayerEntity) entity), (playerEntity) -> {
-                                        playerEntity.sendBreakAnimation(Hand.MAIN_HAND);
-                                        playerEntity.sendBreakAnimation(Hand.OFF_HAND);
-                                    });
-                                }
-                            });
-                            blockedFlag = true;
-                        }
-                    }
-
-                    Util.spawnParticle(standEntityIn, 14, entity.getPosX(), entity.getPosY() + 1, entity.getPosZ(), 1, 1, 1, 20);
-
-                    ((KillerQueenEntity) standEntityIn).removeFirstBombFromAll();
-
-                    Stand stand = Stand.getCapabilityFromPlayer(standEntityIn.getMaster());
-
-
-                    if(bombTarget.getHealth() / bombTarget.getMaxHealth() <= 0.15 || bombTarget.getHealth() <= 3){
-                        ((KillerQueenEntity) standEntityIn).bombEntity = bombTarget;
-                        stand.setBombEntityId(bombTarget.getEntityId());
-                        standEntityIn.getController().setMoveActive(8);
-                    }else{
-                        ((KillerQueenEntity) standEntityIn).bombEntity = bombTarget;
-                        stand.setBombEntityId(bombTarget.getEntityId());
-                    }
-                }
-            }
-        }
-
-    }
-
-    private void dealEffect(EffectFrame effectFrame, AbstractStandEntity standEntityIn) {
-
-        if(standEntityIn.getServer() == null) {return;}
-        World world = standEntityIn.getServer().getWorld(standEntityIn.world.getDimensionKey());
-        if(world == null || standEntityIn.getServer().getWorld(standEntityIn.world.getDimensionKey()) == null) {return;}
-
-        AxisAlignedBB hitbox = Util.getAttackHitbox(standEntityIn, effectFrame.getHitboxRange());
-
-        List<Entity> listOfEntities = world.getEntitiesWithinAABBExcludingEntity(standEntityIn, hitbox);
-
-        for (Entity parseList : listOfEntities) {
-            if (parseList instanceof LivingEntity) {
-                ((LivingEntity) parseList).addPotionEffect(effectFrame.getEffectInstance());
-            }
-        }
     }
 
     public void setActive(boolean active){
@@ -328,38 +164,6 @@ public class AttackFramedata {
         }
 
         return this;
-    }
-
-
-    private void radialDamage(LivingEntity entity, RadialDamageFrame frame, AbstractStandEntity standIn){
-        Util.spawnParticle(standIn, 2, entity.getPosX(), entity.getEyeHeight() + entity.getPosY(), entity.getPosZ(), 1.2, 1.6, 1.2, 2);
-
-        int entitiesHit = 0;
-        Random random = entity.getRNG();
-
-        if(standIn.getServer() == null) {return;}
-        World world = standIn.getServer().getWorld(standIn.world.getDimensionKey());
-        if(world == null || standIn.getServer().getWorld(standIn.world.getDimensionKey()) == null) {return;}
-
-        if (entity != standIn) {
-            if (!(entity.equals(standIn.getMaster())) || (entity.equals(standIn.getMaster()) && assignedMove.getCanDamageMaster())) {
-                    Util.dealStandDamage(standIn, entity, frame.getDamage(), frame.getMotion(), frame.getBlockable());
-                    entitiesHit++;
-            }
-        }
-
-        if (!(entity.equals(standIn.getMaster())) || (entity.equals(standIn.getMaster()) && assignedMove.getCanDamageMaster())) {
-            Util.spawnParticle(standIn, 3, entity.getPosX(), entity.getEyeHeight() + entity.getPosY(), entity.getPosZ(), 2.4, 1.4, 2.4, 1);
-            Util.spawnParticle(standIn, 4, entity.getPosX() + (random.nextFloat() - 0.5), entity.getEyeHeight() + entity.getPosY() + (random.nextFloat() - 0.5), entity.getPosZ() + (random.nextFloat() - 0.5), 0.7, 0.9, 0.7, (int) (frame.getDamage() * 8.5));
-        }
-
-
-        if(entitiesHit > 0){
-            world.playSound(null, standIn.getPosition(), Util.getHitSound(standIn), SoundCategory.NEUTRAL, 0.5F, 0.6f / (random.nextFloat() * 0.6f + 1) * 2);
-        }else{
-            world.playSound(null, standIn.getPosition(), SoundInit.PUNCH_MISS.get(), SoundCategory.NEUTRAL, 0.25F, 0.6f / (random.nextFloat() * 0.3f + 1) * 2);
-            standIn.setMostRecentlyDamagedEntity(null);
-        }
     }
 
     public int getAttackDuration(){

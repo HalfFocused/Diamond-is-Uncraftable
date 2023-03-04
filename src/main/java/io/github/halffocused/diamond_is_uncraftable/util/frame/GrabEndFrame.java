@@ -2,7 +2,7 @@ package io.github.halffocused.diamond_is_uncraftable.util.frame;
 
 public class GrabEndFrame {
 
-    int tick;
+    private int tick;
 
     public GrabEndFrame(int tickIn, double hitboxRangeIn) {
         tick = tickIn;

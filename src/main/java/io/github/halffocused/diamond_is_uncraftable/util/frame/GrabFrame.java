@@ -1,22 +1,24 @@
 package io.github.halffocused.diamond_is_uncraftable.util.frame;
 
-public class GrabFrame {
+import io.github.halffocused.diamond_is_uncraftable.entity.stand.AbstractStandEntity;
+import io.github.halffocused.diamond_is_uncraftable.util.movesets.Move;
 
-    int tick;
-    double hitboxRange;
+public class GrabFrame extends AbstractFrame{
+
+    private double hitboxRange;
 
     public GrabFrame(int tickIn, double hitboxRangeIn) {
-        tick = tickIn;
+        super(tickIn);
         hitboxRange = hitboxRangeIn;
     }
-
-    public int getTick(){
-        return tick;
-    }
-
 
     public double getHitboxRange(){
         return hitboxRange;
     }
 
+
+    @Override
+    public void doThing(AbstractStandEntity standEntity, Move assignedMove) {
+
+    }
 }

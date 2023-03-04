@@ -1,22 +1,19 @@
 package io.github.halffocused.diamond_is_uncraftable.util.frame;
 
-public class StandMessageFrame {
+import io.github.halffocused.diamond_is_uncraftable.entity.stand.AbstractStandEntity;
+import io.github.halffocused.diamond_is_uncraftable.util.movesets.Move;
 
-    int tick;
-    int message1;
-    Object message2;
-    Object message3;
+public class StandMessageFrame extends AbstractFrame{
+
+    private int message1;
+    private Object message2;
+    private Object message3;
 
     public StandMessageFrame(int tickIn, int message1In, Object message2In, Object message3In) {
-        super();
-        tick = tickIn;
+        super(tickIn);
         message1 = message1In;
         message2 = message2In;
         message3 = message3In;
-    }
-
-    public int getTick(){
-        return tick;
     }
 
     public int getMessage1(){
@@ -31,4 +28,8 @@ public class StandMessageFrame {
         return message3;
     }
 
+    @Override
+    public void doThing(AbstractStandEntity standEntity, Move assignedMove) {
+        standEntity.messageFrame(getMessage1(), getMessage2(), getMessage3());
+    }
 }
