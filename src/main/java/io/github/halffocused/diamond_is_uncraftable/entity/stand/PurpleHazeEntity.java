@@ -27,27 +27,22 @@ public class PurpleHazeEntity extends AbstractStandEntity implements IAnimatable
 
     int viralModifier = 0;
 
-    AttackFramedata normalPunchData = new AttackFramedata()
+    AttackFramedata normalPunchData = new AttackFramedata(22)
             .addDamageFrame(9, 4, Vector3d.ZERO, 2.0, 3)
-            .addDamageFrame(12, 6, Vector3d.ZERO, 2.0, 3)
-            .setAttackDuration(22);
+            .addDamageFrame(12, 6, Vector3d.ZERO, 2.0, 3);
 
-    AttackFramedata ragePunchData = new AttackFramedata()
-            .addDamageFrame(9, 10, Vector3d.ZERO, 2.0, 1, false)
-            .setAttackDuration(14);
+    AttackFramedata ragePunchData = new AttackFramedata(14)
+            .addDamageFrame(9, 10, Vector3d.ZERO, 2.0, 1, false);
 
-    AttackFramedata rageSlam = new AttackFramedata()
+    AttackFramedata rageSlam = new AttackFramedata(50)
             .addRadialDamageFrame(31, 16, new Vector3d(0, 0.7, 0), 6, false)
-            .addMessageFrame(31, 1, 0,0)
-            .setAttackDuration(50);
+            .addMessageFrame(31, 1, 0,0);
 
-    AttackFramedata barrageData = new AttackFramedata()
-            .generateInterval(45, 108, 2, 2, Vector3d.ZERO, 3, 4)
-            .setAttackDuration(109);
+    AttackFramedata barrageData = new AttackFramedata(109)
+            .generateInterval(45, 108, 2, 2, Vector3d.ZERO, 3, 4);
 
-    AttackFramedata commandGrabData = new AttackFramedata()
-            .addGrabFrame(23, 3.0)
-            .setAttackDuration(80);
+    AttackFramedata commandGrabData = new AttackFramedata(80)
+            .addGrabFrame(23, 3.0);
 
 
 

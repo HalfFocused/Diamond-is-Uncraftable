@@ -19,8 +19,8 @@ public class HoveringMoveHandler {
 
     String currentAnimation;
 
-    static int chargeAttackBuffer = 5; //how long an input has to be held for the charge attack to register.
-    int barWidth = 20; //Width of the bars that appear in the action bar. 20 was my first instinct and I have liked it the most.
+    final static int chargeAttackBuffer = 5; //how long an input has to be held for the charge attack to register.
+    final int barWidth = 20; //Width of the bars that appear in the action bar. 20 was my first instinct and I have liked it the most.
 
     boolean standHasAttackPosition;
 
@@ -52,7 +52,7 @@ public class HoveringMoveHandler {
 
     ArrayList<Move> moveList = new ArrayList<>();
 
-    private AbstractStandEntity stand;
+    private final AbstractStandEntity stand;
 
 
     public HoveringMoveHandler(AbstractStandEntity standIn){
@@ -267,6 +267,7 @@ public class HoveringMoveHandler {
             Stand.getLazyOptional(stand.getMaster()).ifPresent(props -> {
                 props.setCharging(attackKey);
                 boolean allowChargeAttack = !(stand instanceof IOverrideChargeAttack) || (((IOverrideChargeAttack) stand).shouldAllowChargeAttack() || chargeTicks != 0);
+
                 if (attackKey && (chargeTicks < chargeAttackBuffer || allowChargeAttack)) {
                         prevChargeTicks = chargeTicks;
                         chargeTicks++;

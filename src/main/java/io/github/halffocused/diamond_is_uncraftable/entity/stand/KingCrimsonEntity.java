@@ -42,51 +42,42 @@ public class KingCrimsonEntity extends AbstractStandEntity implements IAnimatabl
     boolean clipToPosition = false;
     LivingEntity executionTarget = null;
 
-    AttackFramedata mainPunchData = new AttackFramedata()
+    AttackFramedata mainPunchData = new AttackFramedata(25)
             .addDamageFrame(12, 10, Vector3d.ZERO, 2, 1)
-            .addMessageFrame(15, 1, 9, null)
-            .setAttackDuration(25);
+            .addMessageFrame(15, 1, 9, null);
 
-    AttackFramedata barrageData = new AttackFramedata()
+    AttackFramedata barrageData = new AttackFramedata(53)
             .generateInterval(8, 45, 3, 2, Vector3d.ZERO, 2.7, 4)
-            .addMessageFrame(43, 1, 9, null)
-            .setAttackDuration(53);
+            .addMessageFrame(43, 1, 9, null);
 
-    AttackFramedata lightChargeAttack = new AttackFramedata()
+    AttackFramedata lightChargeAttack = new AttackFramedata(22)
             .addDamageFrame(8, 16, Vector3d.ZERO, 2.0, 1)
-            .addMessageFrame(12, 1, 9, null)
-            .setAttackDuration(22);
+            .addMessageFrame(12, 1, 9, null);
 
-    AttackFramedata mediumChargeAttack = new AttackFramedata()
+    AttackFramedata mediumChargeAttack = new AttackFramedata(24)
             .addDamageFrame(10, 21, Vector3d.ZERO, 2.0, 1)
-            .addMessageFrame(14, 1, 9, null)
-            .setAttackDuration(24);
+            .addMessageFrame(14, 1, 9, null);
 
-    AttackFramedata chopAttack = new AttackFramedata()
-            .addDamageFrame(11, 4, Vector3d.ZERO, 2.0, 3, false)
-            .setAttackDuration(25);
+    AttackFramedata chopAttack = new AttackFramedata(25)
+            .addDamageFrame(11, 4, Vector3d.ZERO, 2.0, 3, false);
 
-    AttackFramedata epitaphChopAttack = new AttackFramedata()
-            .addDamageFrame(11, 17, Vector3d.ZERO, 2.0, 3)
-            .setAttackDuration(30);
+    AttackFramedata epitaphChopAttack = new AttackFramedata(30)
+            .addDamageFrame(11, 17, Vector3d.ZERO, 2.0, 3);
 
-    AttackFramedata timeErase = new AttackFramedata()
-            .addMessageFrame(30, 4, null, null)
-            .setAttackDuration(32);
+    AttackFramedata timeErase = new AttackFramedata(32)
+            .addMessageFrame(30, 4, null, null);
 
-    AttackFramedata execution = new AttackFramedata()
+    AttackFramedata execution = new AttackFramedata(95)
             .addDamageFrame(10, 1, Vector3d.ZERO, 4, 1)
             .addMessageFrame(14, 2, null, null)
             .addMenacingFrame(15)
             .addMessageFrame(88, 3, null, null)
-            .addMenacingFrame(88)
-            .setAttackDuration(95);
+            .addMenacingFrame(88);
 
-    AttackFramedata recovery = new AttackFramedata().setAttackDuration(90);
+    AttackFramedata recovery = new AttackFramedata(90);
 
-    AttackFramedata epitaph = new AttackFramedata()
-            .addMessageFrame(11, 5, null, null)
-            .setAttackDuration(30);
+    AttackFramedata epitaph = new AttackFramedata(30)
+            .addMessageFrame(11, 5, null, null);
 
     ChargeAttackFormat chargeAttackFormat = new ChargeAttackFormat("charging")
             .addChargeNode(60, 3, true)

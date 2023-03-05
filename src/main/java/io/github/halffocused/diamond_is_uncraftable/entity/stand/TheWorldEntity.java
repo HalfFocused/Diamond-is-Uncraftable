@@ -55,23 +55,19 @@ public class TheWorldEntity extends AbstractStandEntity implements IMomentum, IO
     ChargeAttackFormat chargeAttack = new ChargeAttackFormat("taunt")
             .addChargeNode(11, 3, true);
 
-    AttackFramedata punchData = new AttackFramedata()
+    AttackFramedata punchData = new AttackFramedata(19)
             .addDamageFrame(7, 3, Vector3d.ZERO, 2.1, 2)
-            .addDamageFrame(9, 4, Vector3d.ZERO, 2.2, 2)
-            .setAttackDuration(19);
+            .addDamageFrame(9, 4, Vector3d.ZERO, 2.2, 2);
 
-    AttackFramedata tauntTp = new AttackFramedata()
-            .addMessageFrame(1, 1,null, null)
-            .setAttackDuration(1);
+    AttackFramedata tauntTp = new AttackFramedata(1)
+            .addMessageFrame(1, 1,null, null);
 
-    AttackFramedata barrageData = new AttackFramedata()
-                        .generateInterval(10, 125, 2, 2, Vector3d.ZERO, 1.7, 6)
-                        .setAttackDuration(125);
+    AttackFramedata barrageData = new AttackFramedata(125)
+                        .generateInterval(10, 125, 2, 2, Vector3d.ZERO, 1.7, 6);
 
-    AttackFramedata timestop = new AttackFramedata()
+    AttackFramedata timestop = new AttackFramedata(62)
             .addMessageFrame(45, 1, null, null)
-            .addMenacingFrame(45)
-            .setAttackDuration(62);
+            .addMenacingFrame(45);
 
     HoveringMoveHandler controller = new HoveringMoveHandler(this)
             .addMove("Jab",1, punchData, "jab", 1.6)

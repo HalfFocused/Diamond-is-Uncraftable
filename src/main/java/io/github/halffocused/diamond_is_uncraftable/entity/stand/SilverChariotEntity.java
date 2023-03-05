@@ -47,62 +47,53 @@ public class SilverChariotEntity extends AbstractStandEntity implements IAnimata
 
     final int ARMOR_OFF_FRAME = 40;
 
-    AttackFramedata jabData = new AttackFramedata()
+    AttackFramedata jabData = new AttackFramedata(22)
             .addDamageFrame(6, 1, Vector3d.ZERO, 2.6, 3)
             .addDamageFrame(8, 1, Vector3d.ZERO, 2.6, 3)
             .addDamageFrame(10, 1, Vector3d.ZERO, 2.6, 3)
             .addDamageFrame(12, 1, Vector3d.ZERO, 2.6, 3)
-            .addDamageFrame(14, 2, Vector3d.ZERO, 2.6, 3)
-            .setAttackDuration(22);
+            .addDamageFrame(14, 2, Vector3d.ZERO, 2.6, 3);
 
-    AttackFramedata fastJabData = new AttackFramedata()
+    AttackFramedata fastJabData = new AttackFramedata(16)
             .addDamageFrame(6, 1, Vector3d.ZERO, 2.6, 4)
             .addDamageFrame(7, 1, Vector3d.ZERO, 2.6, 4)
             .addDamageFrame(8, 1, Vector3d.ZERO, 2.6, 4)
             .addDamageFrame(9, 1, Vector3d.ZERO, 2.6, 4)
             .addDamageFrame(10, 2, Vector3d.ZERO, 2.6, 4)
             .addDamageFrame(12, 2, Vector3d.ZERO, 2.6, 4)
-            .addDamageFrame(14, 2, new Vector3d(0, 0.45, 0), 2.6, 4)
-            .setAttackDuration(16);
+            .addDamageFrame(14, 2, new Vector3d(0, 0.45, 0), 2.6, 4);
 
-    AttackFramedata barrageData = new AttackFramedata()
+    AttackFramedata barrageData = new AttackFramedata(47)
             .addDamageFrame(4, 2, Vector3d.ZERO, 2.2, 2)
             .addDamageFrame(9, 2, Vector3d.ZERO, 2.4, 2)
-            .generateInterval(16, 38, 2, 1, Vector3d.ZERO, 2.6, 3)
-            .setAttackDuration(47);
+            .generateInterval(16, 38, 2, 1, Vector3d.ZERO, 2.6, 3);
 
-    AttackFramedata spinAttack = new AttackFramedata()
+    AttackFramedata spinAttack = new AttackFramedata(20)
             .addRadialDamageFrame(1, 2, new Vector3d(0, 0.4, 0), 4)
-            .generateRadialInterval(0, 20, 2, 1, Vector3d.ZERO, 5)
-            .setAttackDuration(20);
+            .generateRadialInterval(0, 20, 2, 1, Vector3d.ZERO, 5);
 
-    AttackFramedata countering = new AttackFramedata().setAttackDuration(15);
+    AttackFramedata countering = new AttackFramedata(15);
 
-    AttackFramedata counterSlash = new AttackFramedata()
+    AttackFramedata counterSlash = new AttackFramedata(60)
             .addRadialDamageFrame(1, 2, new Vector3d(0, 0.4, 0), 5)
             .addMenacingFrame(1)
             .addMessageFrame(1, 2, null, null)
-            .generateRadialInterval(18, 30, 2, 4, Vector3d.ZERO, 5)
-            .setAttackDuration(60);
+            .generateRadialInterval(18, 30, 2, 4, Vector3d.ZERO, 5);
 
-    AttackFramedata shedArmor = new AttackFramedata()
+    AttackFramedata shedArmor = new AttackFramedata(55)
             .addRadialDamageFrame(ARMOR_OFF_FRAME, 3, Vector3d.ZERO, 8, false)
-            .addMessageFrame(54, 3, null, null)
-            .setAttackDuration(55);
+            .addMessageFrame(54, 3, null, null);
 
-    AttackFramedata armorOn = new AttackFramedata()
-            .setAttackDuration(45);
+    AttackFramedata armorOn = new AttackFramedata(45);
 
-    AttackFramedata aimSword = new AttackFramedata()
+    AttackFramedata aimSword = new AttackFramedata(30)
             .addMessageFrame(1,4, null, null)
             .addMessageFrame(10,4, null, null)
             .addMessageFrame(20,4, null, null)
-            .addMessageFrame(30, 0, null, null)
-            .setAttackDuration(30);
+            .addMessageFrame(30, 0, null, null);
 
-    AttackFramedata fireSword = new AttackFramedata()
-            .addMessageFrame(3, 1, null, null)
-            .setAttackDuration(4);
+    AttackFramedata fireSword = new AttackFramedata(4)
+            .addMessageFrame(3, 1, null, null);
 
     HoveringMoveHandler controller = new HoveringMoveHandler(this)
             .addMove("Rapid Swings", 1, jabData, "jabs", 2.0)

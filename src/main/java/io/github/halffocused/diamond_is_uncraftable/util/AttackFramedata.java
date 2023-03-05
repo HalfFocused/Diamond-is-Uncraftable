@@ -36,6 +36,10 @@ public class AttackFramedata {
     private List<AbstractFrame> frameList =new ArrayList<>();
     int ticker = 0;
 
+    public AttackFramedata(int attackDurationIn){
+        attackDuration = attackDurationIn;
+    }
+
     public AttackFramedata addDamageFrame(int tickIn, float damageIn, Vector3d motionIn, double hitBoxRange, int pierce){
         DamageFrame newFrame = new DamageFrame(tickIn, damageIn, motionIn, hitBoxRange, pierce, true);
         frameList.add(newFrame);
@@ -133,11 +137,6 @@ public class AttackFramedata {
 
     public boolean isActive(){
         return isActive;
-    }
-
-    public AttackFramedata setAttackDuration(int ticks){
-        attackDuration = ticks;
-        return this;
     }
 
     public AttackFramedata generateInterval(int intervalStart, int intervalEnd, int intervalSpacing, float damage, Vector3d motionIn, double hitBoxRange, int pierce){

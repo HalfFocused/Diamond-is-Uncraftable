@@ -40,39 +40,31 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
     public static final double minExplosionDamage = 5;
     public static final double explosionRange = 7;
 
-    AttackFramedata leftPunchData = new AttackFramedata()
-            .addDamageFrame(13, 8, Vector3d.ZERO, 2.3, 2)
-            .setAttackDuration(20);
+    AttackFramedata leftPunchData = new AttackFramedata(20)
+            .addDamageFrame(13, 8, Vector3d.ZERO, 2.3, 2);
 
-    AttackFramedata rightPunchData = new AttackFramedata()
-            .addDamageFrame(13, 8, Vector3d.ZERO, 2.3, 2)
-            .setAttackDuration(20);
+    AttackFramedata rightPunchData = new AttackFramedata(20)
+            .addDamageFrame(13, 8, Vector3d.ZERO, 2.3, 2);
 
-    AttackFramedata barrageData = new AttackFramedata()
-            .generateInterval(6, 30, 3, 2, Vector3d.ZERO, 2.4, 4)
-            .setAttackDuration(32);
+    AttackFramedata barrageData = new AttackFramedata(32)
+            .generateInterval(6, 30, 3, 2, Vector3d.ZERO, 2.4, 4);
 
-    AttackFramedata bombData = new AttackFramedata()
-            .addBombFrame(8, 3.2)
-            .setAttackDuration(14);
+    AttackFramedata bombData = new AttackFramedata(14)
+            .addBombFrame(8, 3.2);
 
-    AttackFramedata detonateData = new AttackFramedata()
+    AttackFramedata detonateData = new AttackFramedata(43)
             .addMessageFrame(39, 1, null, null)
-            .addMessageFrame(32, 5, null, null)
-            .setAttackDuration(43);
+            .addMessageFrame(32, 5, null, null);
 
-    AttackFramedata blockBombData = new AttackFramedata()
-            .addMessageFrame(20, 2, null, null)
-            .setAttackDuration(54);
+    AttackFramedata blockBombData = new AttackFramedata(54)
+            .addMessageFrame(20, 2, null, null);
 
-    AttackFramedata itemBombData = new AttackFramedata()
-            .addMessageFrame(12, 3, null, null)
-            .setAttackDuration(45);
+    AttackFramedata itemBombData = new AttackFramedata(45)
+            .addMessageFrame(12, 3, null, null);
 
-    AttackFramedata executeData = new AttackFramedata()
+    AttackFramedata executeData = new AttackFramedata(50)
             .addMessageFrame(42, 4, null, null)
-            .addMenacingFrame(42)
-            .setAttackDuration(50);
+            .addMenacingFrame(42);
 
     ChargeAttackFormat chargeAttackFormat = new ChargeAttackFormat("firstbombcharge", 54, "holding")
             .addChargeNode(54, 4, true);
