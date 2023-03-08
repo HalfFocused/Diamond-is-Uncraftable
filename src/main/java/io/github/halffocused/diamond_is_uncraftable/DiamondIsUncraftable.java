@@ -132,10 +132,10 @@ public class DiamondIsUncraftable {
             */
 
             GlobalEntityTypeAttributes.put(EntityInit.KILLER_QUEEN.get(), AbstractStandEntity.setCustomAttributes().create());
+            GlobalEntityTypeAttributes.put(EntityInit.KILLER_QUEEN_BTD.get(), AbstractStandEntity.setCustomAttributes().create());
             GlobalEntityTypeAttributes.put(EntityInit.SILVER_CHARIOT.get(), AbstractStandEntity.setCustomAttributes().create());
             GlobalEntityTypeAttributes.put(EntityInit.THE_WORLD.get(), AbstractStandEntity.setCustomAttributes().create());
             GlobalEntityTypeAttributes.put(EntityInit.KING_CRIMSON.get(), AbstractStandEntity.setCustomAttributes().create());
-
         });
 
 

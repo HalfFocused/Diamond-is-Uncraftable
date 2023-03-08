@@ -71,7 +71,7 @@ public abstract class AbstractStandEntity extends MobEntity implements IEntityAd
 
     public HoveringMoveHandler controller;
 
-    private AnimationFactory factory = new AnimationFactory(this);
+    private final AnimationFactory factory = new AnimationFactory(this);
 
 
     public String currentAnimation;
@@ -597,5 +597,9 @@ public abstract class AbstractStandEntity extends MobEntity implements IEntityAd
      */
     public float getDamageSharingPercentage(){
         return 0.5f;
+    }
+
+    public int attackParticle(){
+        return 3;
     }
 }

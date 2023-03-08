@@ -527,7 +527,7 @@ public class Util {
 
             stand.setMostRecentlyDamagedEntity(entity);
 
-            Util.spawnParticle(stand, 3, entity.getPosX(), entity.getEyeHeight() + entity.getPosY(), entity.getPosZ(), 2.4, 1.4, 2.4, 1);
+            Util.spawnParticle(stand, stand.attackParticle(), entity.getPosX(), entity.getEyeHeight() + entity.getPosY(), entity.getPosZ(), 2.4, 1.4, 2.4, 1);
             Util.spawnParticle(stand, 4, entity.getPosX() + (random.nextFloat() - 0.5), entity.getEyeHeight() + entity.getPosY() + (random.nextFloat() - 0.5), entity.getPosZ() + (random.nextFloat() - 0.5), 0.7, 0.9, 0.7, (int) (damage * 8.5));
 
             Stand.getLazyOptional(stand.getMaster()).ifPresent(props -> {
@@ -546,7 +546,6 @@ public class Util {
     }
 
     public static void dealUnsummonedStandDamage(PlayerEntity standMaster, LivingEntity entity, float damage, Vector3d motion, boolean blockable){
-
         LivingEntity attackedEntity;
 
         Random random = standMaster.getRNG();
@@ -673,9 +672,12 @@ public class Util {
 
         public static final int KILLER_QUEEN = 2;
 
+        public static final int KILLER_QUEEN_BTD = 102;
+
         public static final int SILVER_CHARIOT = 3;
 
         public static final int THE_WORLD = 4;
+
 
         public static final int STICKY_FINGERS = -1;
 
@@ -695,7 +697,7 @@ public class Util {
             THE_WORLD
         );
 
-        public static final List<Integer> STANDS_WITH_ACTS = Arrays.asList( //What stands should render the momentum meter on the HUD
+        public static final List<Integer> STANDS_WITH_ACTS = Arrays.asList(
 
         );
 
@@ -717,6 +719,8 @@ public class Util {
                     return new KingCrimsonEntity(EntityInit.KING_CRIMSON.get(), world);
                 case KILLER_QUEEN:
                     return new KillerQueenEntity(EntityInit.KILLER_QUEEN.get(), world);
+                case KILLER_QUEEN_BTD:
+                    return new KillerQueenBitesTheDustEntity(EntityInit.KILLER_QUEEN_BTD.get(), world);
                 case THE_WORLD:
                     return new TheWorldEntity(EntityInit.THE_WORLD.get(), world);
                 case SILVER_CHARIOT:

@@ -1,4 +1,4 @@
-package io.github.halffocused.diamond_is_uncraftable.util.timestop;
+package io.github.halffocused.diamond_is_uncraftable.util.globalabilities;
 
 import io.github.halffocused.diamond_is_uncraftable.DiamondIsUncraftable;
 import io.github.halffocused.diamond_is_uncraftable.capability.Stand;

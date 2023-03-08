@@ -26,6 +26,12 @@ public class EntityInit {
                             .disableSummoning().size(1.2f, 2.7f)
                             .build(new ResourceLocation(DiamondIsUncraftable.MOD_ID, "killer_queen").toString()));
 
+    public static final RegistryObject<EntityType<KillerQueenBitesTheDustEntity>> KILLER_QUEEN_BTD = ENTITY_TYPES
+            .register("killer_queen_btd",
+                    () -> EntityType.Builder.create(KillerQueenBitesTheDustEntity::new, EntityClassification.CREATURE)
+                            .disableSummoning().size(1.2f, 2.7f)
+                            .build(new ResourceLocation(DiamondIsUncraftable.MOD_ID, "killer_queen_btd").toString()));
+
     public static final RegistryObject<EntityType<PurpleHazeEntity>> PURPLE_HAZE = ENTITY_TYPES
             .register("purple_haze",
                     () -> EntityType.Builder.create(PurpleHazeEntity::new, EntityClassification.CREATURE)

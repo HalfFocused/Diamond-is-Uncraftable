@@ -26,6 +26,7 @@ public class ClientEventBusSubscriber {
         RenderingRegistry.registerEntityRenderingHandler(EntityInit.KING_CRIMSON.get(), KingCrimsonRenderer::new);
 
         RenderingRegistry.registerEntityRenderingHandler(EntityInit.KILLER_QUEEN.get(), KillerQueenRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityInit.KILLER_QUEEN_BTD.get(), KillerQueenBitesTheDustRenderer::new);
 
         RenderingRegistry.registerEntityRenderingHandler(EntityInit.SHEER_HEART_ATTACK.get(), SheerHeartAttackRenderer::new);
 

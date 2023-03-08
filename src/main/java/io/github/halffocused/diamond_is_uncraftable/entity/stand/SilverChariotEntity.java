@@ -181,9 +181,6 @@ public class SilverChariotEntity extends AbstractStandEntity implements IAnimata
         this.hasArmor = hasArmor;
     }
 
-    /**
-     * Removes the speed {@link net.minecraft.potion.Effect} from the Stand's master when it's unsummoned.
-     */
     @Override
     public void onRemovedFromWorld() {
         super.onRemovedFromWorld();
@@ -385,5 +382,10 @@ public class SilverChariotEntity extends AbstractStandEntity implements IAnimata
     @Override
     public float getDamageSharingPercentage(){
         return hasArmor() ? 0.35f : 1.25f;
+    }
+
+    @Override
+    public int attackParticle(){
+        return 2;
     }
 }

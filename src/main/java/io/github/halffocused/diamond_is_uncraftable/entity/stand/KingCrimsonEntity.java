@@ -281,6 +281,7 @@ public class KingCrimsonEntity extends AbstractStandEntity implements IAnimatabl
             }else{
                 executionTarget = getMostRecentlyDamagedEntity();
                 clipToPosition = true;
+                executionTarget.setNoGravity(true);
             }
         }
 
@@ -288,6 +289,7 @@ public class KingCrimsonEntity extends AbstractStandEntity implements IAnimatabl
             if(executionTarget != null){
                 Util.dealStandDamage(this, executionTarget, 50f, Vector3d.ZERO, false);
                 clipToPosition = false;
+                executionTarget.setNoGravity(false);
             }
         }
 
@@ -302,6 +304,20 @@ public class KingCrimsonEntity extends AbstractStandEntity implements IAnimatabl
             });
 
             master.addPotionEffect(new EffectInstance(Effects.SLOWNESS, 30, 1));
+        }
+    }
+
+
+    @Override
+    public void onRemovedFromWorld() {
+        super.onRemovedFromWorld();
+
+        if(timeEraseActive){
+            endTimeSkip();
+        }
+        if(executionTarget != null){
+            executionTarget.setNoGravity(false);
+            executionTarget = null;
         }
     }
 

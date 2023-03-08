@@ -30,12 +30,12 @@ public class StandCommand {
                         .then(Commands.argument("target", EntityArgument.player())
                                 .executes(context -> removePlayerStand(context.getSource(), EntityArgument.getPlayer(context, "target")))
                         ))
-                /*
+
                 .then(Commands.literal("evolve")
                         .then(Commands.argument("target", EntityArgument.player())
                                 .executes(context -> evolvePlayerStand(context.getSource(), EntityArgument.getPlayer(context, "target")))
                         ))
-                 */
+
         );
     }
 
@@ -74,7 +74,7 @@ public class StandCommand {
                 break;
             }
             case Util.StandID.KILLER_QUEEN: {
-                stand.addAbilityUnlocked(2);
+                standID = Util.StandID.KILLER_QUEEN_BTD;
                 break;
             }
         }
