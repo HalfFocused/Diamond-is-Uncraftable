@@ -78,6 +78,8 @@ public class EventClientTick {
     public static void renderGameOverlay(RenderGameOverlayEvent.Post event) {
         if (event.getType() != RenderGameOverlayEvent.ElementType.ALL) return;
         new TimeSkipEffectGUI().renderEffect();
+        new BitesTheDustGUI().render(event.getMatrixStack());
+        new BitesTheDustEffectGUI().renderEffect();
     }
 
     @SubscribeEvent //This one still bugs me to this day, can't think of a way to automate it.
@@ -92,6 +94,10 @@ public class EventClientTick {
                 }
                 case Util.StandID.KILLER_QUEEN: {
                     standName = "Killer Queen";
+                    break;
+                }
+                case Util.StandID.KILLER_QUEEN_BTD: {
+                    standName = "Killer Queen: Bites The Dust";
                     break;
                 }
                 case Util.StandID.THE_WORLD: {

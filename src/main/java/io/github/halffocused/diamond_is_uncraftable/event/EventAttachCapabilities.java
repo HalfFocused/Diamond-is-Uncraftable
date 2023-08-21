@@ -22,6 +22,7 @@ public class EventAttachCapabilities {
     public static final ResourceLocation STAND_TILE_ENTITY_EFFECTS_CAPABILITY = new ResourceLocation(DiamondIsUncraftable.MOD_ID, "stand_tile_entity_effects_capability");
     public static final ResourceLocation STAND_PER_WORLD_CAPABILITY = new ResourceLocation(DiamondIsUncraftable.MOD_ID, "stand_per_world_capability");
     public static final ResourceLocation WORLD_TIMESTOP_CAPABILITY = new ResourceLocation(DiamondIsUncraftable.MOD_ID, "world_timestop_capability");
+    public static final ResourceLocation BITES_THE_DUST_CAPABILITY = new ResourceLocation(DiamondIsUncraftable.MOD_ID, "bites_the_dust_capability");
     public static final ResourceLocation COMBAT_CAPABILITY = new ResourceLocation(DiamondIsUncraftable.MOD_ID, "combat_capability");
 
 
@@ -32,6 +33,7 @@ public class EventAttachCapabilities {
             event.addCapability(STAND_PLAYER_EFFECTS_CAPABILITY, new StandPlayerEffects((PlayerEntity) event.getObject()));
         }
         event.addCapability(TIMESTOP_CAPABILITY, new Timestop(event.getObject()));
+        event.addCapability(BITES_THE_DUST_CAPABILITY, new BitesTheDustCapability(event.getObject()));
         event.addCapability(STAND_EFFECTS_CAPABILITY, new StandEffects(event.getObject()));
         event.addCapability(COMBAT_CAPABILITY, new CombatCapability(event.getObject()));
     }

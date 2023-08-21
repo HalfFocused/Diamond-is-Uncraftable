@@ -37,7 +37,6 @@ public class EventHandleKeybinds {
                     if (KeyInit.SWITCH_ACT.isPressed())
                         DiamondIsUncraftable.INSTANCE.sendToServer(new CSwitchStandActPacket());
 
-                if (props.getStandOn()) {
                     if (KeyInit.ABILITY1.isPressed())
                         DiamondIsUncraftable.INSTANCE.sendToServer(new CSyncStandAbilitiesPacket((byte) 1));
                     if (KeyInit.ABILITY2.isPressed())
@@ -45,6 +44,7 @@ public class EventHandleKeybinds {
                     if (KeyInit.ABILITY3.isPressed())
                         DiamondIsUncraftable.INSTANCE.sendToServer(new CSyncStandAbilitiesPacket((byte) 3));
 
+                if (props.getStandOn()) {
                     if (mc.gameSettings.keyBindBack.isKeyDown()) {
                         DiamondIsUncraftable.INSTANCE.sendToServer(new CStandMasterMovementPacket(CStandMasterMovementPacket.Direction.BACKWARDS));
                     }else if (mc.gameSettings.keyBindRight.isKeyDown()) {

@@ -3,15 +3,10 @@ package io.github.halffocused.diamond_is_uncraftable.network.message.client;
 import io.github.halffocused.diamond_is_uncraftable.capability.Stand;
 import io.github.halffocused.diamond_is_uncraftable.capability.StandEffects;
 import io.github.halffocused.diamond_is_uncraftable.entity.stand.*;
-import io.github.halffocused.diamond_is_uncraftable.entity.stand.attack.AbstractStandAttackEntity;
 import io.github.halffocused.diamond_is_uncraftable.network.message.IMessage;
-import io.github.halffocused.diamond_is_uncraftable.util.Util;
-import net.minecraft.entity.Entity;
+import io.github.halffocused.diamond_is_uncraftable.util.globalabilities.BitesTheDustHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.EntityRayTraceResult;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkEvent.Context;
@@ -65,7 +60,8 @@ public class CSyncStandAbilitiesPacket implements IMessage<CSyncStandAbilitiesPa
                                                 });
                                         break;
                                     }
-                                    case KILLER_QUEEN: {
+                                    case KILLER_QUEEN:
+                                    case KILLER_QUEEN_BTD: {
                                         if (StandEffects.getCapabilityFromEntity(sender).isThreeFreeze()) return;
                                         world.getServer().getWorld(sender.world.getDimensionKey()).getEntities()
                                                 .filter(entity -> entity instanceof KillerQueenEntity)
@@ -119,15 +115,15 @@ public class CSyncStandAbilitiesPacket implements IMessage<CSyncStandAbilitiesPa
                                                         default:
                                                             break;
                                                         case 1: {
-                                                            ((StickyFingersEntity) entity).disguise();
+                                                            ((StickyFingersEntity) entity).toggleZippedBlock();
                                                             break;
                                                         }
                                                         case 2: {
-                                                            ((StickyFingersEntity) entity).zipThroughWall();
+                                                            ((StickyFingersEntity) entity).addZippedBlock();
                                                             break;
                                                         }
                                                         case 3: {
-                                                            ((StickyFingersEntity) entity).zipPunch();
+                                                            ((StickyFingersEntity) entity).zipLine();
                                                             break;
                                                         }
                                                     }
@@ -147,6 +143,30 @@ public class CSyncStandAbilitiesPacket implements IMessage<CSyncStandAbilitiesPa
                                     }
                                     default:
                                         break;
+                                }
+                            }else{ //Stand off abilities
+                                switch (props.getStandID()) {
+                                    case KILLER_QUEEN_BTD: {
+                                        world.getServer().getWorld(sender.world.getDimensionKey()).getEntities()
+                                                .filter(entity -> entity instanceof PlayerEntity)
+                                                .forEach(entity -> {
+                                                    switch (message.action) {
+                                                        case 1: {
+                                                            System.out.println("Sneaking: " + entity.isSneaking());
+                                                            System.out.println("Correct Player: " + BitesTheDustHelper.bitesTheDustPlayer.equals(entity));
+                                                            System.out.println("Bites The Dust Active: " + BitesTheDustHelper.bitesTheDustActive);
+                                                            if(entity.isSneaking() && BitesTheDustHelper.bitesTheDustPlayer.equals(entity) && BitesTheDustHelper.bitesTheDustActive){
+                                                                BitesTheDustHelper.rewindBitesTheDust();
+                                                            }
+                                                            break;
+                                                        }
+                                                        default:
+                                                            break;
+                                                    }
+                                                });
+                                        break;
+                                    }
+
                                 }
                             }
                         });

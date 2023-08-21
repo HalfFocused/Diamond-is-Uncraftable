@@ -120,6 +120,7 @@ public class DiamondIsUncraftable {
         StandPerWorldCapability.register();
         CombatCapability.register();
         WorldTimestopCapability.register();
+        BitesTheDustCapability.register();
 
 
 

@@ -8,7 +8,7 @@ import io.github.halffocused.diamond_is_uncraftable.config.DiamondIsUncraftableC
 import io.github.halffocused.diamond_is_uncraftable.entity.stand.*;
 import io.github.halffocused.diamond_is_uncraftable.entity.stand.attack.SheerHeartAttackEntity;
 import io.github.halffocused.diamond_is_uncraftable.network.message.server.SSyncStandCapabilityPacket;
-import io.github.halffocused.diamond_is_uncraftable.util.timestop.TimestopHelper;
+import io.github.halffocused.diamond_is_uncraftable.util.globalabilities.TimestopHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.world.DimensionType;

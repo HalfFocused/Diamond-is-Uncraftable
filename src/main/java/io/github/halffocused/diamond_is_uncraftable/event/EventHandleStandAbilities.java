@@ -13,7 +13,8 @@ import io.github.halffocused.diamond_is_uncraftable.init.ItemInit;
 import io.github.halffocused.diamond_is_uncraftable.network.message.server.SSyncStandMasterPacket;
 import io.github.halffocused.diamond_is_uncraftable.util.IOnMasterAttacked;
 import io.github.halffocused.diamond_is_uncraftable.util.Util;
-import io.github.halffocused.diamond_is_uncraftable.util.timestop.TimestopHelper;
+import io.github.halffocused.diamond_is_uncraftable.util.globalabilities.BitesTheDustHelper;
+import io.github.halffocused.diamond_is_uncraftable.util.globalabilities.TimestopHelper;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
@@ -58,6 +59,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
+import static io.github.halffocused.diamond_is_uncraftable.util.globalabilities.BitesTheDustHelper.*;
+
 @SuppressWarnings("ConstantConditions")
 @Mod.EventBusSubscriber(modid = DiamondIsUncraftable.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class EventHandleStandAbilities {
@@ -72,6 +75,9 @@ public class EventHandleStandAbilities {
                 }
                 if(stand.getTimeSkipEffectTicker() > 0){
                     stand.setTimeSkipEffectTicker(stand.getTimeSkipEffectTicker() - 1);
+                }
+                if(stand.getBitesTheDustEffectTicker() > 0){
+                    stand.setBitesTheDustEffectTicker(stand.getBitesTheDustEffectTicker() - 1);
                 }
 
                 Random rand = player.world.rand;
@@ -347,7 +353,7 @@ public class EventHandleStandAbilities {
         StandEffects.getLazyOptional(livingEntity).ifPresent(standEffects -> {
             if (standEffects.getDestroyedBlocks().containsKey(chunk.getPos()) && standEffects.getDestroyedBlocks().get(chunk.getPos()).containsKey(event.getPos()))
                 return;
-            if (standEffects.getBitesTheDustPos() != BlockPos.ZERO)
+            if (BitesTheDustHelper.bitesTheDustActive)
                 standEffects.putDestroyedBlock(chunk.getPos(), event.getPos(), event.getState());
         });
     }
@@ -360,7 +366,7 @@ public class EventHandleStandAbilities {
         StandEffects.getLazyOptional(entity).ifPresent(standEffects -> {
             if (standEffects.getDestroyedBlocks().containsKey(chunk.getPos()) && standEffects.getDestroyedBlocks().get(chunk.getPos()).containsKey(event.getPos()))
                 return;
-            if (standEffects.getBitesTheDustPos() != BlockPos.ZERO)
+            if (BitesTheDustHelper.bitesTheDustActive)
                 standEffects.putDestroyedBlock(chunk.getPos(), event.getPos(), Blocks.AIR.getDefaultState());
 
         });
@@ -373,13 +379,45 @@ public class EventHandleStandAbilities {
         Chunk chunk = player.world.getChunkAt(player.getPosition());
         if (event.getUseBlock() == Event.Result.ALLOW && player.world.getTileEntity(event.getPos()) != null)
             StandEffects.getLazyOptional(player).ifPresent(standEffects -> {
-                if (standEffects.getBitesTheDustPos() != BlockPos.ZERO)
+                if (BitesTheDustHelper.bitesTheDustActive)
                     standEffects.putAlteredTileEntity(chunk.getPos(), event.getPos());
             });
     }
 
     @SubscribeEvent
     public static void livingDeath(LivingDeathEvent event) {
+
+        if(!event.getEntityLiving().getEntityWorld().isRemote() && event.getEntityLiving() instanceof PlayerEntity){
+            PlayerEntity player = ((PlayerEntity) event.getEntityLiving());
+            if(bitesTheDustPlayer != null) {
+                if (bitesTheDustPlayer.equals(player)) {
+                    if (bitesTheDustActive){
+                        event.setCanceled(true);
+                        player.setHealth(4f);
+                        rewindBitesTheDust();
+                    }
+                }else if(previousBitesTheDustPlayer != null && previousBitesTheDustPlayer.equals(player)){
+                    if(!bitesTheDustActive){
+                        fatedDeaths.clear();
+                    }
+                }
+            }
+        }
+        
+        if(!event.getEntity().world.isRemote() && event.getEntity() instanceof LivingEntity){
+            if(BitesTheDustHelper.bitesTheDustActive && !killedEntities.contains(((LivingEntity) event.getEntity()))){
+                BitesTheDustCapability bitesTheDustCapability = BitesTheDustCapability.getCapabilityFromEntity(event.getEntity());
+                Vector3d originPos = new Vector3d(bitesTheDustCapability.getPosX(), bitesTheDustCapability.getPosY(), bitesTheDustCapability.getPosZ());
+                BitesTheDustHelper.addFatedDeath(((LivingEntity) event.getEntity()), originPos);
+
+                if(!(event.getEntity() instanceof PlayerEntity)){
+                    killedEntities.add((LivingEntity) event.getEntity());
+                    event.getEntity().remove();
+                    event.getEntity().removed = false;
+                }
+            }
+        }
+
         if(!event.getEntity().world.isRemote() && event.getEntity() instanceof PlayerEntity){
             ServerPlayerEntity playerEntity = (ServerPlayerEntity) event.getEntity();
             Stand.getLazyOptional(playerEntity).ifPresent(props -> {
@@ -716,23 +754,6 @@ public class EventHandleStandAbilities {
                 if (entity.world.rand.nextInt(6) == 1)
                     entity.attackEntityFrom(DamageSource.IN_FIRE, 2);
             }
-            if (props.getTimeOfDeath() != -1 && props.getStandUser() != null && entity.world.getPlayerByUuid(props.getStandUser()) != null && entity.world.getPlayerByUuid(props.getStandUser()).isAlive() && props.getTimeOfDeath() <= entity.world.getGameTime()) {
-                if (entity instanceof MobEntity) {
-                    Explosion explosion = new Explosion(entity.world, entity.world.getPlayerByUuid(props.getStandUser()), entity.getPosX(), entity.getPosY(), entity.getPosZ(), 4, true, Explosion.Mode.NONE);
-                    ((MobEntity) entity).spawnExplosionParticle();
-                    explosion.doExplosionB(true);
-                    entity.world.playSound(null, entity.getPosition(), SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 1, 1);
-                    entity.remove();
-                } else if (entity instanceof PlayerEntity) {
-                    Stand.getLazyOptional((PlayerEntity) entity).ifPresent(bombProps -> {
-                        Explosion explosion = new Explosion(entity.world, null, entity.getPosX(), entity.getPosY(), entity.getPosZ(), 4, true, Explosion.Mode.NONE);
-                        ((PlayerEntity) entity).spawnSweepParticles();
-                        explosion.doExplosionB(true);
-                        entity.attackEntityFrom(DamageSource.causeExplosionDamage(explosion), Float.MAX_VALUE);
-                    });
-                }
-            }
-
         });
 
         StandChunkEffects.getLazyOptional(entity.world.getChunkAt(entity.getPosition())).ifPresent(props ->

@@ -27,7 +27,7 @@ public class TimeSkipEffectGUI extends AbstractGui {
                     //If I had randomly chosen numbers I'm pretty sure I would have gotten these faster than trying to actually figure them out.
                     //This was a very informative introduction to GUIs. What did I learn? Why I couldn't find a guide online.
                     double xScaleFactor = mc.getMainWindow().getScaledWidth() / 256.0;
-                    double yScaleFactor = mc.getMainWindow().getScaledHeight() / 154.0;
+                    double yScaleFactor = mc.getMainWindow().getScaledHeight() / 144.0;
 
 
                     GlStateManager.enableBlend();
@@ -36,7 +36,7 @@ public class TimeSkipEffectGUI extends AbstractGui {
                     int frame = props.getTimeSkipEffectTicker();
 
                     Minecraft.getInstance().getTextureManager().bindTexture(new ResourceLocation(DiamondIsUncraftable.MOD_ID, "textures/gui/timeskip/time_skip" + (16 - frame) + ".png"));
-                    GuiUtils.drawTexturedModalRect(0, 0, 0, 0, 256, 154, 0);
+                    GuiUtils.drawTexturedModalRect(0, 0, 0, 0, 256, 144, 0);
 
                     //DiamondIsUncraftable.INSTANCE.sendToServer(new CTimeSkipEffectPacket());
                 }

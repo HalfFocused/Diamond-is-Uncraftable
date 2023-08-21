@@ -16,6 +16,7 @@ public class PacketHandler {
         registerPacket(CSyncStandAbilitiesPacket.class, new CSyncStandAbilitiesPacket(), NetworkDirection.PLAY_TO_SERVER);
         registerPacket(SSyncStandCapabilityPacket.class, new SSyncStandCapabilityPacket(), NetworkDirection.PLAY_TO_CLIENT);
         registerPacket(SSyncTimestopCapabilityPacket.class, new SSyncTimestopCapabilityPacket(), NetworkDirection.PLAY_TO_CLIENT);
+        registerPacket(SSyncBitesTheDustCapabilityPacket.class, new SSyncBitesTheDustCapabilityPacket(), NetworkDirection.PLAY_TO_CLIENT);
         registerPacket(SSyncStandPerWorldCapabilityPacket.class, new SSyncStandPerWorldCapabilityPacket(), NetworkDirection.PLAY_TO_CLIENT);
         registerPacket(SSyncCombatCapabilityCombat.class, new SSyncCombatCapabilityCombat(), NetworkDirection.PLAY_TO_CLIENT);
         registerPacket(SSyncStandMasterPacket.class, new SSyncStandMasterPacket(), NetworkDirection.PLAY_TO_CLIENT);
@@ -26,15 +27,11 @@ public class PacketHandler {
         registerPacket(SSyncStickyFingersDisguisePacket.class, new SSyncStickyFingersDisguisePacket(), NetworkDirection.PLAY_TO_CLIENT);
         registerPacket(SSyncStandChunkEffectCapabilityPacket.class, new SSyncStandChunkEffectCapabilityPacket(), NetworkDirection.PLAY_TO_CLIENT);
         registerPacket(CAerosmithRotationPacket.class, new CAerosmithRotationPacket(), NetworkDirection.PLAY_TO_SERVER);
-
-        registerPacket(CRemoveEntityPacket.class, new CRemoveEntityPacket(), NetworkDirection.PLAY_TO_SERVER);
-
         registerPacket(SAnimatePacket.class, new SAnimatePacket(), NetworkDirection.PLAY_TO_CLIENT);
         registerPacket(SParticlePacket.class, new SParticlePacket(), NetworkDirection.PLAY_TO_CLIENT);
         registerPacket(CStandMasterMovementPacket.class, new CStandMasterMovementPacket(), NetworkDirection.PLAY_TO_SERVER);
         registerPacket(CWalkingStandTargetPacket.class, new CWalkingStandTargetPacket(), NetworkDirection.PLAY_TO_SERVER);
         registerPacket(CAddStandToWorldData.class, new CAddStandToWorldData(), NetworkDirection.PLAY_TO_SERVER);
-
         registerPacket(SSyncWorldTimestopCapability.class, new SSyncWorldTimestopCapability(), NetworkDirection.PLAY_TO_CLIENT);
 
     }

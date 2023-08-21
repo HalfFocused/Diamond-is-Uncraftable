@@ -120,8 +120,6 @@ public class KingCrimsonEntity extends AbstractStandEntity implements IAnimatabl
         if (world.isRemote || master == null || epitaphTicks > 0) return;
 
         Stand.getLazyOptional(master).ifPresent(stand -> {
-
-
             if (timeEraseActive) {
                 endTimeSkip();
             } else if (!timeEraseActive) {

@@ -37,6 +37,7 @@ import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.*;
 import net.minecraft.util.math.*;
+import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ChatType;
@@ -678,8 +679,7 @@ public class Util {
 
         public static final int THE_WORLD = 4;
 
-
-        public static final int STICKY_FINGERS = -1;
+        public static final int STICKY_FINGERS = 5;
 
 
         /**
@@ -725,6 +725,8 @@ public class Util {
                     return new TheWorldEntity(EntityInit.THE_WORLD.get(), world);
                 case SILVER_CHARIOT:
                     return new SilverChariotEntity(EntityInit.SILVER_CHARIOT.get(), world);
+                case STICKY_FINGERS:
+                    return new StickyFingersEntity(EntityInit.SILVER_CHARIOT.get(), world);
             }
         }
 

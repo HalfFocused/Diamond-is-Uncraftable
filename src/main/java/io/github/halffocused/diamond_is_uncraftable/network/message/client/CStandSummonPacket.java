@@ -4,9 +4,11 @@ import io.github.halffocused.diamond_is_uncraftable.DiamondIsUncraftable;
 import io.github.halffocused.diamond_is_uncraftable.capability.Stand;
 import io.github.halffocused.diamond_is_uncraftable.config.DiamondIsUncraftableConfig;
 import io.github.halffocused.diamond_is_uncraftable.entity.stand.AbstractStandEntity;
+import io.github.halffocused.diamond_is_uncraftable.entity.stand.KillerQueenBitesTheDustEntity;
 import io.github.halffocused.diamond_is_uncraftable.network.message.IMessage;
 import io.github.halffocused.diamond_is_uncraftable.network.message.server.SSyncStandMasterPacket;
 import io.github.halffocused.diamond_is_uncraftable.util.Util;
+import io.github.halffocused.diamond_is_uncraftable.util.globalabilities.BitesTheDustHelper;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.vector.Vector3d;
@@ -64,6 +66,12 @@ public class CStandSummonPacket implements IMessage<CStandSummonPacket> {
                                     standEntity.playSpawnSound();
                                 DiamondIsUncraftable.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> sender), new SSyncStandMasterPacket(standEntity.getEntityId(), sender.getEntityId()));
                                 sender.world.addEntity(standEntity);
+                                if(standEntity instanceof KillerQueenBitesTheDustEntity){
+                                    if(BitesTheDustHelper.bitesTheDustActive && BitesTheDustHelper.bitesTheDustPlayer.equals(sender)
+                                    ){
+                                        BitesTheDustHelper.cancelBitesTheDust();
+                                    }
+                                }
                             }
                         } else
                             stand.setAct(0);

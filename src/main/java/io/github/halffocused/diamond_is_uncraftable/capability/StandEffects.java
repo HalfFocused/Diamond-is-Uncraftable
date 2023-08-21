@@ -42,7 +42,7 @@ public class StandEffects implements ICapabilitySerializable<INBT> {
     private boolean threeFreeze;
     private double timeNearFlames;
     private BlockPos bitesTheDustPos = BlockPos.ZERO;
-    private long timeOfDeath = -1;
+    private int remainingTicks = -1;
     private Map<ChunkPos, Map<BlockPos, BlockState>> destroyedBlocks = new ConcurrentHashMap<>();
     private boolean shouldBeRemoved;
     private int hitstun;
@@ -80,7 +80,7 @@ public class StandEffects implements ICapabilitySerializable<INBT> {
                 nbt.putDouble("bitesTheDustY", instance.bitesTheDustPos.getY());
                 nbt.putDouble("bitesTheDustZ", instance.bitesTheDustPos.getZ());
                 nbt.putInt("hitstun", instance.hitstun);
-                nbt.putLong("timeOfDeath", instance.timeOfDeath);
+                nbt.putLong("timeOfDeath", instance.remainingTicks);
                 nbt.putBoolean("shouldBeRemoved", instance.shouldBeRemoved);
                 ListNBT destroyedBlocks = new ListNBT();
                 instance.destroyedBlocks.forEach((pos, list) -> {
@@ -133,7 +133,7 @@ public class StandEffects implements ICapabilitySerializable<INBT> {
                 instance.timeNearFlames = compoundNBT.getDouble("timeNearFlames");
                 instance.hitstun = compoundNBT.getInt("hitstun");
                 instance.bitesTheDustPos = new BlockPos(compoundNBT.getDouble("bitesTheDustX"), compoundNBT.getDouble("bitesTheDustY"), compoundNBT.getDouble("bitesTheDustZ"));
-                instance.timeOfDeath = compoundNBT.getLong("timeOfDeath");
+                instance.remainingTicks = compoundNBT.getInt("timeOfDeath");
                 instance.shouldBeRemoved = compoundNBT.getBoolean("shouldBeRemoved");
                 compoundNBT.getList("destroyedBlocks", Constants.NBT.TAG_COMPOUND).forEach(compound -> {
                     if (compound instanceof CompoundNBT && ((CompoundNBT) compound).contains("chunkPosX")) {
@@ -270,12 +270,12 @@ public class StandEffects implements ICapabilitySerializable<INBT> {
         onDataUpdated();
     }
 
-    public long getTimeOfDeath() {
-        return timeOfDeath;
+    public int getRemainingTicks() {
+        return remainingTicks;
     }
 
-    public void setTimeOfDeath(long timeOfDeath) {
-        this.timeOfDeath = timeOfDeath;
+    public void setRemainingTicks(int timeOfDeath) {
+        this.remainingTicks = timeOfDeath;
         onDataUpdated();
     }
 

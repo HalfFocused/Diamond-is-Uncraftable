@@ -5,7 +5,7 @@ import io.github.halffocused.diamond_is_uncraftable.capability.Stand;
 import io.github.halffocused.diamond_is_uncraftable.entity.stand.AbstractStandEntity;
 import io.github.halffocused.diamond_is_uncraftable.network.message.server.SAnimatePacket;
 import io.github.halffocused.diamond_is_uncraftable.util.*;
-import io.github.halffocused.diamond_is_uncraftable.util.timestop.TimestopHelper;
+import io.github.halffocused.diamond_is_uncraftable.util.globalabilities.TimestopHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.Style;

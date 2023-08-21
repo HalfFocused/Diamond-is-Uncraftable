@@ -45,7 +45,7 @@ public class StickyFingersEntity extends AbstractStandEntity {
         return null;
     }
 
-    public void disguise() {
+    public void toggleZippedBlock() {
         if (getMaster() == null || world.isRemote()) return;
             //Raytracing but awesome
             //Just kidding, it's never awesome
@@ -87,7 +87,7 @@ public class StickyFingersEntity extends AbstractStandEntity {
             }
         }
 
-    public void zipThroughWall() {
+    public void addZippedBlock() {
         if (getMaster() == null || world.isRemote || disguiseEntity != null) return;
         BlockPos pos = lookingAt(master, false);
         ZippedBlock block = null;
@@ -113,7 +113,7 @@ public class StickyFingersEntity extends AbstractStandEntity {
         }
     }
 
-    public void zipPunch() {
+    public void zipLine() {
         if (getMaster() == null || world.isRemote || disguiseEntity != null) return;
 
         if(!layingZipLine && master.isOnGround()) {
@@ -310,28 +310,28 @@ public class StickyFingersEntity extends AbstractStandEntity {
                 {0,0,-1}
         };
         for(int[] array : displacementArray) {
-                BlockPos checkPos = new BlockPos(pos.getX() + array[0], pos.getY() + array[1], pos.getZ() + array[2]);
-                for(ZippedBlock zippedBlock : zippedBlocks){
-                    BlockPos block = zippedBlock.position;
+            BlockPos checkPos = new BlockPos(pos.getX() + array[0], pos.getY() + array[1], pos.getZ() + array[2]);
+            for(ZippedBlock zippedBlock : zippedBlocks){
+                BlockPos block = zippedBlock.position;
 
-                    boolean adjacentZippedBlockContainsBlock = false;
+                boolean adjacentZippedBlockContainsBlock = false;
 
-                    for (ZippedBlock zippedBlock1 : adjacentZippedBlocks) {
-                        if (zippedBlock1.position.getX() == checkPos.getX() && zippedBlock1.position.getY() == checkPos.getY() && zippedBlock1.position.getZ() == checkPos.getZ()) {
-                            adjacentZippedBlockContainsBlock = true;
-                        }
-                    }
-
-                    if(block.getX() == checkPos.getX() && block.getY() == checkPos.getY() && block.getZ() == checkPos.getZ() && !adjacentZippedBlockContainsBlock){
-                        adjacentZippedBlocks.add(zippedBlock);
-                        addAdjacentZippedBlocks(block);
+                for (ZippedBlock zippedBlock1 : adjacentZippedBlocks) {
+                    if (zippedBlock1.position.getX() == checkPos.getX() && zippedBlock1.position.getY() == checkPos.getY() && zippedBlock1.position.getZ() == checkPos.getZ()) {
+                        adjacentZippedBlockContainsBlock = true;
                     }
                 }
+
+                if(block.getX() == checkPos.getX() && block.getY() == checkPos.getY() && block.getZ() == checkPos.getZ() && !adjacentZippedBlockContainsBlock){
+                    adjacentZippedBlocks.add(zippedBlock);
+                    addAdjacentZippedBlocks(block);
+                }
+            }
         }
     }
 
 
-    class ZippedBlock{
+    static class ZippedBlock{
         World world;
         public BlockPos position;
         public boolean toggled;

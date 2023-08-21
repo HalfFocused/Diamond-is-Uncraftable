@@ -7,7 +7,7 @@ import io.github.halffocused.diamond_is_uncraftable.util.*;
 import io.github.halffocused.diamond_is_uncraftable.util.movesets.ChargeAttackFormat;
 import io.github.halffocused.diamond_is_uncraftable.util.movesets.HoveringMoveHandler;
 import io.github.halffocused.diamond_is_uncraftable.util.movesets.MovementAnimationHolder;
-import io.github.halffocused.diamond_is_uncraftable.util.timestop.TimestopHelper;
+import io.github.halffocused.diamond_is_uncraftable.util.globalabilities.TimestopHelper;
 import net.minecraft.entity.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.EffectInstance;

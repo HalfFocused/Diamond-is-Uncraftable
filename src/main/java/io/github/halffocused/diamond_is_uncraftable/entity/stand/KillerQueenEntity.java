@@ -108,7 +108,7 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
     }
 
     public void turnItemOrBlockIntoBomb() {
-        if (getMaster() == null || world.isRemote) return;
+        if (getMaster() == null || world.isRemote || !getController().isActionable()) return;
         Stand.getLazyOptional(master).ifPresent(props -> {
             if (!master.isCrouching() && master.getHeldItemMainhand() != ItemStack.EMPTY) {
                 controller.setMoveActive(7);
@@ -186,7 +186,6 @@ public class KillerQueenEntity extends AbstractStandEntity implements IAnimatabl
                                 CompoundNBT nbt = itemEntity.getItem().getOrCreateTag();
                                 if (nbt.getBoolean("bomb") && nbt.getUniqueId("ownerUUID").equals(master.getUniqueID())) {
                                     Util.standExplosion(master, this.world, entity.getPositionVec(), explosionRange, 3, maxExplosionDamage, minExplosionDamage);
-
                                     entity.remove();
                                 }
                             });

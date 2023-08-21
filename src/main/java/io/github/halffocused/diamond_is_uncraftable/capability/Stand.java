@@ -73,6 +73,7 @@ public class Stand implements ICapabilitySerializable<INBT> {
     private double momentum = 0;
     private int rage = 0;
     private int epitaphEffectTicker = 0;
+    private int btdEffectTicker = 0;
     private double maxStandEnergy = 100;
     private double currentStandEnergy = 100;
     private double energyRegenerationRate = 5;
@@ -144,6 +145,7 @@ public class Stand implements ICapabilitySerializable<INBT> {
                 nbt.putDouble("momentum", instance.getMomentum());
                 nbt.putInt("rage", instance.getRage());
                 nbt.putInt("epitaphTicker", instance.getTimeSkipEffectTicker());
+                nbt.putInt("btdTicker", instance.getBitesTheDustEffectTicker());
                 nbt.putDouble("currentEnergy", instance.getCurrentStandEnergy());
                 nbt.putDouble("maxEnergy", instance.getMaxStandEnergy());
                 nbt.putDouble("energyRegeneration", instance.getEnergyRegenerationRate());
@@ -216,6 +218,7 @@ public class Stand implements ICapabilitySerializable<INBT> {
                 instance.momentum = compoundNBT.getDouble("momentum");
                 instance.rage = compoundNBT.getInt("rage");
                 instance.epitaphEffectTicker = compoundNBT.getInt("epitaphTicker");
+                instance.btdEffectTicker = compoundNBT.getInt("btdTicker");
                 instance.currentStandEnergy = compoundNBT.getDouble("currentEnergy");
                 instance.maxStandEnergy = compoundNBT.getDouble("maxEnergy");
                 instance.energyRegenerationRate = compoundNBT.getDouble("energyRegeneration");
@@ -430,6 +433,15 @@ public class Stand implements ICapabilitySerializable<INBT> {
 
     public void setTimeSkipEffectTicker(int effectTickerIn) {
         this.epitaphEffectTicker = effectTickerIn;
+        onDataUpdated();
+    }
+
+    public int getBitesTheDustEffectTicker() {
+        return btdEffectTicker;
+    }
+
+    public void setBitesTheDustEffectTicker(int effectTickerIn) {
+        this.btdEffectTicker = effectTickerIn;
         onDataUpdated();
     }
 
@@ -695,6 +707,7 @@ public class Stand implements ICapabilitySerializable<INBT> {
         momentum = stand.getMomentum();
         rage = stand.getRage();
         epitaphEffectTicker = stand.getTimeSkipEffectTicker();
+        btdEffectTicker = stand.getBitesTheDustEffectTicker();
         currentStandEnergy = stand.getCurrentStandEnergy();
         maxStandEnergy = stand.getMaxStandEnergy();
         energyRegenerationRate = stand.getEnergyRegenerationRate();
@@ -767,6 +780,7 @@ public class Stand implements ICapabilitySerializable<INBT> {
         momentum = 0;
         rage = 0;
         epitaphEffectTicker = 0;
+        btdEffectTicker = 0;
         experiencingTimeSkip = false;
         experiencingTimeStop = false;
         counterBuffer = false;
